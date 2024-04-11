@@ -1,0 +1,121 @@
+image: $CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX/docker:20-git
+
+stages:
+  - security
+  - build
+  - deploy
+  - notification
+
+variables:
+  # 高速化
+  FF_USE_FASTZIP: 'true'
+  ARTIFACT_COMPRESSION_LEVEL: 'fast'
+  CACHE_COMPRESSION_LEVEL: 'fast'
+  # ランナー -------------------------------------------
+  SECURITY_RUNNER: clsl-dev
+  BUILD_RUNNER: clsl-dev
+  DEPLOY_RUNNER: clsl-dev
+  # 開発環境 -------------------------------------------
+  DEVELOP_NODE_IMAGE: $CI_REGISTRY_IMAGE
+  # 検証環境 -------------------------------------------
+  # 開発環境 -------------------------------------------
+
+# ＣＩの共通処理を読み込み（案件グループ内の private レポジトリを参照）
+include:
+  - project: infrastructure-templates/gitlab-ci
+    ref: v1.0.4
+    file:
+      - .notification/.gitlab-ci.yml
+      - .security/.gitlab-ci.yml
+      - .clsl-develop-server/.gitlab-ci.yml
+
+# security -----------------------------------------------------------------------------------------------
+.security_rules: &security_rules
+  rules:
+    # - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_PIPELINE_SOURCE == "schedule")
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^hotfix\/*/ # hotfix からのマージリクエストは常に実行
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop" # develop ブランチへのマージリクエストは常に実行
+
+# audit
+yarn-audit:
+  extends: .security-yarn-audit
+  tags: [$SECURITY_RUNNER]
+  <<: *security_rules
+  variables:
+    NODE_IMAGE_VERSION: iron-alpine
+
+# audit の通知
+audit-notification:
+  extends: .notification-send
+  <<: *security_rules
+  tags: [$SECURITY_RUNNER]
+  when: on_failure
+  variables:
+    MENTION: '${CI_COMMIT_AUTHOR}'
+    BODY: "##### [${CI_PROJECT_NAME}](${CI_PROJECT_URL}) パッケージのセキュリティ情報が更新されました。\n[ここをクリック](${FAILURE_JOB_URL})して内容を確認してください"
+  needs:
+    - yarn-audit
+  dependencies:
+    - yarn-audit
+
+# 開発環境 ------------------------------------------------------------------------------------------------
+.develop_deploy_rules: &develop_deploy_rules
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop" && ($CI_PIPELINE_SOURCE != "schedule")
+
+# ビルド
+develop-build:
+  extends: .clsl-develop-server-build
+  tags: [$BUILD_RUNNER]
+  <<: *develop_deploy_rules
+  variables:
+    ENVIRONMENT: develop
+    IMAGE_NAME: ${DEVELOP_NODE_IMAGE}
+
+# ビルド失敗通知
+develop-build-notification:
+  extends: .notification-send
+  tags: [$BUILD_RUNNER]
+  when: on_failure
+  <<: *develop_deploy_rules
+  variables:
+    MENTION: $CI_COMMIT_AUTHOR
+    BODY: '##### [${CI_PROJECT_NAME}](${CI_PROJECT_URL}) ビルドに失敗しました'
+  needs:
+    - develop-build
+  dependencies:
+    - develop-build
+
+# デプロイ
+develop-deploy:
+  extends: .clsl-develop-server-deploy-nuxt
+  tags: [aws-dev01]
+  <<: *develop_deploy_rules
+  variables:
+    IMAGE_NAME: ${DEVELOP_NODE_IMAGE}
+
+# デプロイ失敗通知
+develop-deploy-notification:
+  extends: .notification-send
+  tags: [$BUILD_RUNNER]
+  when: on_failure
+  <<: *develop_deploy_rules
+  variables:
+    MENTION: $CI_COMMIT_AUTHOR
+    BODY: '##### [${CI_PROJECT_NAME}](${CI_PROJECT_URL}) デプロイに失敗しました'
+  needs:
+    - develop-deploy
+  dependencies:
+    - develop-deploy
+
+yarn-install-notification:
+  extends: .notification-send
+  tags: [$BUILD_RUNNER]
+  variables:
+    BODY: "##### 【管理サイト】パッケージに更新がはいりました。\n##### ${CI_COMMIT_BRANCH} ブランチを取り込んだら、各自 `yarn install` の実行をお願いします。"
+    FAILED_BODY: ''
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - package.json

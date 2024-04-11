@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  node:
+    image: ${NODE_IMAGE_NAME}
+    container_name: ${COMPOSE_PROJECT_NAME}
+    environment:
+      VIRTUAL_HOST: admin.sensy-md.coresoft-dev.com
+    restart: always
+
+networks:
+  default:
+    external:
+      name: docker-dev-network
