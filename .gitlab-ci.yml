@@ -38,7 +38,7 @@ include:
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop" # develop ブランチへのマージリクエストは常に実行
 
 # audit
-yarn-audit:
+.yarn-audit:
   extends: .security-yarn-audit
   tags: [$SECURITY_RUNNER]
   <<: *security_rules
@@ -46,7 +46,7 @@ yarn-audit:
     NODE_IMAGE_VERSION: iron-alpine
 
 # audit の通知
-audit-notification:
+.audit-notification:
   extends: .notification-send
   <<: *security_rules
   tags: [$SECURITY_RUNNER]
