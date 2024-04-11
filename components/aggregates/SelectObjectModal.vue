@@ -5,7 +5,7 @@
     color="gray"
     block
     class="select-buttons"
-    @click="isOpenModal = true"
+    @click="openModal"
   />
   <UModal v-model="isOpenModal">
     <UCard
@@ -24,7 +24,12 @@
         </UForm>
       </template>
 
-      <UTable v-model="internalSelected" :rows="items" :columns="columns" />
+      <UTable
+        v-model="internalSelected"
+        :rows="items"
+        :columns="columns"
+        @select="onSelected"
+      />
 
       <template #footer>
         <div class="block text-right">
@@ -39,14 +44,18 @@
 <script setup lang="ts">
 const isOpenModal = ref(false)
 
-const { items, columns, nameColumn } = withDefaults(
+const { columns, nameColumn } = withDefaults(
   defineProps<{
-    items: any[]
     columns: { key: string; label: string }[]
     nameColumn: string
   }>(),
   {}
 )
+
+const items = defineModel<any[]>('items', {
+  type: Array,
+  required: true,
+})
 
 const selected = defineModel<any[]>('selected', {
   type: Array,
@@ -57,24 +66,26 @@ const internalSelected = ref<any>([])
 type SearchRequest = {
   text: string | null
   page: number
+  perPage: number
 }
 const searchRequest = ref<SearchRequest>({
   text: null,
   page: 1,
+  perPage: 10,
 })
 const emit = defineEmits<{ fetchItems: [searchRequest: SearchRequest] }>()
 
-// 開いた時の初期化
-watch(isOpenModal, (value) => {
-  if (value) {
-    searchRequest.value = {
-      page: 1,
-      text: null,
-    }
-    internalSelected.value = [...selected.value]
-    emit('fetchItems', searchRequest.value)
+async function openModal() {
+  searchRequest.value = {
+    ...searchRequest.value,
+    page: 1,
+    text: null,
   }
-})
+  internalSelected.value = [...selected.value]
+  await emit('fetchItems', searchRequest.value)
+
+  isOpenModal.value = true
+}
 
 function save() {
   selected.value = [...internalSelected.value]
@@ -89,6 +100,14 @@ const buttonLabel = computed(() => {
 function fetch(page: number) {
   searchRequest.value.page = page
   emit('fetchItems', searchRequest.value)
+}
+
+function onSelected(row: any) {
+  if (!internalSelected.value.includes(row)) {
+    internalSelected.value.push(row)
+  } else {
+    internalSelected.value.splice(internalSelected.value.indexOf(row), 1)
+  }
 }
 </script>
 
