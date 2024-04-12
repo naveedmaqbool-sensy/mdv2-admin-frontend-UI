@@ -10,14 +10,14 @@ import type LineMaster from '../../database/SensyCloud/LineMaster'
 import type ClassMaster from '../../database/SensyCloud/ClassMaster'
 
 interface FormData {
-  aggregateType: AggregateTypes
-  aggregateUnitType: AggregateUnitTypes
-  aggregateHorizontalAxisType: AggregateHorizontalAxisTypes
-  skuAggregateUnitType: SkuAggregateUnitTypes
-  storeAggregateType: StoreAggregateTypes
-  storeAggregateUnitType: StoreAggregateUnitTypes
-  targetDateFrom: Date
-  targetDateTo: Date
+  aggregateType: AggregateTypes | null
+  aggregateUnitType: AggregateUnitTypes | null
+  aggregateHorizontalAxisType: AggregateHorizontalAxisTypes | null
+  skuAggregateUnitType: SkuAggregateUnitTypes | null
+  storeAggregateType: StoreAggregateTypes | null
+  storeAggregateUnitType: StoreAggregateUnitTypes | null
+  targetDateFrom: Date | null
+  targetDateTo: Date | null
   groups: GroupMaster[]
   departments: DepartmentMaster[]
   lines: LineMaster[]

@@ -11,14 +11,14 @@ import StoreAggregateTypes from '~/types/enums/StoreAggregateTypes'
 import StoreAggregateUnitTypes from '~/types/enums/StoreAggregateUnitTypes'
 
 export default class implements FormData {
-  aggregateType!: AggregateTypes
-  aggregateUnitType!: AggregateUnitTypes
-  aggregateHorizontalAxisType!: AggregateHorizontalAxisTypes
-  skuAggregateUnitType!: SkuAggregateUnitTypes
-  storeAggregateType!: StoreAggregateTypes
-  storeAggregateUnitType!: StoreAggregateUnitTypes
-  targetDateFrom!: Date
-  targetDateTo!: Date
+  aggregateType!: AggregateTypes | null
+  aggregateUnitType!: AggregateUnitTypes | null
+  aggregateHorizontalAxisType!: AggregateHorizontalAxisTypes | null
+  skuAggregateUnitType!: SkuAggregateUnitTypes | null
+  storeAggregateType!: StoreAggregateTypes | null
+  storeAggregateUnitType!: StoreAggregateUnitTypes | null
+  targetDateFrom!: Date | null
+  targetDateTo!: Date | null
   groups!: GroupMaster[]
   departments!: DepartmentMaster[]
   lines!: LineMaster[]
@@ -27,14 +27,14 @@ export default class implements FormData {
   stores!: StoreMaster[]
 
   constructor(
-    aggregateType: AggregateTypes = AggregateTypes.OrderPty,
-    aggregateUnitType: AggregateUnitTypes = AggregateUnitTypes.Sku,
-    aggregateHorizontalAxisType: AggregateHorizontalAxisTypes = AggregateHorizontalAxisTypes.Daily,
-    skuAggregateUnitType: SkuAggregateUnitTypes = SkuAggregateUnitTypes.Sku,
-    storeAggregateType: StoreAggregateTypes = StoreAggregateTypes.All,
-    storeAggregateUnitType: StoreAggregateUnitTypes = StoreAggregateUnitTypes.Store,
-    targetDateFrom: Date = new Date(),
-    targetDateTo: Date = new Date(),
+    aggregateType: AggregateTypes | null = null,
+    aggregateUnitType: AggregateUnitTypes | null = null,
+    aggregateHorizontalAxisType: AggregateHorizontalAxisTypes | null = null,
+    skuAggregateUnitType: SkuAggregateUnitTypes | null = null,
+    storeAggregateType: StoreAggregateTypes | null = null,
+    storeAggregateUnitType: StoreAggregateUnitTypes | null = null,
+    targetDateFrom: Date | null = null,
+    targetDateTo: Date | null = null,
     groups: GroupMaster[] = [],
     departments: DepartmentMaster[] = [],
     lines: LineMaster[] = [],

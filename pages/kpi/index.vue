@@ -14,88 +14,14 @@
     >
       <template #conditions>
         <section class="block">
-          <div>
+          <div v-for="(labels, index) in badges" :key="index" class="pb-1">
             <UBadge
-              v-for="label in [
-                AggregateTypes.getName(formData.aggregateType),
-                AggregateUnitTypes.getName(formData.aggregateUnitType),
-                SkuAggregateUnitTypes.getName(formData.skuAggregateUnitType),
-                StoreAggregateUnitTypes.getName(
-                  formData.storeAggregateUnitType
-                ),
-                StoreAggregateTypes.getName(formData.storeAggregateType),
-                AggregateHorizontalAxisTypes.getName(
-                  formData.aggregateHorizontalAxisType
-                ),
-                formatterDate(formData.targetDateFrom) +
-                  '～' +
-                  formatterDate(formData.targetDateTo),
-              ]"
-              :key="label"
+              v-for="(label, index2) in labels"
+              :key="index2"
               color="gray"
               class="mr-1"
             >
               {{ label }}
-            </UBadge>
-          </div>
-          <div v-if="formData.groups.length > 0" class="pt-1">
-            <UBadge
-              v-for="group in formData.groups"
-              :key="group.groupId"
-              color="gray"
-              class="mr-1"
-            >
-              {{ group.groupName }}
-            </UBadge>
-          </div>
-          <div v-if="formData.departments.length > 0" class="pt-1">
-            <UBadge
-              v-for="department in formData.departments"
-              :key="department.departmentId"
-              color="gray"
-              class="mr-1"
-            >
-              {{ department.departmentName }}
-            </UBadge>
-          </div>
-          <div v-if="formData.lines.length > 0" class="pt-1">
-            <UBadge
-              v-for="line in formData.lines"
-              :key="line.lineId"
-              color="gray"
-              class="mr-1"
-            >
-              {{ line.lineName }}
-            </UBadge>
-          </div>
-          <div v-if="formData.classes.length > 0" class="pt-1">
-            <UBadge
-              v-for="cls in formData.classes"
-              :key="cls.classId"
-              color="gray"
-              class="mr-1"
-            >
-              {{ cls.className }}
-            </UBadge>
-          </div>
-          <div v-if="formData.storeGroups.length > 0" class="pt-1">
-            <UBadge
-              v-for="storeGroup in formData.storeGroups"
-              :key="storeGroup.storeName"
-              color="gray"
-              class="mr-1"
-            >
-              {{ storeGroup.storeName }}
-            </UBadge>
-          </div>
-          <div v-if="formData.stores.length > 0" class="pt-1">
-            <UBadge
-              v-for="store in formData.stores"
-              :key="store.storeId"
-              color="gray"
-              class="mr-1"
-            >
-              {{ store.storeName }}
             </UBadge>
           </div>
         </section>
@@ -107,8 +33,14 @@
     </template>
 
     <ClientOnly>
-      <USlideover v-model="isOpenConditions">
-        <AggregatesSearchForm v-model:form-data="formData" />
+      <USlideover v-model="isOpenConditions" prevent-close>
+        <AggregatesSearchForm
+          v-model:form-data="internalFormData"
+          @close="isOpenConditions = false"
+          @save="save"
+          @csv-export="csvExport"
+          @cancel="cancel"
+        />
       </USlideover>
     </ClientOnly>
   </div>
@@ -125,12 +57,68 @@ import type FormData from '~/types/interfaces/page/kpi/FormData'
 import FormDataFactory from '~/types/interfaces/page/kpi/FormDataFactory'
 
 const formData = ref<FormData>(new FormDataFactory())
+const internalFormData = ref<FormData>({ ...formData.value })
 const isOpenConditions = ref(true)
 
-watch(isOpenConditions, (value) => {
-  if (!value) {
-    fetchKpi()
+const badges = computed<string[][]>(() => {
+  const results: string[][] = [[]]
+
+  if (formData.value.aggregateType) {
+    results[0].push(AggregateTypes.getName(formData.value.aggregateType))
   }
+  if (formData.value.aggregateUnitType) {
+    results[0].push(
+      AggregateUnitTypes.getName(formData.value.aggregateUnitType)
+    )
+  }
+  if (formData.value.storeAggregateUnitType) {
+    results[0].push(
+      StoreAggregateUnitTypes.getName(formData.value.storeAggregateUnitType)
+    )
+  }
+  if (formData.value.skuAggregateUnitType) {
+    results[0].push(
+      SkuAggregateUnitTypes.getName(formData.value.skuAggregateUnitType)
+    )
+  }
+  if (formData.value.storeAggregateType) {
+    results[0].push(
+      StoreAggregateTypes.getName(formData.value.storeAggregateType)
+    )
+  }
+  if (formData.value.aggregateHorizontalAxisType) {
+    results[0].push(
+      AggregateHorizontalAxisTypes.getName(
+        formData.value.aggregateHorizontalAxisType
+      )
+    )
+  }
+  if (formData.value.groups.length > 0) {
+    results.push(formData.value.groups.map((v) => v.groupName))
+  }
+  if (formData.value.departments.length > 0) {
+    results.push(formData.value.departments.map((v) => v.departmentName))
+  }
+  if (formData.value.classes.length > 0) {
+    results.push(formData.value.classes.map((v) => v.className))
+  }
+  if (formData.value.lines.length > 0) {
+    results.push(formData.value.lines.map((v) => v.lineName))
+  }
+  if (formData.value.stores.length > 0) {
+    results.push(formData.value.stores.map((v) => v.storeName))
+  }
+  if (formData.value.storeGroups.length > 0) {
+    results.push(formData.value.storeGroups.map((v) => v.storeName))
+  }
+  if (formData.value.targetDateFrom) {
+    results[0].push(formatterDate(formData.value.targetDateFrom))
+  }
+  if (formData.value.targetDateTo) {
+    results[0].push(formatterDate(formData.value.targetDateTo))
+  }
+
+  return results
 })
 
 // FIXME: rfukuma とりあえずモックとして作る
@@ -139,6 +127,9 @@ const kpiColumns = ref<{ key: string; label: string }[]>([])
 
 async function fetchKpi() {
   serviceLoadingStart()
+
+  kpiRows.value = []
+  kpiColumns.value = []
 
   await new Promise((resolve) => setTimeout(resolve, 3000))
 
@@ -195,6 +186,19 @@ async function fetchKpi() {
     }
   )
   serviceLoadingFinish()
+}
+
+async function save() {
+  formData.value = { ...internalFormData.value }
+  await fetchKpi()
+}
+
+function cancel() {
+  internalFormData.value = { ...formData.value }
+}
+
+function csvExport() {
+  alert('csv出力を行います')
 }
 </script>
 

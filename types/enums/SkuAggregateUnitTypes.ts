@@ -3,6 +3,8 @@ enum SkuAggregateUnitTypes {
   Sku, // SKU
   Group, // 部門
   Department, // 中分類
+  Line, // 小分類
+  Class, // 種別
 }
 
 namespace SkuAggregateUnitTypes {
@@ -14,6 +16,10 @@ namespace SkuAggregateUnitTypes {
         return '部門'
       case SkuAggregateUnitTypes.Department:
         return '中分類'
+      case SkuAggregateUnitTypes.Line:
+        return '小分類'
+      case SkuAggregateUnitTypes.Class:
+        return '種別'
     }
   }
 
@@ -22,6 +28,8 @@ namespace SkuAggregateUnitTypes {
       SkuAggregateUnitTypes.Sku,
       SkuAggregateUnitTypes.Group,
       SkuAggregateUnitTypes.Department,
+      SkuAggregateUnitTypes.Line,
+      SkuAggregateUnitTypes.Class,
     ].map((v) => {
       return {
         name: getName(v),
