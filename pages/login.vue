@@ -3,7 +3,7 @@
     class="flex min-h-screen items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8"
   >
     <div class="mt-[-10rem] w-full max-w-md space-y-6">
-      <UForm class="space-y-3" @submit="login">
+      <UForm :state="{}" class="space-y-3" @submit="login">
         <UFormGroup label="メールアドレス" name="email">
           <UInput
             id="email-address"
