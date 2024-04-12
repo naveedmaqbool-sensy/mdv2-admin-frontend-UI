@@ -11,9 +11,9 @@
 </template>
 
 <script setup lang="ts">
-const selected = defineModel('selected', {
+const selected = defineModel<number | null>('selected', {
   type: Number,
-  required: true,
+  required: false,
 })
 
 const { options, title } = withDefaults(
