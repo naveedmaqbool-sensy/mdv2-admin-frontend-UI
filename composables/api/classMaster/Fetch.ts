@@ -1,4 +1,4 @@
-import type ClassMaster from '~/types/interfaces/SensyCloud/ClassMaster'
+import type ClassMaster from '~/types/interfaces/database/SensyCloud/ClassMaster'
 import type {
   PaginationRequest,
   PaginationResponse,

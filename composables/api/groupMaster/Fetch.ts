@@ -1,4 +1,4 @@
-import type GroupMaster from '~/types/interfaces/SensyCloud/GroupMaster'
+import type GroupMaster from '~/types/interfaces/database/SensyCloud/GroupMaster'
 import type {
   PaginationRequest,
   PaginationResponse,

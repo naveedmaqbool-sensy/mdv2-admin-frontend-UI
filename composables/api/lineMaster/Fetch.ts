@@ -1,4 +1,4 @@
-import type LineMaster from '~/types/interfaces/SensyCloud/LineMaster'
+import type LineMaster from '~/types/interfaces/database/SensyCloud/LineMaster'
 import type {
   PaginationRequest,
   PaginationResponse,

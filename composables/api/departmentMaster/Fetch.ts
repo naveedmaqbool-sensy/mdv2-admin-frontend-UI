@@ -1,4 +1,4 @@
-import type DepartmentMaster from '~/types/interfaces/SensyCloud/DepartmentMaster'
+import type DepartmentMaster from '~/types/interfaces/database/SensyCloud/DepartmentMaster'
 import type {
   PaginationRequest,
   PaginationResponse,

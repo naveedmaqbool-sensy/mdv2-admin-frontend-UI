@@ -4,7 +4,7 @@
     class="fixed left-0 top-0 z-[9999] flex h-screen w-screen items-center justify-center bg-slate-800 bg-opacity-50"
   >
     <div
-      class="absolute bottom-0 right-0 flex h-full w-full items-end justify-end pb-3 pr-4"
+      class="absolute bottom-0 right-0 flex h-full w-full items-end justify-end pb-5 pr-7"
     >
       <svg
         class="mb-1 mr-2 h-4 w-4 animate-spin text-white"

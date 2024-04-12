@@ -19,13 +19,13 @@
 const links = [
   {
     icon: 'i-heroicons-home',
-    label: 'ダッシュボード',
+    label: 'Dashboard',
     to: '/',
   },
   {
     icon: 'i-heroicons-chart-bar-square',
-    label: '集計',
-    to: '/aggregate',
+    label: 'KPI',
+    to: '/kpi',
   },
 ]
 </script>
