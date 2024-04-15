@@ -6,11 +6,15 @@
       <img src="/img/logo.png" alt="sensy" class="inline-block h-8" />
       SENSY MD
     </a>
-    <UButton color="gray" @click="logout"> ログアウト </UButton>
+    <UButton v-if="status !== 'unauthenticated'" color="gray" @click="logout">
+      ログアウト
+    </UButton>
   </header>
 </template>
 
 <script setup lang="ts">
+const { status } = useAuth()
+
 async function logout() {
   const { signOut } = useAuth()
   await signOut({
