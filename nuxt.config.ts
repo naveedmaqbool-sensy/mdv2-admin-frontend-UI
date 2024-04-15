@@ -70,6 +70,12 @@ export default defineNuxtConfig({
   basicAuth,
   auth: {
     baseURL: `${apiUrl}/auth`,
+    headers: {
+      // 'content-type': 'application/json',
+      // accept: 'application/json',
+      // 'X-Requested-With': 'XMLHttpRequest',
+    },
+
     provider: {
       type: 'local',
       endpoints: {
