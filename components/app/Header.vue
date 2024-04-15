@@ -11,8 +11,12 @@
 </template>
 
 <script setup lang="ts">
-function logout() {
+async function logout() {
   const { signOut } = useAuth()
-  signOut()
+  await signOut({
+    redirect: false,
+  })
+
+  useRouter().push('/login')
 }
 </script>
