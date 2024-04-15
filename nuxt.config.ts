@@ -89,7 +89,7 @@ export default defineNuxtConfig({
       },
     },
     globalAppMiddleware: {
-      isEnabled: !hasBasicAuth,
+      isEnabled: true,
     },
   },
 })
