@@ -140,7 +140,7 @@ async function fetchKpi() {
   kpiRows.value = []
   kpiColumns.value = []
 
-  await new Promise((resolve) => setTimeout(resolve, 3000))
+  await new Promise((resolve) => setTimeout(resolve, 2000))
 
   // FIXME: rfukuma ＫＰＩ分析
   for (let i = 0; i < 9; i++) {
