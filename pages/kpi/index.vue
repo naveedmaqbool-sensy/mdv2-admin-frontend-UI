@@ -2,8 +2,17 @@
   <div>
     <CommonHeader title="KPI">
       <template #right-content>
+        <UButton
+          color="primary"
+          class="mr-2"
+          size="xs"
+          :disabled="kpiRows.length === 0 || kpiColumns.length === 0"
+          @click="isOpenConditions = true"
+        >
+          CSV出力
+        </UButton>
         <UButton color="indigo" size="xs" @click="isOpenConditions = true">
-          条件を変更
+          条件指定
         </UButton>
       </template>
     </CommonHeader>
