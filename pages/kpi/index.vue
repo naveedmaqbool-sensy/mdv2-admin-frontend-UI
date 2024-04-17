@@ -7,7 +7,7 @@
           class="mr-2"
           size="xs"
           :disabled="kpiRows.length === 0 || kpiColumns.length === 0"
-          @click="isOpenConditions = true"
+          @click="csvExport"
         >
           CSV出力
         </UButton>
@@ -207,7 +207,8 @@ function cancel() {
 }
 
 function csvExport() {
-  alert('csv出力を行います')
+  // FIXME: rfukuma CSV出力
+  alert('CSV 出力を行います')
 }
 </script>
 
