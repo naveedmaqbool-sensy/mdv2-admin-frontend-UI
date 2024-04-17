@@ -19,6 +19,8 @@ export default class implements FormData {
   storeAggregateUnitType!: StoreAggregateUnitTypes | null
   targetDateFrom!: Date | null
   targetDateTo!: Date | null
+  // FIXME: rfukuma 型定義作ったら入れる
+  skus!: any[]
   groups!: GroupMaster[]
   departments!: DepartmentMaster[]
   lines!: LineMaster[]
@@ -35,6 +37,8 @@ export default class implements FormData {
     storeAggregateUnitType: StoreAggregateUnitTypes | null = null,
     targetDateFrom: Date | null = null,
     targetDateTo: Date | null = null,
+    // FIXME: rfukuma 型定義作ったら入れる
+    skus: any[] = [],
     groups: GroupMaster[] = [],
     departments: DepartmentMaster[] = [],
     lines: LineMaster[] = [],
@@ -50,6 +54,7 @@ export default class implements FormData {
     this.storeAggregateUnitType = storeAggregateUnitType
     this.targetDateFrom = targetDateFrom
     this.targetDateTo = targetDateTo
+    this.skus = skus
     this.groups = groups
     this.departments = departments
     this.lines = lines

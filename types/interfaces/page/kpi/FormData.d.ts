@@ -18,6 +18,8 @@ interface FormData {
   storeAggregateUnitType: StoreAggregateUnitTypes | null
   targetDateFrom: Date | null
   targetDateTo: Date | null
+  // FIXME: rfukuma 型定義作ったら入れる
+  skus: any[]
   groups: GroupMaster[]
   departments: DepartmentMaster[]
   lines: LineMaster[]

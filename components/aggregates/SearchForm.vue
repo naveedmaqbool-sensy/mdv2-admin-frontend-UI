@@ -60,6 +60,19 @@
           class="flex items-center space-x-4"
         >
           <UFormGroup
+            v-if="formData.skuAggregateUnitType === SkuAggregateUnitTypes.Sku"
+            label="ＳＫＵ"
+            class="w-[50%] flex-1"
+          >
+            <AggregatesSelectObjectModal
+              v-model:selected="formData.skus"
+              v-model:items="skus"
+              :columns="[{ key: 'skuName', label: '商品名' }]"
+              name-column="skuName"
+              @fetch-items="fetchSkus"
+            />
+          </UFormGroup>
+          <UFormGroup
             v-if="formData.skuAggregateUnitType === SkuAggregateUnitTypes.Group"
             label="部門"
             class="w-[50%] flex-1"
@@ -288,6 +301,7 @@ const step = computed(() => {
           ) {
             switch (formData.value.skuAggregateUnitType) {
               case SkuAggregateUnitTypes.Sku:
+                if (formData.value.skus.length > 0) return 5
                 break
               case SkuAggregateUnitTypes.Group:
                 if (formData.value.groups.length > 0) return 5
@@ -333,12 +347,25 @@ const step = computed(() => {
 })
 const stepProgress = computed(() => (step.value / totalStep) * 100)
 const uiType = ref(2)
+// FIXME: rfukuma 型定義作ったら適用
+const skus = ref<any[]>([])
 const groups = ref<GroupMaster[]>([])
 const departments = ref<DepartmentMaster[]>([])
 const lines = ref<LineMaster[]>([])
 const classes = ref<ClassMaster[]>([])
 const storeGroups = ref<StoreMaster[]>([]) // FIXME: rfukuma 店舗グループの扱いが変わる可能性があるため StoreMaster 参照とする
 const stores = ref<StoreMaster[]>([])
+
+async function fetchSkus(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  const response = await apiSkuMasterFetch(searchRequest)
+  skus.value = response ? response.data : []
+  serviceLoadingFinish()
+}
 
 async function fetchGroups(searchRequest: {
   text: string | null
@@ -446,6 +473,7 @@ function onChangedstoreAggregateType() {
     aggregateType: formData.value.aggregateType,
     aggregateUnitType: formData.value.aggregateUnitType,
     skuAggregateUnitType: formData.value.skuAggregateUnitType,
+    skus: formData.value.skus,
     groups: formData.value.groups,
     departments: formData.value.departments,
     lines: formData.value.lines,
@@ -465,6 +493,7 @@ function onChangedAggregateHorizontalAxisType() {
     storeAggregateUnitType: formData.value.storeAggregateUnitType,
     stores: formData.value.stores,
     storeGroups: formData.value.storeGroups,
+    skus: formData.value.skus,
     groups: formData.value.groups,
     departments: formData.value.departments,
     lines: formData.value.lines,
