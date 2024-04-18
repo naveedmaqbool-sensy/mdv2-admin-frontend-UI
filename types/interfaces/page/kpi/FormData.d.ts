@@ -8,6 +8,8 @@ import type GroupMaster from '../../database/SensyCloud/GroupMaster'
 import type DepartmentMaster from '../../database/SensyCloud/DepartmentMaster'
 import type LineMaster from '../../database/SensyCloud/LineMaster'
 import type ClassMaster from '../../database/SensyCloud/ClassMaster'
+import type StoreMaster from '../../database/SensyCloud/StoreMaster'
+import type StoreGroup from '../../database/SensyCloud/StoreGroup'
 
 interface FormData {
   aggregateType: AggregateTypes | null
@@ -24,7 +26,7 @@ interface FormData {
   departments: DepartmentMaster[]
   lines: LineMaster[]
   classes: ClassMaster[]
-  storeGroups: StoreMaster[] // FIXME: rfukuma 店舗グループの扱いが変わる可能性があるため StoreMaster 参照とする
+  storeGroups: StoreGroup[]
   stores: StoreMaster[]
 }
 

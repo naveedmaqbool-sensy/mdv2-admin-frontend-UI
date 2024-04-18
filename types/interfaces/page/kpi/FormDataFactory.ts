@@ -2,6 +2,8 @@ import type GroupMaster from '../../database/SensyCloud/GroupMaster'
 import type DepartmentMaster from '../../database/SensyCloud/DepartmentMaster'
 import type LineMaster from '../../database/SensyCloud/LineMaster'
 import type ClassMaster from '../../database/SensyCloud/ClassMaster'
+import type StoreGroup from '../../database/SensyCloud/StoreGroup'
+import type StoreMaster from '../../database/SensyCloud/StoreMaster'
 import type FormData from './FormData'
 import AggregateTypes from '~/types/enums/AggregateTypes'
 import AggregateUnitTypes from '~/types/enums/AggregateUnitTypes'
@@ -25,25 +27,25 @@ export default class implements FormData {
   departments!: DepartmentMaster[]
   lines!: LineMaster[]
   classes!: ClassMaster[]
-  storeGroups!: StoreMaster[]
+  storeGroups!: StoreGroup[]
   stores!: StoreMaster[]
 
   constructor(
-    aggregateType: AggregateTypes | null = null,
+    aggregateType: AggregateTypes | null = AggregateTypes.DefectRate,
     aggregateUnitType: AggregateUnitTypes | null = null,
-    aggregateHorizontalAxisType: AggregateHorizontalAxisTypes | null = null,
-    skuAggregateUnitType: SkuAggregateUnitTypes | null = null,
+    aggregateHorizontalAxisType: AggregateHorizontalAxisTypes | null = AggregateHorizontalAxisTypes.Daily,
+    skuAggregateUnitType: SkuAggregateUnitTypes | null = SkuAggregateUnitTypes.Sku,
     storeAggregateType: StoreAggregateTypes | null = null,
-    storeAggregateUnitType: StoreAggregateUnitTypes | null = null,
-    targetDateFrom: Date | null = null,
-    targetDateTo: Date | null = null,
+    storeAggregateUnitType: StoreAggregateUnitTypes | null = StoreAggregateUnitTypes.Store,
+    targetDateFrom: Date | null = new Date(),
+    targetDateTo: Date | null = new Date(),
     // FIXME: rfukuma 型定義作ったら入れる
     skus: any[] = [],
     groups: GroupMaster[] = [],
     departments: DepartmentMaster[] = [],
     lines: LineMaster[] = [],
     classes: ClassMaster[] = [],
-    storeGroups: StoreMaster[] = [],
+    storeGroups: StoreGroup[] = [],
     stores: StoreMaster[] = []
   ) {
     this.aggregateType = aggregateType

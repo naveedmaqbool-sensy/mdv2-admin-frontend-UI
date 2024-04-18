@@ -1,134 +1,184 @@
 <template>
   <div>
-    <CommonHeader title="KPI">
-      <template #right-content>
-        <UButton
-          color="primary"
-          class="mr-2"
-          size="xs"
-          :disabled="kpiRows.length === 0 || kpiColumns.length === 0"
-          @click="csvExport"
-        >
-          CSV出力
-        </UButton>
-        <UButton color="indigo" size="xs" @click="isOpenConditions = true">
-          条件指定
-        </UButton>
-      </template>
-    </CommonHeader>
+    <CommonHeader title="KPI" />
 
-    <UAccordion
-      :items="[{ label: '集計条件', defaultOpen: true, slot: 'conditions' }]"
-      color="indigo"
-    >
-      <template #conditions>
-        <section class="block">
-          <div v-for="(labels, index) in badges" :key="index" class="pb-1">
-            <UBadge
-              v-for="(label, index2) in labels"
-              :key="index2"
-              color="gray"
-              class="mr-1"
-            >
-              {{ label }}
-            </UBadge>
-          </div>
-        </section>
-      </template>
-    </UAccordion>
+    <!-- 検索条件 -->
+    <UForm :state="{}" @submit="fetch">
+      <div class="flex">
+        <div class="basis-1/4">
+          <UFormGroup class="pb-3">
+            <div class="flex items-center gap-1">
+              <label class="basis-1/6 whitespace-nowrap font-bold">指標</label>
+              <CommonSelect
+                v-model:selected="formData.aggregateType"
+                class="w-full"
+                :options="AggregateTypes.getNameValues()"
+              />
+              <div></div>
+            </div>
+          </UFormGroup>
+        </div>
+        <div class="ml-3 basis-1/2">
+          <UFormGroup class="pb-3">
+            <div class="flex items-center gap-1">
+              <label class="basis-1/12 whitespace-nowrap font-bold">商品</label>
+              <CommonSelect
+                v-model:selected="formData.skuAggregateUnitType"
+                class="basis-4/12"
+                :options="SkuAggregateUnitTypes.getNameValues()"
+              />
+              <div class="flex w-full gap-1">
+                <UInput class="w-full" />
+                <UButton color="indigo" @click="openSkuModal">選択</UButton>
+              </div>
+            </div>
+          </UFormGroup>
+          <UFormGroup class="pb-3">
+            <div class="flex items-center gap-1">
+              <label class="basis-1/12 whitespace-nowrap font-bold">店舗</label>
+              <CommonSelect
+                v-model:selected="formData.storeAggregateUnitType"
+                class="basis-4/12"
+                :options="StoreAggregateUnitTypes.getNameValues()"
+              />
+              <div class="flex w-full gap-1">
+                <UInput class="w-full" />
+                <UButton color="indigo" @click="openStoreModal">選択</UButton>
+              </div>
+            </div>
+          </UFormGroup>
+          <UFormGroup class="pb-3">
+            <div class="flex items-center gap-1">
+              <label class="basis-1/12 whitespace-nowrap font-bold">期間</label>
+              <CommonSelect
+                v-model:selected="formData.aggregateHorizontalAxisType"
+                class="basis-4/12"
+                :options="AggregateHorizontalAxisTypes.getNameValues()"
+              />
+              <div class="flex w-full gap-1">
+                <CommonDatepicker
+                  v-model="formData.targetDateFrom"
+                  class="basis-2/5"
+                />
+                <p class="text-center">~</p>
+                <CommonDatepicker
+                  v-model="formData.targetDateTo"
+                  class="basis-2/5"
+                />
+              </div>
+              <div></div>
+            </div>
+          </UFormGroup>
+        </div>
+      </div>
+    </UForm>
 
+    <section>
+      <UButton color="indigo" @click="fetch">画面表示</UButton>
+      <UButton
+        color="primary"
+        class="ml-2"
+        :disabled="kpiRows.length === 0 || kpiColumns.length === 0"
+        @click="csvExport"
+      >
+        CSV出力
+      </UButton>
+    </section>
+
+    <!-- 集計結果 -->
     <template v-if="kpiRows.length > 0 && kpiColumns.length > 0">
       <UTable :columns="kpiColumns" :rows="kpiRows" />
     </template>
 
-    <ClientOnly>
-      <USlideover v-model="isOpenConditions" prevent-close>
-        <AggregatesSearchForm
-          v-model:form-data="internalFormData"
-          @close="isOpenConditions = false"
-          @save="save"
-          @csv-export="csvExport"
-          @cancel="cancel"
-        />
-      </USlideover>
-    </ClientOnly>
+    <AggregatesSelectObjectModal
+      v-model:is-open-modal="isOpenSkuModal"
+      v-model:selected="formData.skus"
+      v-model:items="skus"
+      :columns="[{ key: 'skuName', label: '商品名' }]"
+      name-column="skuName"
+      @fetch-items="fetchSkus"
+    />
+    <AggregatesSelectObjectModal
+      v-model:is-open-modal="isOpenGroupsModal"
+      v-model:selected="formData.groups"
+      v-model:items="groups"
+      :columns="[{ key: 'groupName', label: '部門' }]"
+      name-column="groupName"
+      @fetch-items="fetchGroups"
+    />
+    <AggregatesSelectObjectModal
+      v-model:is-open-modal="isOpenDepartmentsModal"
+      v-model:selected="formData.departments"
+      v-model:items="departments"
+      :columns="[{ key: 'departmentName', label: '中分類' }]"
+      name-column="departmentName"
+      @fetch-items="fetchDepartments"
+    />
+    <AggregatesSelectObjectModal
+      v-model:is-open-modal="isOpenLinesModal"
+      v-model:selected="formData.lines"
+      v-model:items="lines"
+      :columns="[{ key: 'lineName', label: '小分類' }]"
+      name-column="lineName"
+      @fetch-items="fetchLines"
+    />
+    <AggregatesSelectObjectModal
+      v-model:is-open-modal="isOpenClassesModal"
+      v-model:selected="formData.classes"
+      v-model:items="classes"
+      :columns="[{ key: 'className', label: '種別' }]"
+      name-column="className"
+      @fetch-items="fetchClasses"
+    />
+    <AggregatesSelectObjectModal
+      v-model:is-open-modal="isOpenStoreMasterModal"
+      v-model:selected="formData.stores"
+      v-model:items="storeMasters"
+      :columns="[{ key: 'storeName', label: '店舗' }]"
+      name-column="storeName"
+      @fetch-items="fetchStores"
+    />
+    <AggregatesSelectObjectModal
+      v-model:is-open-modal="isOpenStoreGroupModal"
+      v-model:selected="formData.storeGroups"
+      v-model:items="storeGroups"
+      :columns="[{ key: 'storeGroupName', label: '店舗グループ' }]"
+      name-column="storeGroupName"
+      @fetch-items="fetchStoreGroups"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import AggregateTypes from '~/types/enums/AggregateTypes'
-import AggregateUnitTypes from '~/types/enums/AggregateUnitTypes'
 import AggregateHorizontalAxisTypes from '~/types/enums/AggregateHorizontalAxisTypes'
+import AggregateTypes from '~/types/enums/AggregateTypes'
 import SkuAggregateUnitTypes from '~/types/enums/SkuAggregateUnitTypes'
-import StoreAggregateTypes from '~/types/enums/StoreAggregateTypes'
 import StoreAggregateUnitTypes from '~/types/enums/StoreAggregateUnitTypes'
+import type ClassMaster from '~/types/interfaces/database/SensyCloud/ClassMaster'
+import type DepartmentMaster from '~/types/interfaces/database/SensyCloud/DepartmentMaster'
+import type GroupMaster from '~/types/interfaces/database/SensyCloud/GroupMaster'
+import type LineMaster from '~/types/interfaces/database/SensyCloud/LineMaster'
+import type StoreGroup from '~/types/interfaces/database/SensyCloud/StoreGroup'
+import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
 import type FormData from '~/types/interfaces/page/kpi/FormData'
 import FormDataFactory from '~/types/interfaces/page/kpi/FormDataFactory'
 
 const formData = ref<FormData>(new FormDataFactory())
 const internalFormData = ref<FormData>({ ...formData.value })
-const isOpenConditions = ref(true)
-
-const badges = computed<string[][]>(() => {
-  const results: string[][] = [[]]
-
-  if (formData.value.aggregateType) {
-    results[0].push(AggregateTypes.getName(formData.value.aggregateType))
-  }
-  if (formData.value.aggregateUnitType) {
-    results[0].push(
-      AggregateUnitTypes.getName(formData.value.aggregateUnitType)
-    )
-  }
-  if (formData.value.storeAggregateUnitType) {
-    results[0].push(
-      StoreAggregateUnitTypes.getName(formData.value.storeAggregateUnitType)
-    )
-  }
-  if (formData.value.skuAggregateUnitType) {
-    results[0].push(
-      SkuAggregateUnitTypes.getName(formData.value.skuAggregateUnitType)
-    )
-  }
-  if (formData.value.storeAggregateType) {
-    results[0].push(
-      StoreAggregateTypes.getName(formData.value.storeAggregateType)
-    )
-  }
-  if (formData.value.aggregateHorizontalAxisType) {
-    results[0].push(
-      AggregateHorizontalAxisTypes.getName(
-        formData.value.aggregateHorizontalAxisType
-      )
-    )
-  }
-  if (formData.value.groups.length > 0) {
-    results.push(formData.value.groups.map((v) => v.groupName))
-  }
-  if (formData.value.departments.length > 0) {
-    results.push(formData.value.departments.map((v) => v.departmentName))
-  }
-  if (formData.value.classes.length > 0) {
-    results.push(formData.value.classes.map((v) => v.className))
-  }
-  if (formData.value.lines.length > 0) {
-    results.push(formData.value.lines.map((v) => v.lineName))
-  }
-  if (formData.value.stores.length > 0) {
-    results.push(formData.value.stores.map((v) => v.storeName))
-  }
-  if (formData.value.storeGroups.length > 0) {
-    results.push(formData.value.storeGroups.map((v) => v.storeName))
-  }
-  if (formData.value.targetDateFrom) {
-    results[0].push(formatterDate(formData.value.targetDateFrom))
-  }
-  if (formData.value.targetDateTo) {
-    results[0].push(formatterDate(formData.value.targetDateTo))
-  }
-
-  return results
-})
+const isOpenSkuModal = ref(false)
+const skus = ref<any[]>([]) // FIXME: rfukuma 型定義作ったら充てる
+const isOpenGroupsModal = ref(false)
+const groups = ref<GroupMaster[]>([])
+const isOpenDepartmentsModal = ref(false)
+const departments = ref<DepartmentMaster[]>([])
+const isOpenLinesModal = ref(false)
+const lines = ref<LineMaster[]>([])
+const isOpenClassesModal = ref(false)
+const classes = ref<ClassMaster[]>([])
+const isOpenStoreMasterModal = ref(false)
+const storeMasters = ref<StoreMaster[]>([])
+const isOpenStoreGroupModal = ref(false)
+const storeGroups = ref<StoreGroup[]>([]) // FIXME: rfukuma 商品グループの仕様固まったら型を作る
 
 // FIXME: rfukuma とりあえずモックとして作る
 const kpiRows = ref<any[]>([])
@@ -197,18 +247,123 @@ async function fetchKpi() {
   serviceLoadingFinish()
 }
 
-async function save() {
+async function fetch() {
   formData.value = { ...internalFormData.value }
   await fetchKpi()
-}
-
-function cancel() {
-  internalFormData.value = { ...formData.value }
 }
 
 function csvExport() {
   // FIXME: rfukuma CSV出力
   alert('CSV 出力を行います')
+}
+
+async function fetchSkus(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  const response = await apiSkuMasterFetch(searchRequest)
+  skus.value = response ? response.data : []
+  serviceLoadingFinish()
+}
+
+async function fetchGroups(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  const response = await apiGroupMasterFetch(searchRequest)
+  groups.value = response ? response.data : []
+  serviceLoadingFinish()
+}
+
+async function fetchDepartments(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  const response = await apiDepartmentMasterFetch(searchRequest)
+  departments.value = response ? response.data : []
+  serviceLoadingFinish()
+}
+
+async function fetchLines(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  const response = await apiLineMasterFetch(searchRequest)
+  lines.value = response ? response.data : []
+  serviceLoadingFinish()
+}
+
+async function fetchClasses(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  const response = await apiClassMasterFetch(searchRequest)
+  classes.value = response ? response.data : []
+  serviceLoadingFinish()
+}
+
+async function fetchStores(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  const response = await apiStoreMasterFetch(searchRequest)
+  storeMasters.value = response ? response.data : []
+  serviceLoadingFinish()
+}
+
+async function fetchStoreGroups(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  // FIXME: rfukuma 店舗グループの扱いが変わる可能性があるため StoreMaster 参照とする
+  const response = await apiStoreGroupFetch(searchRequest)
+  storeGroups.value = response ? response.data : []
+  serviceLoadingFinish()
+}
+
+function openSkuModal() {
+  switch (formData.value.skuAggregateUnitType) {
+    case SkuAggregateUnitTypes.Sku:
+      isOpenSkuModal.value = true
+      break
+    case SkuAggregateUnitTypes.Group:
+      isOpenGroupsModal.value = true
+      break
+    case SkuAggregateUnitTypes.Department:
+      isOpenDepartmentsModal.value = true
+      break
+    case SkuAggregateUnitTypes.Line:
+      isOpenLinesModal.value = true
+      break
+    case SkuAggregateUnitTypes.Class:
+      isOpenClassesModal.value = true
+      break
+  }
+}
+
+function openStoreModal() {
+  switch (formData.value.storeAggregateUnitType) {
+    case StoreAggregateUnitTypes.Store:
+      isOpenStoreMasterModal.value = true
+      break
+    case StoreAggregateUnitTypes.Area:
+      isOpenStoreGroupModal.value = true
+      break
+  }
 }
 </script>
 

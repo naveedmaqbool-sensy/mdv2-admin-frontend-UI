@@ -267,6 +267,7 @@ import type GroupMaster from '~/types/interfaces/database/SensyCloud/GroupMaster
 import type LineMaster from '~/types/interfaces/database/SensyCloud/LineMaster'
 import type FormData from '~/types/interfaces/page/kpi/FormData'
 import FormDataFactory from '~/types/interfaces/page/kpi/FormDataFactory'
+import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
 
 const formData = defineModel<FormData>('formData', {
   type: Object,

@@ -5,3 +5,4 @@ interface StoreMaster {
   openHour?: string | null
   closeHour?: string | null
 }
+export default StoreMaster
