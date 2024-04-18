@@ -291,7 +291,6 @@ import type FormData from '~/types/interfaces/page/kpi/FormData'
 import FormDataFactory from '~/types/interfaces/page/kpi/FormDataFactory'
 
 const formData = ref<FormData>(new FormDataFactory())
-const internalFormData = ref<FormData>({ ...formData.value })
 const isOpenSkuModal = ref(false)
 const skus = ref<any[]>([]) // FIXME: rfukuma 型定義作ったら充てる
 const isOpenGroupsModal = ref(false)
@@ -305,7 +304,7 @@ const classes = ref<ClassMaster[]>([])
 const isOpenStoreMasterModal = ref(false)
 const storeMasters = ref<StoreMaster[]>([])
 const isOpenStoreGroupModal = ref(false)
-const storeGroups = ref<StoreGroup[]>([]) // FIXME: rfukuma 商品グループの仕様固まったら型を作る
+const storeGroups = ref<StoreGroup[]>([])
 
 const skuText = ref<string>('')
 const storeText = ref<string>('')
@@ -325,7 +324,7 @@ async function fetchKpi() {
   // FIXME: rfukuma ＫＰＩ分析
   for (let i = 0; i < 9; i++) {
     kpiRows.value.push({
-      storeName: `00${i} 〇〇店`,
+      skuName: `商品 00${i}`,
       '0': '0.1%',
       '1': '0.1%',
       '2': '0.1%',
@@ -338,8 +337,8 @@ async function fetchKpi() {
   }
   kpiColumns.value.push(
     {
-      key: 'storeName',
-      label: '店舗',
+      key: 'skuName',
+      label: '商品',
     },
     {
       key: '0',
@@ -378,7 +377,16 @@ async function fetchKpi() {
 }
 
 async function fetch() {
-  formData.value = { ...internalFormData.value }
+  if (
+    formData.value.skus.length === 0 &&
+    formData.value.groups.length === 0 &&
+    formData.value.departments.length === 0 &&
+    formData.value.lines.length === 0 &&
+    formData.value.classes.length === 0
+  ) {
+    useNuxtApp().$toast.error('商品を指定してください。')
+    return
+  }
   await fetchKpi()
 }
 
