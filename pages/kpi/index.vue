@@ -27,6 +27,7 @@
                 v-model:selected="formData.skuAggregateUnitType"
                 class="basis-4/12"
                 :options="SkuAggregateUnitTypes.getNameValues()"
+                @change="onChangedSkuAggregateUnitType"
               />
               <div class="flex w-full gap-1">
                 <UInput
@@ -129,6 +130,7 @@
                 v-model:selected="formData.storeAggregateUnitType"
                 class="basis-4/12"
                 :options="StoreAggregateUnitTypes.getNameValues()"
+                @change="onChangedStoreAggregateUnitType"
               />
               <div class="flex w-full gap-1">
                 <UInput
@@ -201,7 +203,7 @@
     </UForm>
 
     <section>
-      <UButton color="indigo" @click="fetch">画面表示</UButton>
+      <UButton color="indigo" @click="fetchKpi">画面表示</UButton>
       <UButton
         color="primary"
         class="ml-2"
@@ -314,6 +316,8 @@ const kpiRows = ref<any[]>([])
 const kpiColumns = ref<{ key: string; label: string }[]>([])
 
 async function fetchKpi() {
+  // FIMXE: rfukuma バリデーションがあればここで
+
   serviceLoadingStart()
 
   kpiRows.value = []
@@ -374,20 +378,6 @@ async function fetchKpi() {
     }
   )
   serviceLoadingFinish()
-}
-
-async function fetch() {
-  if (
-    formData.value.skus.length === 0 &&
-    formData.value.groups.length === 0 &&
-    formData.value.departments.length === 0 &&
-    formData.value.lines.length === 0 &&
-    formData.value.classes.length === 0
-  ) {
-    useNuxtApp().$toast.error('商品を指定してください。')
-    return
-  }
-  await fetchKpi()
 }
 
 function csvExport() {
@@ -620,6 +610,56 @@ async function fetchStore(text: string) {
       perPage: 10,
     })
     formData.value.storeGroups = [...storeGroups.value]
+  }
+}
+
+function onChangedSkuAggregateUnitType() {
+  switch (formData.value.skuAggregateUnitType) {
+    case SkuAggregateUnitTypes.Sku:
+      formData.value.groups = []
+      formData.value.departments = []
+      formData.value.lines = []
+      formData.value.classes = []
+      break
+    case SkuAggregateUnitTypes.Group:
+      formData.value.skus = []
+      formData.value.departments = []
+      formData.value.lines = []
+      formData.value.classes = []
+      break
+    case SkuAggregateUnitTypes.Department:
+      formData.value.skus = []
+      formData.value.groups = []
+      formData.value.lines = []
+      formData.value.classes = []
+      break
+    case SkuAggregateUnitTypes.Line:
+      formData.value.skus = []
+      formData.value.groups = []
+      formData.value.departments = []
+      formData.value.classes = []
+      break
+    case SkuAggregateUnitTypes.Class:
+      formData.value.skus = []
+      formData.value.groups = []
+      formData.value.departments = []
+      formData.value.lines = []
+      break
+  }
+}
+
+function onChangedStoreAggregateUnitType() {
+  switch (formData.value.storeAggregateUnitType) {
+    case StoreAggregateUnitTypes.All:
+      formData.value.stores = []
+      formData.value.storeGroups = []
+      break
+    case StoreAggregateUnitTypes.Store:
+      formData.value.storeGroups = []
+      break
+    case StoreAggregateUnitTypes.Area:
+      formData.value.stores = []
+      break
   }
 }
 </script>
