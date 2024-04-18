@@ -3,7 +3,7 @@
     <CommonHeader title="KPI" />
 
     <!-- 検索条件 -->
-    <UForm :state="{}" @submit="fetch">
+    <UForm :state="{}">
       <div class="flex">
         <div class="basis-1/4">
           <UFormGroup class="pb-3">
@@ -19,6 +19,7 @@
           </UFormGroup>
         </div>
         <div class="ml-3 basis-1/2">
+          <!-- 商品選択 -->
           <UFormGroup class="pb-3">
             <div class="flex items-center gap-1">
               <label class="basis-1/12 whitespace-nowrap font-bold">商品</label>
@@ -28,11 +29,99 @@
                 :options="SkuAggregateUnitTypes.getNameValues()"
               />
               <div class="flex w-full gap-1">
-                <UInput class="w-full" />
-                <UButton color="indigo" @click="openSkuModal">選択</UButton>
+                <UInput
+                  v-model.lazy="skuText"
+                  class="w-full"
+                  @change="fetchSku"
+                />
+                <UButton color="indigo" @click="openSkuModal"> 選択 </UButton>
               </div>
             </div>
           </UFormGroup>
+          <div v-if="formData.skus.length > 0" class="pb-3">
+            <template v-for="(sku, index) in formData.skus" :key="sku.skuId">
+              <UBadge class="ml-1" color="gray">
+                {{ sku.skuName }}
+                <UButton
+                  :padded="false"
+                  color="gray"
+                  variant="link"
+                  icon="i-heroicons-x-mark-20-solid"
+                  @click="formData.skus.splice(index, 1)"
+                />
+              </UBadge>
+            </template>
+          </div>
+          <div v-if="formData.groups.length > 0" class="pb-3">
+            <template
+              v-for="(group, index) in formData.groups"
+              :key="group.groupId"
+            >
+              <UBadge class="ml-1" color="gray">
+                {{ group.groupName }}
+                <UButton
+                  :padded="false"
+                  color="gray"
+                  variant="link"
+                  icon="i-heroicons-x-mark-20-solid"
+                  @click="formData.groups.splice(index, 1)"
+                />
+              </UBadge>
+            </template>
+          </div>
+          <div v-if="formData.departments.length > 0" class="pb-3">
+            <template
+              v-for="(department, index) in formData.departments"
+              :key="department.departmentId"
+            >
+              <UBadge class="ml-1" color="gray">
+                {{ department.departmentName }}
+                <UButton
+                  :padded="false"
+                  color="gray"
+                  variant="link"
+                  icon="i-heroicons-x-mark-20-solid"
+                  @click="formData.departments.splice(index, 1)"
+                />
+              </UBadge>
+            </template>
+          </div>
+          <div v-if="formData.classes.length > 0" class="pb-3">
+            <template
+              v-for="(clazz, index) in formData.classes"
+              :key="clazz.classId"
+            >
+              <UBadge class="ml-1" color="gray">
+                {{ clazz.className }}
+                <UButton
+                  :padded="false"
+                  color="gray"
+                  variant="link"
+                  icon="i-heroicons-x-mark-20-solid"
+                  @click="formData.classes.splice(index, 1)"
+                />
+              </UBadge>
+            </template>
+          </div>
+          <div v-if="formData.lines.length > 0" class="pb-3">
+            <template
+              v-for="(line, index) in formData.lines"
+              :key="line.lineId"
+            >
+              <UBadge class="ml-1" color="gray">
+                {{ line.lineName }}
+                <UButton
+                  :padded="false"
+                  color="gray"
+                  variant="link"
+                  icon="i-heroicons-x-mark-20-solid"
+                  @click="formData.lines.splice(index, 1)"
+                />
+              </UBadge>
+            </template>
+          </div>
+
+          <!-- 店舗選択 -->
           <UFormGroup class="pb-3">
             <div class="flex items-center gap-1">
               <label class="basis-1/12 whitespace-nowrap font-bold">店舗</label>
@@ -42,11 +131,49 @@
                 :options="StoreAggregateUnitTypes.getNameValues()"
               />
               <div class="flex w-full gap-1">
-                <UInput class="w-full" />
+                <UInput
+                  v-model.lazy="storeText"
+                  class="w-full"
+                  @change="fetchStore"
+                />
                 <UButton color="indigo" @click="openStoreModal">選択</UButton>
               </div>
             </div>
           </UFormGroup>
+          <div v-if="formData.stores.length > 0" class="pb-3">
+            <template
+              v-for="(store, index) in formData.stores"
+              :key="store.storeId"
+            >
+              <UBadge class="ml-1" color="gray">
+                {{ store.storeName }}
+                <UButton
+                  :padded="false"
+                  color="gray"
+                  variant="link"
+                  icon="i-heroicons-x-mark-20-solid"
+                  @click="formData.stores.splice(index, 1)"
+                />
+              </UBadge>
+            </template>
+          </div>
+          <div v-if="formData.storeGroups.length > 0" class="pb-3">
+            <template
+              v-for="(storeGroup, index) in formData.storeGroups"
+              :key="storeGroup.storeGroupId"
+            >
+              <UBadge class="ml-1" color="gray">
+                {{ storeGroup.storeGroupName }}
+                <UButton
+                  :padded="false"
+                  color="gray"
+                  variant="link"
+                  icon="i-heroicons-x-mark-20-solid"
+                  @click="formData.storeGroups.splice(index, 1)"
+                />
+              </UBadge>
+            </template>
+          </div>
           <UFormGroup class="pb-3">
             <div class="flex items-center gap-1">
               <label class="basis-1/12 whitespace-nowrap font-bold">期間</label>
@@ -179,6 +306,9 @@ const isOpenStoreMasterModal = ref(false)
 const storeMasters = ref<StoreMaster[]>([])
 const isOpenStoreGroupModal = ref(false)
 const storeGroups = ref<StoreGroup[]>([]) // FIXME: rfukuma 商品グループの仕様固まったら型を作る
+
+const skuText = ref<string>('')
+const storeText = ref<string>('')
 
 // FIXME: rfukuma とりあえずモックとして作る
 const kpiRows = ref<any[]>([])
@@ -357,12 +487,131 @@ function openSkuModal() {
 
 function openStoreModal() {
   switch (formData.value.storeAggregateUnitType) {
+    case StoreAggregateUnitTypes.All:
     case StoreAggregateUnitTypes.Store:
       isOpenStoreMasterModal.value = true
       break
     case StoreAggregateUnitTypes.Area:
       isOpenStoreGroupModal.value = true
       break
+  }
+}
+
+async function fetchSku(text: string) {
+  // FIXME: rfukuma 商品検索にヒットした
+  if (text === '商品' || text === 'JANCODE') {
+    formData.value.skuAggregateUnitType = SkuAggregateUnitTypes.Sku
+    formData.value.groups = []
+    formData.value.departments = []
+    formData.value.lines = []
+    formData.value.classes = []
+
+    // FIXME: rfukuma 仮組み
+    await fetchSkus({
+      text: null,
+      page: 1,
+      perPage: 10,
+    })
+    formData.value.skus = [...skus.value]
+    return
+  }
+  // FIXME: rfukuma 部門検索にヒットした
+  if (text === '部門') {
+    formData.value.skuAggregateUnitType = SkuAggregateUnitTypes.Group
+    formData.value.skus = []
+    formData.value.departments = []
+    formData.value.lines = []
+    formData.value.classes = []
+
+    // FIXME: rfukuma 仮組み
+    await fetchGroups({
+      text: null,
+      page: 1,
+      perPage: 10,
+    })
+    formData.value.groups = [...groups.value]
+    return
+  }
+  // FIXME: rfukuma 中分類検索にヒットした
+  if (text === '中分類') {
+    formData.value.skuAggregateUnitType = SkuAggregateUnitTypes.Department
+    formData.value.skus = []
+    formData.value.groups = []
+    formData.value.lines = []
+    formData.value.classes = []
+
+    // FIXME: rfukuma 仮組み
+    await fetchDepartments({
+      text: null,
+      page: 1,
+      perPage: 10,
+    })
+    formData.value.departments = [...departments.value]
+    return
+  }
+  // FIXME: rfukuma 小分類検索にヒットした
+  if (text === '小分類') {
+    formData.value.skuAggregateUnitType = SkuAggregateUnitTypes.Line
+    formData.value.skus = []
+    formData.value.groups = []
+    formData.value.departments = []
+    formData.value.classes = []
+
+    // FIXME: rfukuma 仮組み
+    await fetchLines({
+      text: null,
+      page: 1,
+      perPage: 10,
+    })
+    formData.value.lines = [...lines.value]
+    return
+  }
+  // FIXME: rfukuma 種別検索にヒットした
+  if (text === '種別') {
+    formData.value.skuAggregateUnitType = SkuAggregateUnitTypes.Class
+    formData.value.skus = []
+    formData.value.groups = []
+    formData.value.departments = []
+    formData.value.lines = []
+
+    // FIXME: rfukuma 仮組み
+    await fetchClasses({
+      text: null,
+      page: 1,
+      perPage: 10,
+    })
+    formData.value.classes = [...classes.value]
+  }
+}
+
+async function fetchStore(text: string) {
+  // FIXME: rfukuma 店舗検索にヒットした
+  if (text === '店舗') {
+    formData.value.storeAggregateUnitType = StoreAggregateUnitTypes.Store
+    formData.value.storeGroups = []
+
+    // FIXME: rfukuma 仮組み
+    await fetchStores({
+      text: null,
+      page: 1,
+      perPage: 10,
+    })
+    formData.value.stores = [...storeMasters.value]
+
+    return
+  }
+  // FIXME: rfukuma 店舗グループ検索にヒットした
+  if (text === '店舗グループ') {
+    formData.value.storeAggregateUnitType = StoreAggregateUnitTypes.Area
+    formData.value.stores = []
+
+    // FIXME: rfukuma 仮組み
+    await fetchStoreGroups({
+      text: null,
+      page: 1,
+      perPage: 10,
+    })
+    formData.value.storeGroups = [...storeGroups.value]
   }
 }
 </script>

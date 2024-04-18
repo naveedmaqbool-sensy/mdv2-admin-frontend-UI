@@ -36,7 +36,7 @@ export default class implements FormData {
     aggregateHorizontalAxisType: AggregateHorizontalAxisTypes | null = AggregateHorizontalAxisTypes.Daily,
     skuAggregateUnitType: SkuAggregateUnitTypes | null = SkuAggregateUnitTypes.Sku,
     storeAggregateType: StoreAggregateTypes | null = null,
-    storeAggregateUnitType: StoreAggregateUnitTypes | null = StoreAggregateUnitTypes.Store,
+    storeAggregateUnitType: StoreAggregateUnitTypes | null = StoreAggregateUnitTypes.All,
     targetDateFrom: Date | null = new Date(),
     targetDateTo: Date | null = new Date(),
     // FIXME: rfukuma 型定義作ったら入れる

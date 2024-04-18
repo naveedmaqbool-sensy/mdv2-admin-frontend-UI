@@ -11,7 +11,7 @@ namespace SkuAggregateUnitTypes {
   export function getName(type: SkuAggregateUnitTypes) {
     switch (type) {
       case SkuAggregateUnitTypes.Sku:
-        return 'SKU'
+        return 'ＳＫＵ'
       case SkuAggregateUnitTypes.Group:
         return '部門'
       case SkuAggregateUnitTypes.Department:

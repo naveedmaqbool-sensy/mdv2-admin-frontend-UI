@@ -1,12 +1,15 @@
 // 店舗集計単位
 enum StoreAggregateUnitTypes {
-  Store = 1, // 店舗別
+  All = 1,
+  Store = 2, // 店舗別
   Area, // 店グループ別
 }
 
 namespace StoreAggregateUnitTypes {
   export function getName(type: StoreAggregateUnitTypes) {
     switch (type) {
+      case StoreAggregateUnitTypes.All:
+        return '全店計'
       case StoreAggregateUnitTypes.Store:
         return '店舗別'
       case StoreAggregateUnitTypes.Area:
@@ -15,14 +18,16 @@ namespace StoreAggregateUnitTypes {
   }
 
   export function getNameValues() {
-    return [StoreAggregateUnitTypes.Store, StoreAggregateUnitTypes.Area].map(
-      (v) => {
-        return {
-          name: getName(v),
-          value: v,
-        }
+    return [
+      StoreAggregateUnitTypes.All,
+      StoreAggregateUnitTypes.Store,
+      StoreAggregateUnitTypes.Area,
+    ].map((v) => {
+      return {
+        name: getName(v),
+        value: v,
       }
-    )
+    })
   }
 }
 
