@@ -579,7 +579,10 @@ async function fetchSku(text: string) {
       perPage: 10,
     })
     formData.value.classes = [...classes.value]
+    return
   }
+
+  useNuxtApp().$toast.warning('お探しの商品は見つかりませんでした。')
 }
 
 async function fetchStore(text: string) {
@@ -595,9 +598,9 @@ async function fetchStore(text: string) {
       perPage: 10,
     })
     formData.value.stores = [...storeMasters.value]
-
     return
   }
+
   // FIXME: rfukuma 店舗グループ検索にヒットした
   if (text === '店舗グループ') {
     formData.value.storeAggregateUnitType = StoreAggregateUnitTypes.Area
@@ -610,7 +613,10 @@ async function fetchStore(text: string) {
       perPage: 10,
     })
     formData.value.storeGroups = [...storeGroups.value]
+    return
   }
+
+  useNuxtApp().$toast.warning('お探しの店舗は見つかりませんでした。')
 }
 
 function onChangedSkuAggregateUnitType() {
