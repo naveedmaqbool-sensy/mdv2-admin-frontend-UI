@@ -33,7 +33,7 @@
             <div class="basis-2/12 text-center font-bold">【取得単位】</div>
             <div class="basis-2/12 text-center font-bold">【取得範囲】</div>
             <div class="basis-12"></div>
-            <div class="basis-4/12"></div>
+            <div class="basis-5/12"></div>
           </div>
 
           <!-- 商品選択 -->
@@ -61,7 +61,7 @@
               >
                 選択
               </UButton>
-              <div class="basis-4/12">
+              <div class="basis-5/12">
                 <UInput
                   v-model.lazy="skuText"
                   class="w-full"
@@ -184,7 +184,7 @@
                 選択
               </UButton>
 
-              <div class="basis-4/12">
+              <div class="basis-5/12">
                 <UInput
                   v-model.lazy="storeText"
                   class="w-full"
@@ -365,7 +365,7 @@ const kpiRows = ref<any[]>([])
 const kpiColumns = ref<{ key: string; label: string }[]>([])
 
 async function fetch() {
-  // FIMXE: rfukuma バリデーションがあればここで
+  // FIXME: rfukuma バリデーションがあればここで
 
   // 検索できない分類をはじく
 
