@@ -5,17 +5,14 @@
     <!-- 検索条件 -->
     <UForm :state="{}">
       <div class="flex flex-row">
-        <div class="basis-1/4"></div>
-        <div class="ml-3 basis-1/2">
-          <div class="flex gap-1">
-            <div class="basis-1/12"></div>
-            <div class="basis-4/12 text-center"></div>
-            <div class="basis-7/12"></div>
-          </div>
-        </div>
-      </div>
-      <div class="flex flex-row">
         <div class="basis-1/4">
+          <div class="flex items-center gap-1">
+            <div class="basis-1/12"></div>
+            <div class="basis-4/12 text-center font-bold">&nbsp;</div>
+            <div class="w-full text-center indent-[-3rem] font-bold">
+              &nbsp;
+            </div>
+          </div>
           <UFormGroup class="pb-3">
             <div class="flex items-center gap-1">
               <label class="basis-1/6 whitespace-nowrap font-bold">指標</label>
@@ -29,6 +26,14 @@
           </UFormGroup>
         </div>
         <div class="ml-3 basis-1/2">
+          <div class="flex items-center gap-1">
+            <div class="basis-1/12"></div>
+            <div class="basis-4/12 text-center font-bold">取得単位</div>
+            <div class="w-full text-center indent-[-4rem] font-bold">
+              取得範囲
+            </div>
+          </div>
+
           <!-- 商品選択 -->
           <UFormGroup class="pb-3">
             <div class="flex items-center gap-1">
