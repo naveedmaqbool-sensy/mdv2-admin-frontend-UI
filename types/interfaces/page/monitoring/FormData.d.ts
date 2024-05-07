@@ -10,12 +10,12 @@ import type StoreMaster from '../../database/SensyCloud/StoreMaster'
 import type StoreGroup from '../../database/SensyCloud/StoreGroup'
 
 interface FormData {
-  aggregateType: MonitoringTypes | null
-  aggregateHorizontalAxisType: MonitoringHorizontalAxisTypes | null
-  skuAggregateUnitType: SkuMonitoringUnitTypes | null
-  skuAggregateRangeType: SkuMonitoringUnitTypes | null
-  storeAggregateUnitType: StoreMonitoringUnitTypes | null
-  storeAggregateRangeType: StoreMonitoringUnitTypes | null
+  monitoringType: MonitoringTypes | null
+  monitoringHorizontalAxisType: MonitoringHorizontalAxisTypes | null
+  skuMonitoringUnitType: SkuMonitoringUnitTypes | null
+  skuMonitoringRangeType: SkuMonitoringUnitTypes | null
+  storeMonitoringUnitType: StoreMonitoringUnitTypes | null
+  storeMonitoringRangeType: StoreMonitoringUnitTypes | null
   targetDateFrom: Date | null
   targetDateTo: Date | null
   // FIXME: rfukuma 型定義作ったら入れる

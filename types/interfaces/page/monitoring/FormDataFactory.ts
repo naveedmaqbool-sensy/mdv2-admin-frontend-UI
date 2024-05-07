@@ -11,13 +11,13 @@ import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
 import StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
 
 export default class implements FormData {
-  aggregateType!: MonitoringTypes | null
-  aggregateHorizontalAxisType!: MonitoringHorizontalAxisTypes | null
-  skuAggregateUnitType!: SkuMonitoringUnitTypes | null
-  skuAggregateRangeType!: SkuMonitoringUnitTypes | null
+  monitoringType!: MonitoringTypes | null
+  monitoringHorizontalAxisType!: MonitoringHorizontalAxisTypes | null
+  skuMonitoringUnitType!: SkuMonitoringUnitTypes | null
+  skuMonitoringRangeType!: SkuMonitoringUnitTypes | null
 
-  storeAggregateUnitType!: StoreMonitoringUnitTypes | null
-  storeAggregateRangeType!: StoreMonitoringUnitTypes | null
+  storeMonitoringUnitType!: StoreMonitoringUnitTypes | null
+  storeMonitoringRangeType!: StoreMonitoringUnitTypes | null
 
   targetDateFrom!: Date | null
   targetDateTo!: Date | null
@@ -31,12 +31,12 @@ export default class implements FormData {
   stores!: StoreMaster[]
 
   constructor(
-    aggregateType: MonitoringTypes | null = MonitoringTypes.DefectRate,
-    aggregateHorizontalAxisType: MonitoringHorizontalAxisTypes | null = MonitoringHorizontalAxisTypes.Daily,
-    skuAggregateUnitType: SkuMonitoringUnitTypes | null = SkuMonitoringUnitTypes.Sku,
-    skuAggregateRangeType: SkuMonitoringUnitTypes | null = null,
-    storeAggregateUnitType: StoreMonitoringUnitTypes | null = StoreMonitoringUnitTypes.All,
-    storeAggregateRangeType: StoreMonitoringUnitTypes | null = null,
+    monitoringType: MonitoringTypes | null = MonitoringTypes.DefectRate,
+    monitoringHorizontalAxisType: MonitoringHorizontalAxisTypes | null = MonitoringHorizontalAxisTypes.Daily,
+    skuMonitoringUnitType: SkuMonitoringUnitTypes | null = SkuMonitoringUnitTypes.Sku,
+    skuMonitoringRangeType: SkuMonitoringUnitTypes | null = null,
+    storeMonitoringUnitType: StoreMonitoringUnitTypes | null = StoreMonitoringUnitTypes.All,
+    storeMonitoringRangeType: StoreMonitoringUnitTypes | null = null,
     targetDateFrom: Date | null = new Date(),
     targetDateTo: Date | null = new Date(),
     // FIXME: rfukuma 型定義作ったら入れる
@@ -48,12 +48,12 @@ export default class implements FormData {
     storeGroups: StoreGroup[] = [],
     stores: StoreMaster[] = []
   ) {
-    this.aggregateType = aggregateType
-    this.aggregateHorizontalAxisType = aggregateHorizontalAxisType
-    this.skuAggregateUnitType = skuAggregateUnitType
-    this.skuAggregateRangeType = skuAggregateRangeType
-    this.storeAggregateUnitType = storeAggregateUnitType
-    this.storeAggregateRangeType = storeAggregateRangeType
+    this.monitoringType = monitoringType
+    this.monitoringHorizontalAxisType = monitoringHorizontalAxisType
+    this.skuMonitoringUnitType = skuMonitoringUnitType
+    this.skuMonitoringRangeType = skuMonitoringRangeType
+    this.storeMonitoringUnitType = storeMonitoringUnitType
+    this.storeMonitoringRangeType = storeMonitoringRangeType
     this.targetDateFrom = targetDateFrom
     this.targetDateTo = targetDateTo
     this.skus = skus

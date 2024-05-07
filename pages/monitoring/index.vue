@@ -19,7 +19,7 @@
                 指標
               </label>
               <CommonSelect
-                v-model:selected="formData.aggregateType"
+                v-model:selected="formData.monitoringType"
                 class="w-full"
                 :options="MonitoringTypes.getNameValues()"
               />
@@ -41,22 +41,22 @@
             <div class="flex items-center gap-1">
               <label class="basis-10 whitespace-nowrap font-bold">商品</label>
               <CommonSelect
-                v-model:selected="formData.skuAggregateUnitType"
+                v-model:selected="formData.skuMonitoringUnitType"
                 class="basis-2/12"
                 :options="SkuMonitoringUnitTypes.getNameValues()"
-                @change="onChangedSkuAggregateUnitType"
+                @change="onChangedSkuMonitoringUnitType"
               />
               <CommonSelect
-                v-model:selected="formData.skuAggregateRangeType"
+                v-model:selected="formData.skuMonitoringRangeType"
                 class="basis-2/12"
                 :options="SkuMonitoringUnitTypes.getNameValues()"
                 placeholder="-"
-                @change="onChangedSkuAggregateUnitType"
+                @change="onChangedSkuMonitoringUnitType"
               />
               <UButton
                 class="basis-12"
                 color="indigo"
-                :disabled="formData.skuAggregateRangeType === null"
+                :disabled="formData.skuMonitoringRangeType === null"
                 @click="openSkuModal"
               >
                 選択
@@ -159,26 +159,26 @@
               <label class="basis-10 whitespace-nowrap font-bold">店舗</label>
               <!-- FIXME: rfukuma 範囲選択 -->
               <CommonSelect
-                v-model:selected="formData.storeAggregateUnitType"
+                v-model:selected="formData.storeMonitoringUnitType"
                 class="basis-2/12"
                 :options="StoreMonitoringUnitTypes.getNameValues()"
-                @change="onChangedStoreAggregateUnitType"
+                @change="onChangedStoreMonitoringUnitType"
               />
               <CommonSelect
-                v-model:selected="formData.storeAggregateRangeType"
+                v-model:selected="formData.storeMonitoringRangeType"
                 class="basis-2/12"
                 :options="StoreMonitoringUnitTypes.getNameValues()"
                 placeholder="-"
                 :disabled="
-                  formData.storeAggregateUnitType ===
+                  formData.storeMonitoringUnitType ===
                   StoreMonitoringUnitTypes.All
                 "
-                @change="onChangedStoreAggregateUnitType"
+                @change="onChangedStoreMonitoringUnitType"
               />
               <UButton
                 class="basis-12"
                 color="indigo"
-                :disabled="formData.storeAggregateRangeType === null"
+                :disabled="formData.storeMonitoringRangeType === null"
                 @click="openStoreModal"
               >
                 選択
@@ -231,7 +231,7 @@
             <div class="flex items-center gap-1">
               <label class="basis-10 whitespace-nowrap font-bold">期間</label>
               <CommonSelect
-                v-model:selected="formData.aggregateHorizontalAxisType"
+                v-model:selected="formData.monitoringHorizontalAxisType"
                 class="basis-2/12"
                 :options="MonitoringHorizontalAxisTypes.getNameValues()"
               />
@@ -366,6 +366,8 @@ const kpiColumns = ref<{ key: string; label: string }[]>([])
 
 async function fetch() {
   // FIMXE: rfukuma バリデーションがあればここで
+
+  // 検索できない分類をはじく
 
   serviceLoadingStart()
 
@@ -513,7 +515,7 @@ async function fetchStoreGroups(searchRequest: {
 }
 
 function openSkuModal() {
-  switch (formData.value.skuAggregateRangeType) {
+  switch (formData.value.skuMonitoringRangeType) {
     case SkuMonitoringUnitTypes.Sku:
       isOpenSkuModal.value = true
       break
@@ -533,7 +535,7 @@ function openSkuModal() {
 }
 
 function openStoreModal() {
-  switch (formData.value.storeAggregateRangeType) {
+  switch (formData.value.storeMonitoringRangeType) {
     case StoreMonitoringUnitTypes.All:
     case StoreMonitoringUnitTypes.Store:
       isOpenStoreMasterModal.value = true
@@ -592,7 +594,7 @@ async function fetchStore(text: string) {
   useNuxtApp().$toast.warning('お探しの店舗は見つかりませんでした。')
 }
 
-function onChangedSkuAggregateUnitType() {
+function onChangedSkuMonitoringUnitType() {
   // formData.value.skus = []
   // formData.value.groups = []
   // formData.value.departments = []
@@ -600,8 +602,8 @@ function onChangedSkuAggregateUnitType() {
   // formData.value.classes = []
 }
 
-function onChangedStoreAggregateUnitType() {
-  switch (formData.value.storeAggregateUnitType) {
+function onChangedStoreMonitoringUnitType() {
+  switch (formData.value.storeMonitoringUnitType) {
     case StoreMonitoringUnitTypes.All:
       formData.value.stores = []
       formData.value.storeGroups = []
