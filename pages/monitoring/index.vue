@@ -1,10 +1,20 @@
 <template>
   <div>
-    <CommonHeader title="KPI" />
+    <CommonHeader title="モニタリング" />
 
     <!-- 検索条件 -->
     <UForm :state="{}">
-      <div class="flex">
+      <div class="flex flex-row">
+        <div class="basis-1/4"></div>
+        <div class="ml-3 basis-1/2">
+          <div class="flex gap-1">
+            <div class="basis-1/12"></div>
+            <div class="basis-4/12 text-center">ふが</div>
+            <div class="basis-7/12">ほげ</div>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-row">
         <div class="basis-1/4">
           <UFormGroup class="pb-3">
             <div class="flex items-center gap-1">
@@ -203,7 +213,7 @@
     </UForm>
 
     <section>
-      <UButton color="indigo" @click="fetchKpi">画面表示</UButton>
+      <UButton color="indigo" @click="fetch">画面表示</UButton>
       <UButton
         color="primary"
         class="ml-2"
@@ -289,8 +299,8 @@ import type GroupMaster from '~/types/interfaces/database/SensyCloud/GroupMaster
 import type LineMaster from '~/types/interfaces/database/SensyCloud/LineMaster'
 import type StoreGroup from '~/types/interfaces/database/SensyCloud/StoreGroup'
 import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
-import type FormData from '~/types/interfaces/page/kpi/FormData'
-import FormDataFactory from '~/types/interfaces/page/kpi/FormDataFactory'
+import type FormData from '~/types/interfaces/page/monitoring/FormData'
+import FormDataFactory from '~/types/interfaces/page/monitoring/FormDataFactory'
 
 const formData = ref<FormData>(new FormDataFactory())
 const isOpenSkuModal = ref(false)
@@ -315,7 +325,7 @@ const storeText = ref<string>('')
 const kpiRows = ref<any[]>([])
 const kpiColumns = ref<{ key: string; label: string }[]>([])
 
-async function fetchKpi() {
+async function fetch() {
   // FIMXE: rfukuma バリデーションがあればここで
 
   serviceLoadingStart()

@@ -100,7 +100,7 @@ function onSelected(row: any) {
 
 <style scoped>
 /* ボタンを改行させないようにする */
-.select-buttons > ::v-deep span {
+.select-buttons > :deep(span) {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;

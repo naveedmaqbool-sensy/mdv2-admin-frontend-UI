@@ -19,13 +19,23 @@
 const links = [
   {
     icon: 'i-heroicons-home',
-    label: 'Dashboard',
+    label: 'アラート確認',
     to: '/',
   },
   {
     icon: 'i-heroicons-chart-bar-square',
-    label: 'KPI',
-    to: '/kpi',
+    label: 'モニタリング',
+    to: '/monitoring',
+  },
+  {
+    icon: 'i-heroicons-arrow-up-tray-16-solid',
+    label: '発注修正',
+    to: '/order',
+  },
+  {
+    icon: 'i-heroicons-cog-6-tooth',
+    label: '閾値設定',
+    to: '/config',
   },
 ]
 </script>

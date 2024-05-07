@@ -1,5 +1,5 @@
 <template>
   <div>
-    <CommonHeader title="ダッシュボード" />
+    <CommonHeader title="アラート確認" />
   </div>
 </template>
