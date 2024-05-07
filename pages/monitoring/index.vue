@@ -5,10 +5,10 @@
     <!-- 検索条件 -->
     <UForm :state="{}">
       <div class="flex flex-row">
-        <div class="basis-1/4">
+        <div class="basis-1/5">
           <div class="flex items-center gap-1">
             <div class="basis-1/12"></div>
-            <div class="basis-4/12 text-center font-bold">&nbsp;</div>
+            <div class="basis-3/12 text-center font-bold">&nbsp;</div>
             <div class="w-full text-center indent-[-3rem] font-bold">
               &nbsp;
             </div>
@@ -25,32 +25,41 @@
             </div>
           </UFormGroup>
         </div>
-        <div class="ml-3 basis-1/2">
+        <div class="ml-3 basis-4/5">
           <div class="flex items-center gap-1">
-            <div class="basis-1/12"></div>
-            <div class="basis-4/12 text-center font-bold">取得単位</div>
-            <div class="w-full text-center indent-[-4rem] font-bold">
-              取得範囲
-            </div>
+            <div class="basis-10"></div>
+            <div class="basis-2/12 font-bold">取得単位</div>
+            <div class="basis-2/12 font-bold">取得単位</div>
+            <div class="basis-12"></div>
+            <div class="basis-4/12"></div>
           </div>
 
           <!-- 商品選択 -->
           <UFormGroup class="pb-3">
             <div class="flex items-center gap-1">
-              <label class="basis-1/12 whitespace-nowrap font-bold">商品</label>
+              <label class="basis-10 whitespace-nowrap font-bold">商品</label>
               <CommonSelect
                 v-model:selected="formData.skuAggregateUnitType"
-                class="basis-4/12"
+                class="basis-2/12"
                 :options="SkuAggregateUnitTypes.getNameValues()"
                 @change="onChangedSkuAggregateUnitType"
               />
-              <div class="flex w-full gap-1">
+              <!-- FIXME: rfukuma 範囲選択 -->
+              <CommonSelect
+                v-model:selected="formData.skuAggregateUnitType"
+                class="basis-2/12"
+                :options="SkuAggregateUnitTypes.getNameValues()"
+                @change="onChangedSkuAggregateUnitType"
+              />
+              <UButton class="basis-12" color="indigo" @click="openSkuModal">
+                選択
+              </UButton>
+              <div class="basis-4/12">
                 <UInput
                   v-model.lazy="skuText"
                   class="w-full"
                   @change="fetchSku"
                 />
-                <UButton color="indigo" @click="openSkuModal"> 選択 </UButton>
               </div>
             </div>
           </UFormGroup>
@@ -140,20 +149,30 @@
           <!-- 店舗選択 -->
           <UFormGroup class="pb-3">
             <div class="flex items-center gap-1">
-              <label class="basis-1/12 whitespace-nowrap font-bold">店舗</label>
+              <label class="basis-10 whitespace-nowrap font-bold">店舗</label>
+              <!-- FIXME: rfukuma 範囲選択 -->
               <CommonSelect
                 v-model:selected="formData.storeAggregateUnitType"
-                class="basis-4/12"
+                class="basis-2/12"
                 :options="StoreAggregateUnitTypes.getNameValues()"
                 @change="onChangedStoreAggregateUnitType"
               />
-              <div class="flex w-full gap-1">
+              <CommonSelect
+                v-model:selected="formData.storeAggregateUnitType"
+                class="basis-2/12"
+                :options="StoreAggregateUnitTypes.getNameValues()"
+                @change="onChangedStoreAggregateUnitType"
+              />
+              <UButton class="basis-12" color="indigo" @click="openStoreModal">
+                選択
+              </UButton>
+
+              <div class="basis-4/12">
                 <UInput
                   v-model.lazy="storeText"
                   class="w-full"
                   @change="fetchStore"
                 />
-                <UButton color="indigo" @click="openStoreModal">選択</UButton>
               </div>
             </div>
           </UFormGroup>
@@ -193,24 +212,21 @@
           </div>
           <UFormGroup class="pb-3">
             <div class="flex items-center gap-1">
-              <label class="basis-1/12 whitespace-nowrap font-bold">期間</label>
+              <label class="basis-10 whitespace-nowrap font-bold">期間</label>
               <CommonSelect
                 v-model:selected="formData.aggregateHorizontalAxisType"
-                class="basis-4/12"
+                class="basis-2/12"
                 :options="AggregateHorizontalAxisTypes.getNameValues()"
               />
-              <div class="flex w-full gap-1">
-                <CommonDatepicker
-                  v-model="formData.targetDateFrom"
-                  class="basis-2/5"
-                />
-                <p class="text-center">~</p>
-                <CommonDatepicker
-                  v-model="formData.targetDateTo"
-                  class="basis-2/5"
-                />
-              </div>
-              <div></div>
+              <CommonDatepicker
+                v-model="formData.targetDateFrom"
+                class="basis-2/12"
+              />
+              <p class="basis-12 text-center">～</p>
+              <CommonDatepicker
+                v-model="formData.targetDateTo"
+                class="basis-2/12"
+              />
             </div>
           </UFormGroup>
         </div>
@@ -234,7 +250,7 @@
       <UTable :columns="kpiColumns" :rows="kpiRows" />
     </template>
 
-    <AggregatesSelectObjectModal
+    <MonitoringSelectObjectModal
       v-model:is-open-modal="isOpenSkuModal"
       v-model:selected="formData.skus"
       v-model:items="skus"
@@ -242,7 +258,7 @@
       name-column="skuName"
       @fetch-items="fetchSkus"
     />
-    <AggregatesSelectObjectModal
+    <MonitoringSelectObjectModal
       v-model:is-open-modal="isOpenGroupsModal"
       v-model:selected="formData.groups"
       v-model:items="groups"
@@ -250,7 +266,7 @@
       name-column="groupName"
       @fetch-items="fetchGroups"
     />
-    <AggregatesSelectObjectModal
+    <MonitoringSelectObjectModal
       v-model:is-open-modal="isOpenDepartmentsModal"
       v-model:selected="formData.departments"
       v-model:items="departments"
@@ -258,7 +274,7 @@
       name-column="departmentName"
       @fetch-items="fetchDepartments"
     />
-    <AggregatesSelectObjectModal
+    <MonitoringSelectObjectModal
       v-model:is-open-modal="isOpenLinesModal"
       v-model:selected="formData.lines"
       v-model:items="lines"
@@ -266,7 +282,7 @@
       name-column="lineName"
       @fetch-items="fetchLines"
     />
-    <AggregatesSelectObjectModal
+    <MonitoringSelectObjectModal
       v-model:is-open-modal="isOpenClassesModal"
       v-model:selected="formData.classes"
       v-model:items="classes"
@@ -274,7 +290,7 @@
       name-column="className"
       @fetch-items="fetchClasses"
     />
-    <AggregatesSelectObjectModal
+    <MonitoringSelectObjectModal
       v-model:is-open-modal="isOpenStoreMasterModal"
       v-model:selected="formData.stores"
       v-model:items="storeMasters"
@@ -282,7 +298,7 @@
       name-column="storeName"
       @fetch-items="fetchStores"
     />
-    <AggregatesSelectObjectModal
+    <MonitoringSelectObjectModal
       v-model:is-open-modal="isOpenStoreGroupModal"
       v-model:selected="formData.storeGroups"
       v-model:items="storeGroups"
@@ -306,6 +322,7 @@ import type StoreGroup from '~/types/interfaces/database/SensyCloud/StoreGroup'
 import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
 import type FormData from '~/types/interfaces/page/monitoring/FormData'
 import FormDataFactory from '~/types/interfaces/page/monitoring/FormDataFactory'
+import PaginationRequestFactory from '~/types/interfaces/common/PaginationRequestFactory'
 
 const formData = ref<FormData>(new FormDataFactory())
 const isOpenSkuModal = ref(false)
@@ -511,9 +528,13 @@ function openStoreModal() {
 }
 
 async function fetchSku(text: string) {
+  // 検索項目なし
+  if (!text) {
+    return
+  }
+
   // FIXME: rfukuma 商品検索にヒットした
   if (text === '商品' || text === 'JANCODE') {
-    formData.value.skuAggregateUnitType = SkuAggregateUnitTypes.Sku
     formData.value.groups = []
     formData.value.departments = []
     formData.value.lines = []
@@ -522,78 +543,10 @@ async function fetchSku(text: string) {
     // FIXME: rfukuma 仮組み
     await fetchSkus({
       text: null,
-      page: 1,
-      perPage: 10,
+      ...new PaginationRequestFactory().all(),
     })
+
     formData.value.skus = [...skus.value]
-    return
-  }
-  // FIXME: rfukuma 部門検索にヒットした
-  if (text === '部門') {
-    formData.value.skuAggregateUnitType = SkuAggregateUnitTypes.Group
-    formData.value.skus = []
-    formData.value.departments = []
-    formData.value.lines = []
-    formData.value.classes = []
-
-    // FIXME: rfukuma 仮組み
-    await fetchGroups({
-      text: null,
-      page: 1,
-      perPage: 10,
-    })
-    formData.value.groups = [...groups.value]
-    return
-  }
-  // FIXME: rfukuma 中分類検索にヒットした
-  if (text === '中分類') {
-    formData.value.skuAggregateUnitType = SkuAggregateUnitTypes.Department
-    formData.value.skus = []
-    formData.value.groups = []
-    formData.value.lines = []
-    formData.value.classes = []
-
-    // FIXME: rfukuma 仮組み
-    await fetchDepartments({
-      text: null,
-      page: 1,
-      perPage: 10,
-    })
-    formData.value.departments = [...departments.value]
-    return
-  }
-  // FIXME: rfukuma 小分類検索にヒットした
-  if (text === '小分類') {
-    formData.value.skuAggregateUnitType = SkuAggregateUnitTypes.Line
-    formData.value.skus = []
-    formData.value.groups = []
-    formData.value.departments = []
-    formData.value.classes = []
-
-    // FIXME: rfukuma 仮組み
-    await fetchLines({
-      text: null,
-      page: 1,
-      perPage: 10,
-    })
-    formData.value.lines = [...lines.value]
-    return
-  }
-  // FIXME: rfukuma 種別検索にヒットした
-  if (text === '種別') {
-    formData.value.skuAggregateUnitType = SkuAggregateUnitTypes.Class
-    formData.value.skus = []
-    formData.value.groups = []
-    formData.value.departments = []
-    formData.value.lines = []
-
-    // FIXME: rfukuma 仮組み
-    await fetchClasses({
-      text: null,
-      page: 1,
-      perPage: 10,
-    })
-    formData.value.classes = [...classes.value]
     return
   }
 
@@ -601,6 +554,11 @@ async function fetchSku(text: string) {
 }
 
 async function fetchStore(text: string) {
+  // 検索項目なし
+  if (!text) {
+    return
+  }
+
   // FIXME: rfukuma 店舗検索にヒットした
   if (text === '店舗') {
     formData.value.storeAggregateUnitType = StoreAggregateUnitTypes.Store
@@ -609,25 +567,9 @@ async function fetchStore(text: string) {
     // FIXME: rfukuma 仮組み
     await fetchStores({
       text: null,
-      page: 1,
-      perPage: 10,
+      ...new PaginationRequestFactory().all(),
     })
     formData.value.stores = [...storeMasters.value]
-    return
-  }
-
-  // FIXME: rfukuma 店舗グループ検索にヒットした
-  if (text === '店舗グループ') {
-    formData.value.storeAggregateUnitType = StoreAggregateUnitTypes.Area
-    formData.value.stores = []
-
-    // FIXME: rfukuma 仮組み
-    await fetchStoreGroups({
-      text: null,
-      page: 1,
-      perPage: 10,
-    })
-    formData.value.storeGroups = [...storeGroups.value]
     return
   }
 
@@ -635,38 +577,11 @@ async function fetchStore(text: string) {
 }
 
 function onChangedSkuAggregateUnitType() {
-  switch (formData.value.skuAggregateUnitType) {
-    case SkuAggregateUnitTypes.Sku:
-      formData.value.groups = []
-      formData.value.departments = []
-      formData.value.lines = []
-      formData.value.classes = []
-      break
-    case SkuAggregateUnitTypes.Group:
-      formData.value.skus = []
-      formData.value.departments = []
-      formData.value.lines = []
-      formData.value.classes = []
-      break
-    case SkuAggregateUnitTypes.Department:
-      formData.value.skus = []
-      formData.value.groups = []
-      formData.value.lines = []
-      formData.value.classes = []
-      break
-    case SkuAggregateUnitTypes.Line:
-      formData.value.skus = []
-      formData.value.groups = []
-      formData.value.departments = []
-      formData.value.classes = []
-      break
-    case SkuAggregateUnitTypes.Class:
-      formData.value.skus = []
-      formData.value.groups = []
-      formData.value.departments = []
-      formData.value.lines = []
-      break
-  }
+  // formData.value.skus = []
+  // formData.value.groups = []
+  // formData.value.departments = []
+  // formData.value.lines = []
+  // formData.value.classes = []
 }
 
 function onChangedStoreAggregateUnitType() {

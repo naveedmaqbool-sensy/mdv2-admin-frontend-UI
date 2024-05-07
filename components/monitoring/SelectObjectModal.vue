@@ -35,6 +35,7 @@
 
 <script setup lang="ts">
 import type { PaginationRequest } from '~/types/interfaces/common/Pagination'
+import PaginationRequestFactory from '~/types/interfaces/common/PaginationRequestFactory'
 
 const isOpenModal = defineModel('isOpenModal', {
   type: Boolean,
@@ -62,8 +63,7 @@ interface SearchRequest extends PaginationRequest {
 }
 const searchRequest = ref<SearchRequest>({
   text: null,
-  page: 1,
-  perPage: 10,
+  ...new PaginationRequestFactory(),
 })
 const emit = defineEmits<{ fetchItems: [searchRequest: SearchRequest] }>()
 
