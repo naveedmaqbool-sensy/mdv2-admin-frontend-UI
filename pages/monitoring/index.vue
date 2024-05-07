@@ -21,7 +21,7 @@
               <CommonSelect
                 v-model:selected="formData.aggregateType"
                 class="w-full"
-                :options="AggregateTypes.getNameValues()"
+                :options="MonitoringTypes.getNameValues()"
               />
               <div></div>
             </div>
@@ -43,13 +43,13 @@
               <CommonSelect
                 v-model:selected="formData.skuAggregateUnitType"
                 class="basis-2/12"
-                :options="SkuAggregateUnitTypes.getNameValues()"
+                :options="SkuMonitoringUnitTypes.getNameValues()"
                 @change="onChangedSkuAggregateUnitType"
               />
               <CommonSelect
                 v-model:selected="formData.skuAggregateRangeType"
                 class="basis-2/12"
-                :options="SkuAggregateUnitTypes.getNameValues()"
+                :options="SkuMonitoringUnitTypes.getNameValues()"
                 placeholder="-"
                 @change="onChangedSkuAggregateUnitType"
               />
@@ -161,17 +161,17 @@
               <CommonSelect
                 v-model:selected="formData.storeAggregateUnitType"
                 class="basis-2/12"
-                :options="StoreAggregateUnitTypes.getNameValues()"
+                :options="StoreMonitoringUnitTypes.getNameValues()"
                 @change="onChangedStoreAggregateUnitType"
               />
               <CommonSelect
                 v-model:selected="formData.storeAggregateRangeType"
                 class="basis-2/12"
-                :options="StoreAggregateUnitTypes.getNameValues()"
+                :options="StoreMonitoringUnitTypes.getNameValues()"
                 placeholder="-"
                 :disabled="
                   formData.storeAggregateUnitType ===
-                  StoreAggregateUnitTypes.All
+                  StoreMonitoringUnitTypes.All
                 "
                 @change="onChangedStoreAggregateUnitType"
               />
@@ -233,7 +233,7 @@
               <CommonSelect
                 v-model:selected="formData.aggregateHorizontalAxisType"
                 class="basis-2/12"
-                :options="AggregateHorizontalAxisTypes.getNameValues()"
+                :options="MonitoringHorizontalAxisTypes.getNameValues()"
               />
               <CommonDatepicker
                 v-model="formData.targetDateFrom"
@@ -327,10 +327,10 @@
 </template>
 
 <script setup lang="ts">
-import AggregateHorizontalAxisTypes from '~/types/enums/AggregateHorizontalAxisTypes'
-import AggregateTypes from '~/types/enums/AggregateTypes'
-import SkuAggregateUnitTypes from '~/types/enums/SkuAggregateUnitTypes'
-import StoreAggregateUnitTypes from '~/types/enums/StoreAggregateUnitTypes'
+import MonitoringHorizontalAxisTypes from '~/types/enums/MonitoringHorizontalAxisTypes'
+import MonitoringTypes from '~/types/enums/MonitoringTypes'
+import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
+import StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
 import type ClassMaster from '~/types/interfaces/database/SensyCloud/ClassMaster'
 import type DepartmentMaster from '~/types/interfaces/database/SensyCloud/DepartmentMaster'
 import type GroupMaster from '~/types/interfaces/database/SensyCloud/GroupMaster'
@@ -514,19 +514,19 @@ async function fetchStoreGroups(searchRequest: {
 
 function openSkuModal() {
   switch (formData.value.skuAggregateRangeType) {
-    case SkuAggregateUnitTypes.Sku:
+    case SkuMonitoringUnitTypes.Sku:
       isOpenSkuModal.value = true
       break
-    case SkuAggregateUnitTypes.Group:
+    case SkuMonitoringUnitTypes.Group:
       isOpenGroupsModal.value = true
       break
-    case SkuAggregateUnitTypes.Department:
+    case SkuMonitoringUnitTypes.Department:
       isOpenDepartmentsModal.value = true
       break
-    case SkuAggregateUnitTypes.Line:
+    case SkuMonitoringUnitTypes.Line:
       isOpenLinesModal.value = true
       break
-    case SkuAggregateUnitTypes.Class:
+    case SkuMonitoringUnitTypes.Class:
       isOpenClassesModal.value = true
       break
   }
@@ -534,11 +534,11 @@ function openSkuModal() {
 
 function openStoreModal() {
   switch (formData.value.storeAggregateRangeType) {
-    case StoreAggregateUnitTypes.All:
-    case StoreAggregateUnitTypes.Store:
+    case StoreMonitoringUnitTypes.All:
+    case StoreMonitoringUnitTypes.Store:
       isOpenStoreMasterModal.value = true
       break
-    case StoreAggregateUnitTypes.Area:
+    case StoreMonitoringUnitTypes.Area:
       isOpenStoreGroupModal.value = true
       break
   }
@@ -578,7 +578,6 @@ async function fetchStore(text: string) {
 
   // FIXME: rfukuma 店舗検索にヒットした
   if (text === '店舗') {
-    formData.value.storeAggregateUnitType = StoreAggregateUnitTypes.Store
     formData.value.storeGroups = []
 
     // FIXME: rfukuma 仮組み
@@ -603,14 +602,14 @@ function onChangedSkuAggregateUnitType() {
 
 function onChangedStoreAggregateUnitType() {
   switch (formData.value.storeAggregateUnitType) {
-    case StoreAggregateUnitTypes.All:
+    case StoreMonitoringUnitTypes.All:
       formData.value.stores = []
       formData.value.storeGroups = []
       break
-    case StoreAggregateUnitTypes.Store:
+    case StoreMonitoringUnitTypes.Store:
       formData.value.storeGroups = []
       break
-    case StoreAggregateUnitTypes.Area:
+    case StoreMonitoringUnitTypes.Area:
       formData.value.stores = []
       break
   }
@@ -618,3 +617,5 @@ function onChangedStoreAggregateUnitType() {
 </script>
 
 <style scoped></style>
+~/types/enums/MonitoringTypes ~/types/enums/MonitoringHorizontalAxisTypes
+~/types/enums/SkuMonitoringUnitTypes ~/types/enums/StoreMonitoringUnitTypes

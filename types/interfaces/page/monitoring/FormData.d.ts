@@ -1,7 +1,7 @@
-import type AggregateHorizontalAxisTypes from '~/types/enums/AggregateHorizontalAxisTypes'
-import type AggregateTypes from '~/types/enums/AggregateTypes'
-import type SkuAggregateUnitTypes from '~/types/enums/SkuAggregateUnitTypes'
-import type StoreAggregateUnitTypes from '~/types/enums/StoreAggregateUnitTypes'
+import type MonitoringHorizontalAxisTypes from '~/types/enums/MonitoringHorizontalAxisTypes'
+import type MonitoringTypes from '~/types/enums/MonitoringTypes'
+import type SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
+import type StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
 import type GroupMaster from '../../database/SensyCloud/GroupMaster'
 import type DepartmentMaster from '../../database/SensyCloud/DepartmentMaster'
 import type LineMaster from '../../database/SensyCloud/LineMaster'
@@ -10,12 +10,12 @@ import type StoreMaster from '../../database/SensyCloud/StoreMaster'
 import type StoreGroup from '../../database/SensyCloud/StoreGroup'
 
 interface FormData {
-  aggregateType: AggregateTypes | null
-  aggregateHorizontalAxisType: AggregateHorizontalAxisTypes | null
-  skuAggregateUnitType: SkuAggregateUnitTypes | null
-  skuAggregateRangeType: SkuAggregateUnitTypes | null
-  storeAggregateUnitType: StoreAggregateUnitTypes | null
-  storeAggregateRangeType: StoreAggregateUnitTypes | null
+  aggregateType: MonitoringTypes | null
+  aggregateHorizontalAxisType: MonitoringHorizontalAxisTypes | null
+  skuAggregateUnitType: SkuMonitoringUnitTypes | null
+  skuAggregateRangeType: SkuMonitoringUnitTypes | null
+  storeAggregateUnitType: StoreMonitoringUnitTypes | null
+  storeAggregateRangeType: StoreMonitoringUnitTypes | null
   targetDateFrom: Date | null
   targetDateTo: Date | null
   // FIXME: rfukuma 型定義作ったら入れる

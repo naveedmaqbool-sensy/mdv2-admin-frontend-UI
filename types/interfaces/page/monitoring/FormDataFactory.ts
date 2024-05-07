@@ -5,19 +5,19 @@ import type ClassMaster from '../../database/SensyCloud/ClassMaster'
 import type StoreGroup from '../../database/SensyCloud/StoreGroup'
 import type StoreMaster from '../../database/SensyCloud/StoreMaster'
 import type FormData from './FormData'
-import AggregateTypes from '~/types/enums/AggregateTypes'
-import AggregateHorizontalAxisTypes from '~/types/enums/AggregateHorizontalAxisTypes'
-import SkuAggregateUnitTypes from '~/types/enums/SkuAggregateUnitTypes'
-import StoreAggregateUnitTypes from '~/types/enums/StoreAggregateUnitTypes'
+import MonitoringTypes from '~/types/enums/MonitoringTypes'
+import MonitoringHorizontalAxisTypes from '~/types/enums/MonitoringHorizontalAxisTypes'
+import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
+import StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
 
 export default class implements FormData {
-  aggregateType!: AggregateTypes | null
-  aggregateHorizontalAxisType!: AggregateHorizontalAxisTypes | null
-  skuAggregateUnitType!: SkuAggregateUnitTypes | null
-  skuAggregateRangeType!: SkuAggregateUnitTypes | null
+  aggregateType!: MonitoringTypes | null
+  aggregateHorizontalAxisType!: MonitoringHorizontalAxisTypes | null
+  skuAggregateUnitType!: SkuMonitoringUnitTypes | null
+  skuAggregateRangeType!: SkuMonitoringUnitTypes | null
 
-  storeAggregateUnitType!: StoreAggregateUnitTypes | null
-  storeAggregateRangeType!: StoreAggregateUnitTypes | null
+  storeAggregateUnitType!: StoreMonitoringUnitTypes | null
+  storeAggregateRangeType!: StoreMonitoringUnitTypes | null
 
   targetDateFrom!: Date | null
   targetDateTo!: Date | null
@@ -31,12 +31,12 @@ export default class implements FormData {
   stores!: StoreMaster[]
 
   constructor(
-    aggregateType: AggregateTypes | null = AggregateTypes.DefectRate,
-    aggregateHorizontalAxisType: AggregateHorizontalAxisTypes | null = AggregateHorizontalAxisTypes.Daily,
-    skuAggregateUnitType: SkuAggregateUnitTypes | null = SkuAggregateUnitTypes.Sku,
-    skuAggregateRangeType: SkuAggregateUnitTypes | null = null,
-    storeAggregateUnitType: StoreAggregateUnitTypes | null = StoreAggregateUnitTypes.All,
-    storeAggregateRangeType: StoreAggregateUnitTypes | null = null,
+    aggregateType: MonitoringTypes | null = MonitoringTypes.DefectRate,
+    aggregateHorizontalAxisType: MonitoringHorizontalAxisTypes | null = MonitoringHorizontalAxisTypes.Daily,
+    skuAggregateUnitType: SkuMonitoringUnitTypes | null = SkuMonitoringUnitTypes.Sku,
+    skuAggregateRangeType: SkuMonitoringUnitTypes | null = null,
+    storeAggregateUnitType: StoreMonitoringUnitTypes | null = StoreMonitoringUnitTypes.All,
+    storeAggregateRangeType: StoreMonitoringUnitTypes | null = null,
     targetDateFrom: Date | null = new Date(),
     targetDateTo: Date | null = new Date(),
     // FIXME: rfukuma 型定義作ったら入れる
