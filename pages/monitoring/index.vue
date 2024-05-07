@@ -15,7 +15,9 @@
           </div>
           <UFormGroup class="pb-3">
             <div class="flex items-center gap-1">
-              <label class="basis-1/6 whitespace-nowrap font-bold">指標</label>
+              <label class="basis-10 whitespace-nowrap pr-2 font-bold">
+                指標
+              </label>
               <CommonSelect
                 v-model:selected="formData.aggregateType"
                 class="w-full"
@@ -28,8 +30,8 @@
         <div class="ml-3 basis-4/5">
           <div class="flex items-center gap-1">
             <div class="basis-10"></div>
-            <div class="basis-2/12 font-bold">取得単位</div>
-            <div class="basis-2/12 font-bold">取得単位</div>
+            <div class="basis-2/12 text-center font-bold">【取得単位】</div>
+            <div class="basis-2/12 text-center font-bold">【取得範囲】</div>
             <div class="basis-12"></div>
             <div class="basis-4/12"></div>
           </div>
@@ -44,14 +46,19 @@
                 :options="SkuAggregateUnitTypes.getNameValues()"
                 @change="onChangedSkuAggregateUnitType"
               />
-              <!-- FIXME: rfukuma 範囲選択 -->
               <CommonSelect
-                v-model:selected="formData.skuAggregateUnitType"
+                v-model:selected="formData.skuAggregateRangeType"
                 class="basis-2/12"
                 :options="SkuAggregateUnitTypes.getNameValues()"
+                placeholder="-"
                 @change="onChangedSkuAggregateUnitType"
               />
-              <UButton class="basis-12" color="indigo" @click="openSkuModal">
+              <UButton
+                class="basis-12"
+                color="indigo"
+                :disabled="formData.skuAggregateRangeType === null"
+                @click="openSkuModal"
+              >
                 選択
               </UButton>
               <div class="basis-4/12">
@@ -158,12 +165,22 @@
                 @change="onChangedStoreAggregateUnitType"
               />
               <CommonSelect
-                v-model:selected="formData.storeAggregateUnitType"
+                v-model:selected="formData.storeAggregateRangeType"
                 class="basis-2/12"
                 :options="StoreAggregateUnitTypes.getNameValues()"
+                placeholder="-"
+                :disabled="
+                  formData.storeAggregateUnitType ===
+                  StoreAggregateUnitTypes.All
+                "
                 @change="onChangedStoreAggregateUnitType"
               />
-              <UButton class="basis-12" color="indigo" @click="openStoreModal">
+              <UButton
+                class="basis-12"
+                color="indigo"
+                :disabled="formData.storeAggregateRangeType === null"
+                @click="openStoreModal"
+              >
                 選択
               </UButton>
 
@@ -496,7 +513,7 @@ async function fetchStoreGroups(searchRequest: {
 }
 
 function openSkuModal() {
-  switch (formData.value.skuAggregateUnitType) {
+  switch (formData.value.skuAggregateRangeType) {
     case SkuAggregateUnitTypes.Sku:
       isOpenSkuModal.value = true
       break
@@ -516,7 +533,7 @@ function openSkuModal() {
 }
 
 function openStoreModal() {
-  switch (formData.value.storeAggregateUnitType) {
+  switch (formData.value.storeAggregateRangeType) {
     case StoreAggregateUnitTypes.All:
     case StoreAggregateUnitTypes.Store:
       isOpenStoreMasterModal.value = true
