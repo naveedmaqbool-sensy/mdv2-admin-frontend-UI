@@ -9,8 +9,8 @@
         <div class="ml-3 basis-1/2">
           <div class="flex gap-1">
             <div class="basis-1/12"></div>
-            <div class="basis-4/12 text-center">ふが</div>
-            <div class="basis-7/12">ほげ</div>
+            <div class="basis-4/12 text-center"></div>
+            <div class="basis-7/12"></div>
           </div>
         </div>
       </div>
