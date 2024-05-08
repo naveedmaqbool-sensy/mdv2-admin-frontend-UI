@@ -5,7 +5,7 @@
     <!-- 検索条件 -->
     <UForm :state="{}">
       <div class="flex flex-row">
-        <div class="basis-1/5">
+        <div class="basis-1/4">
           <div class="flex items-center gap-1">
             <div class="basis-1/12"></div>
             <div class="basis-3/12 text-center font-bold">&nbsp;</div>
@@ -27,13 +27,12 @@
             </div>
           </UFormGroup>
         </div>
-        <div class="ml-3 basis-4/5">
+        <div class="ml-3 basis-3/4">
           <div class="flex items-center gap-1">
             <div class="basis-10"></div>
             <div class="basis-2/12 text-center font-bold">【取得単位】</div>
             <div class="basis-2/12 text-center font-bold">【取得範囲】</div>
             <div class="basis-12"></div>
-            <div class="basis-5/12"></div>
           </div>
 
           <!-- 商品選択 -->
@@ -49,9 +48,16 @@
               <CommonSelect
                 v-model:selected="formData.skuMonitoringRangeType"
                 class="basis-2/12"
-                :options="SkuMonitoringUnitTypes.getNameValues()"
+                :options="
+                  skuRangeTypes.map((v) => {
+                    return {
+                      name: SkuMonitoringUnitTypes.getName(v),
+                      value: v,
+                    }
+                  })
+                "
                 placeholder="-"
-                @change="onChangedSkuMonitoringUnitType"
+                @change="onChangedSkuMonitoringRangeType"
               />
               <UButton
                 class="basis-12"
@@ -61,13 +67,6 @@
               >
                 選択
               </UButton>
-              <div class="basis-5/12">
-                <UInput
-                  v-model.lazy="skuText"
-                  class="w-full"
-                  @change="fetchSku"
-                />
-              </div>
             </div>
           </UFormGroup>
           <div v-if="formData.skus.length > 0" class="pb-3">
@@ -167,13 +166,20 @@
               <CommonSelect
                 v-model:selected="formData.storeMonitoringRangeType"
                 class="basis-2/12"
-                :options="StoreMonitoringUnitTypes.getNameValues()"
+                :options="
+                  storeRangeTypes.map((v) => {
+                    return {
+                      name: StoreMonitoringUnitTypes.getName(v),
+                      value: v,
+                    }
+                  })
+                "
                 placeholder="-"
                 :disabled="
                   formData.storeMonitoringUnitType ===
                   StoreMonitoringUnitTypes.All
                 "
-                @change="onChangedStoreMonitoringUnitType"
+                @change="onChangedStoreMonitoringRangeType"
               />
               <UButton
                 class="basis-12"
@@ -183,14 +189,6 @@
               >
                 選択
               </UButton>
-
-              <div class="basis-5/12">
-                <UInput
-                  v-model.lazy="storeText"
-                  class="w-full"
-                  @change="fetchStore"
-                />
-              </div>
             </div>
           </UFormGroup>
           <div v-if="formData.stores.length > 0" class="pb-3">
@@ -339,7 +337,6 @@ import type StoreGroup from '~/types/interfaces/database/SensyCloud/StoreGroup'
 import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
 import type FormData from '~/types/interfaces/page/monitoring/FormData'
 import FormDataFactory from '~/types/interfaces/page/monitoring/FormDataFactory'
-import PaginationRequestFactory from '~/types/interfaces/common/PaginationRequestFactory'
 
 const formData = ref<FormData>(new FormDataFactory())
 const isOpenSkuModal = ref(false)
@@ -357,12 +354,50 @@ const storeMasters = ref<StoreMaster[]>([])
 const isOpenStoreGroupModal = ref(false)
 const storeGroups = ref<StoreGroup[]>([])
 
-const skuText = ref<string>('')
-const storeText = ref<string>('')
-
 // FIXME: rfukuma とりあえずモックとして作る
 const kpiRows = ref<any[]>([])
 const kpiColumns = ref<{ key: string; label: string }[]>([])
+
+const skuRangeTypes = computed(() => {
+  switch (formData.value.skuMonitoringUnitType) {
+    case SkuMonitoringUnitTypes.Sku:
+      return [
+        SkuMonitoringUnitTypes.Sku,
+        SkuMonitoringUnitTypes.Group,
+        SkuMonitoringUnitTypes.Department,
+        SkuMonitoringUnitTypes.Line,
+        SkuMonitoringUnitTypes.Class,
+      ]
+    case SkuMonitoringUnitTypes.Group:
+      return [SkuMonitoringUnitTypes.Group]
+    case SkuMonitoringUnitTypes.Department:
+      return [SkuMonitoringUnitTypes.Group, SkuMonitoringUnitTypes.Department]
+    case SkuMonitoringUnitTypes.Line:
+      return [
+        SkuMonitoringUnitTypes.Group,
+        SkuMonitoringUnitTypes.Department,
+        SkuMonitoringUnitTypes.Line,
+      ]
+    case SkuMonitoringUnitTypes.Class:
+      return [
+        SkuMonitoringUnitTypes.Group,
+        SkuMonitoringUnitTypes.Department,
+        SkuMonitoringUnitTypes.Line,
+        SkuMonitoringUnitTypes.Class,
+      ]
+  }
+  return []
+})
+
+const storeRangeTypes = computed(() => {
+  switch (formData.value.storeMonitoringUnitType) {
+    case StoreMonitoringUnitTypes.Store:
+      return [StoreMonitoringUnitTypes.Store, StoreMonitoringUnitTypes.Area]
+    case StoreMonitoringUnitTypes.Area:
+      return [StoreMonitoringUnitTypes.Area]
+  }
+  return []
+})
 
 async function fetch() {
   // FIXME: rfukuma バリデーションがあればここで
@@ -546,78 +581,44 @@ function openStoreModal() {
   }
 }
 
-async function fetchSku(text: string) {
-  // 検索項目なし
-  if (!text) {
-    return
-  }
-
-  // FIXME: rfukuma 商品検索にヒットした
-  if (text === '商品' || text === 'JANCODE') {
+function onChangedSkuMonitoringUnitType() {
+  // 指定できない場合は初期化する
+  if (
+    formData.value.skuMonitoringRangeType &&
+    !skuRangeTypes.value.includes(formData.value.skuMonitoringRangeType)
+  ) {
+    formData.value.skuMonitoringRangeType = null
+    formData.value.skus = []
     formData.value.groups = []
     formData.value.departments = []
-    formData.value.lines = []
     formData.value.classes = []
-
-    // FIXME: rfukuma 仮組み
-    await fetchSkus({
-      text: null,
-      ...new PaginationRequestFactory().all(),
-    })
-
-    formData.value.skus = [...skus.value]
-    return
+    formData.value.lines = []
   }
-
-  useNuxtApp().$toast.warning('お探しの商品は見つかりませんでした。')
 }
 
-async function fetchStore(text: string) {
-  // 検索項目なし
-  if (!text) {
-    return
-  }
-
-  // FIXME: rfukuma 店舗検索にヒットした
-  if (text === '店舗') {
-    formData.value.storeGroups = []
-
-    // FIXME: rfukuma 仮組み
-    await fetchStores({
-      text: null,
-      ...new PaginationRequestFactory().all(),
-    })
-    formData.value.stores = [...storeMasters.value]
-    return
-  }
-
-  useNuxtApp().$toast.warning('お探しの店舗は見つかりませんでした。')
-}
-
-function onChangedSkuMonitoringUnitType() {
-  // formData.value.skus = []
-  // formData.value.groups = []
-  // formData.value.departments = []
-  // formData.value.lines = []
-  // formData.value.classes = []
+function onChangedSkuMonitoringRangeType() {
+  formData.value.skus = []
+  formData.value.groups = []
+  formData.value.departments = []
+  formData.value.classes = []
+  formData.value.lines = []
 }
 
 function onChangedStoreMonitoringUnitType() {
-  switch (formData.value.storeMonitoringUnitType) {
-    case StoreMonitoringUnitTypes.All:
-      formData.value.stores = []
-      formData.value.storeGroups = []
-      break
-    case StoreMonitoringUnitTypes.Store:
-      formData.value.storeGroups = []
-      break
-    case StoreMonitoringUnitTypes.Area:
-      formData.value.stores = []
-      break
+  if (
+    formData.value.storeMonitoringRangeType &&
+    !storeRangeTypes.value.includes(formData.value.storeMonitoringRangeType)
+  ) {
+    formData.value.storeMonitoringRangeType = null
+    formData.value.storeGroups = []
+    formData.value.stores = []
   }
+}
+
+function onChangedStoreMonitoringRangeType() {
+  formData.value.storeGroups = []
+  formData.value.stores = []
 }
 </script>
 
 <style scoped></style>
-~/types/enums/MonitoringTypes ~/types/enums/MonitoringHorizontalAxisTypes
-~/types/enums/SkuMonitoringUnitTypes ~/types/enums/StoreMonitoringUnitTypes

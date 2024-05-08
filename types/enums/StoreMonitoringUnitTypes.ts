@@ -20,8 +20,8 @@ namespace StoreMonitoringUnitTypes {
   export function getNameValues() {
     return [
       StoreMonitoringUnitTypes.All,
-      StoreMonitoringUnitTypes.Store,
       StoreMonitoringUnitTypes.Area,
+      StoreMonitoringUnitTypes.Store,
     ].map((v) => {
       return {
         name: getName(v),
