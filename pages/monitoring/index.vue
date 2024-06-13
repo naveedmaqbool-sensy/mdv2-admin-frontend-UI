@@ -69,6 +69,21 @@
               </UButton>
             </div>
           </UFormGroup>
+          <!-- バリデーションエラー -->
+          <div
+            v-if="apiValidationError?.exists('skuMonitoringUnitType')"
+            class="mt-[-0.5rem] pb-3 text-red-400"
+          >
+            {{ apiValidationError.first('skuMonitoringUnitType') }}
+          </div>
+          <div
+            v-if="apiValidationError?.exists('skuMonitoringRangeType')"
+            class="mt-[-0.5rem] pb-3 text-red-400"
+          >
+            {{ apiValidationError.first('skuMonitoringRangeType') }}
+          </div>
+
+          <!-- 選択内容を表示 -->
           <div v-if="formData.skus.length > 0" class="pb-3">
             <template v-for="(sku, index) in formData.skus" :key="sku.skuId">
               <UBadge class="ml-1" color="gray">
@@ -191,6 +206,22 @@
               </UButton>
             </div>
           </UFormGroup>
+
+          <!-- バリデーションエラー -->
+          <div
+            v-if="apiValidationError?.exists('storeMonitoringUnitType')"
+            class="mt-[-0.5rem] pb-3 text-red-400"
+          >
+            {{ apiValidationError.first('storeMonitoringUnitType') }}
+          </div>
+          <div
+            v-if="apiValidationError?.exists('storeMonitoringRangeType')"
+            class="mt-[-0.5rem] pb-3 text-red-400"
+          >
+            {{ apiValidationError.first('storeMonitoringRangeType') }}
+          </div>
+
+          <!-- 選択内容を表示 -->
           <div v-if="formData.stores.length > 0" class="pb-3">
             <template
               v-for="(store, index) in formData.stores"
@@ -244,6 +275,19 @@
               />
             </div>
           </UFormGroup>
+          <!-- バリデーションエラー -->
+          <div
+            v-if="apiValidationError?.exists('targetDateFrom')"
+            class="mt-[-0.5rem] pb-3 text-red-400"
+          >
+            {{ apiValidationError.first('targetDateFrom') }}
+          </div>
+          <div
+            v-if="apiValidationError?.exists('targetDateTo')"
+            class="mt-[-0.5rem] pb-3 text-red-400"
+          >
+            {{ apiValidationError.first('targetDateTo') }}
+          </div>
         </div>
       </div>
     </UForm>
@@ -253,7 +297,7 @@
       <UButton
         color="primary"
         class="ml-2"
-        :disabled="kpiRows.length === 0 || kpiColumns.length === 0"
+        :disabled="kpiRows.length === 0 || kpiHeaders.length === 0"
         @click="csvExport"
       >
         CSV出力
@@ -261,14 +305,31 @@
     </section>
 
     <!-- 集計結果 -->
-    <template v-if="kpiRows.length > 0 && kpiColumns.length > 0">
-      <UTable :columns="kpiColumns" :rows="kpiRows" />
+    <template v-if="kpiRows.length > 0 && kpiHeaders.length > 0">
+      <UTable
+        :columns="
+          kpiHeaders.map((v, index) => ({
+            key: index.toString(),
+            label: v,
+          }))
+        "
+        :rows="
+          kpiRows.map((values) => {
+            const result: { [key: string]: string } = {}
+            values.forEach((v, index) => {
+              result[index.toString()] = v
+            })
+            return result
+          })
+        "
+      />
     </template>
 
     <MonitoringSelectObjectModal
       v-model:is-open-modal="isOpenSkuModal"
       v-model:selected="formData.skus"
       v-model:items="skus"
+      v-model:total="itemsTotal"
       :columns="[{ key: 'skuName', label: '商品名' }]"
       name-column="skuName"
       @fetch-items="fetchSkus"
@@ -277,6 +338,7 @@
       v-model:is-open-modal="isOpenGroupsModal"
       v-model:selected="formData.groups"
       v-model:items="groups"
+      v-model:total="itemsTotal"
       :columns="[{ key: 'groupName', label: '部門' }]"
       name-column="groupName"
       @fetch-items="fetchGroups"
@@ -285,6 +347,7 @@
       v-model:is-open-modal="isOpenDepartmentsModal"
       v-model:selected="formData.departments"
       v-model:items="departments"
+      v-model:total="itemsTotal"
       :columns="[{ key: 'departmentName', label: '中分類' }]"
       name-column="departmentName"
       @fetch-items="fetchDepartments"
@@ -293,6 +356,7 @@
       v-model:is-open-modal="isOpenLinesModal"
       v-model:selected="formData.lines"
       v-model:items="lines"
+      v-model:total="itemsTotal"
       :columns="[{ key: 'lineName', label: '小分類' }]"
       name-column="lineName"
       @fetch-items="fetchLines"
@@ -301,6 +365,7 @@
       v-model:is-open-modal="isOpenClassesModal"
       v-model:selected="formData.classes"
       v-model:items="classes"
+      v-model:total="itemsTotal"
       :columns="[{ key: 'className', label: '種別' }]"
       name-column="className"
       @fetch-items="fetchClasses"
@@ -309,6 +374,7 @@
       v-model:is-open-modal="isOpenStoreMasterModal"
       v-model:selected="formData.stores"
       v-model:items="storeMasters"
+      v-model:total="itemsTotal"
       :columns="[{ key: 'storeName', label: '店舗' }]"
       name-column="storeName"
       @fetch-items="fetchStores"
@@ -317,6 +383,7 @@
       v-model:is-open-modal="isOpenStoreGroupModal"
       v-model:selected="formData.storeGroups"
       v-model:items="storeGroups"
+      v-model:total="itemsTotal"
       :columns="[{ key: 'storeGroupName', label: '店舗グループ' }]"
       name-column="storeGroupName"
       @fetch-items="fetchStoreGroups"
@@ -325,6 +392,7 @@
 </template>
 
 <script setup lang="ts">
+import ApiValidationError from '~/types/classes/ApiValidationError'
 import MonitoringHorizontalAxisTypes from '~/types/enums/MonitoringHorizontalAxisTypes'
 import MonitoringTypes from '~/types/enums/MonitoringTypes'
 import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
@@ -353,10 +421,11 @@ const isOpenStoreMasterModal = ref(false)
 const storeMasters = ref<StoreMaster[]>([])
 const isOpenStoreGroupModal = ref(false)
 const storeGroups = ref<StoreGroup[]>([])
+const itemsTotal = ref(0)
 
-// FIXME: rfukuma とりあえずモックとして作る
-const kpiRows = ref<any[]>([])
-const kpiColumns = ref<{ key: string; label: string }[]>([])
+const kpiRows = ref<string[][]>([])
+const kpiHeaders = ref<string[]>([])
+const apiValidationError = ref<ApiValidationError | null>(null)
 
 const skuRangeTypes = computed(() => {
   switch (formData.value.skuMonitoringUnitType) {
@@ -406,64 +475,17 @@ async function fetch() {
 
   serviceLoadingStart()
 
-  kpiRows.value = []
-  kpiColumns.value = []
+  const response = await apiMonitoringFetch(formData.value)
 
-  await new Promise((resolve) => setTimeout(resolve, 2000))
-
-  // FIXME: rfukuma ＫＰＩ分析
-  for (let i = 0; i < 9; i++) {
-    kpiRows.value.push({
-      skuName: `商品 00${i}`,
-      '0': '0.1%',
-      '1': '0.1%',
-      '2': '0.1%',
-      '3': '0.1%',
-      '4': '0.1%',
-      '5': '0.1%',
-      '6': '0.1%',
-      '7': '0.1%',
-    })
-  }
-  kpiColumns.value.push(
-    {
-      key: 'skuName',
-      label: '商品',
-    },
-    {
-      key: '0',
-      label: '4/1 (月)',
-    },
-    {
-      key: '1',
-      label: '4/2 (月)',
-    },
-    {
-      key: '2',
-      label: '4/3 (月)',
-    },
-    {
-      key: '3',
-      label: '4/4 (月)',
-    },
-    {
-      key: '4',
-      label: '4/5 (月)',
-    },
-    {
-      key: '5',
-      label: '4/6 (月)',
-    },
-    {
-      key: '6',
-      label: '4/7 (月)',
-    },
-    {
-      key: '7',
-      label: '4/8 (月)',
-    }
-  )
   serviceLoadingFinish()
+
+  apiValidationError.value = new ApiValidationError()
+  if (!response || apiValidationError.value!.exists()) {
+    return
+  }
+
+  kpiRows.value = response.rows
+  kpiHeaders.value = response.headers
 }
 
 function csvExport() {
@@ -479,6 +501,7 @@ async function fetchSkus(searchRequest: {
   serviceLoadingStart()
   const response = await apiSkuMasterFetch(searchRequest)
   skus.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
   serviceLoadingFinish()
 }
 
@@ -490,6 +513,7 @@ async function fetchGroups(searchRequest: {
   serviceLoadingStart()
   const response = await apiGroupMasterFetch(searchRequest)
   groups.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
   serviceLoadingFinish()
 }
 
@@ -501,6 +525,7 @@ async function fetchDepartments(searchRequest: {
   serviceLoadingStart()
   const response = await apiDepartmentMasterFetch(searchRequest)
   departments.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
   serviceLoadingFinish()
 }
 
@@ -512,6 +537,7 @@ async function fetchLines(searchRequest: {
   serviceLoadingStart()
   const response = await apiLineMasterFetch(searchRequest)
   lines.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
   serviceLoadingFinish()
 }
 
@@ -523,6 +549,7 @@ async function fetchClasses(searchRequest: {
   serviceLoadingStart()
   const response = await apiClassMasterFetch(searchRequest)
   classes.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
   serviceLoadingFinish()
 }
 
@@ -534,6 +561,7 @@ async function fetchStores(searchRequest: {
   serviceLoadingStart()
   const response = await apiStoreMasterFetch(searchRequest)
   storeMasters.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
   serviceLoadingFinish()
 }
 
@@ -546,6 +574,7 @@ async function fetchStoreGroups(searchRequest: {
   // FIXME: rfukuma 店舗グループの扱いが変わる可能性があるため StoreMaster 参照とする
   const response = await apiStoreGroupFetch(searchRequest)
   storeGroups.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
   serviceLoadingFinish()
 }
 

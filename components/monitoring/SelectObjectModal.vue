@@ -7,12 +7,16 @@
       }"
     >
       <template #header>
-        <UForm :state="{}" @submit="fetch(1)">
+        <UForm :state="{}" class="flex flex-row" @submit="fetch(1)">
           <UInput
             v-model="searchRequest.text"
+            class="basis-10/12"
             icon="i-heroicons-magnifying-glass-20-solid"
             placeholder="検索"
           />
+          <div class="basis-2/12 text-right">
+            <UButton color="indigo" @click="fetch(1)"> 検索 </UButton>
+          </div>
         </UForm>
       </template>
 
@@ -22,11 +26,21 @@
         :columns="columns"
         @select="onSelected"
       />
-
       <template #footer>
-        <div class="block text-right">
-          <UButton color="gray" label="閉じる" @click="isOpenModal = false" />
-          <UButton color="primary" class="ml-2" label="保存" @click="save" />
+        <div class="flex flex-row">
+          <div class="basis-3/4 justify-start">
+            <UPagination
+              v-model="searchRequest.page"
+              :page-count="searchRequest.perPage"
+              :max="5"
+              :total="total"
+              @change="fetch(searchRequest.page)"
+            />
+          </div>
+          <div class="basis-1/4 text-right">
+            <UButton color="gray" label="閉じる" @click="isOpenModal = false" />
+            <UButton color="primary" class="ml-2" label="保存" @click="save" />
+          </div>
         </div>
       </template>
     </UCard>
@@ -52,6 +66,10 @@ const items = defineModel<any[]>('items', {
   type: Array,
   required: true,
 })
+const total = defineModel<number>('total', {
+  type: Number,
+  required: true,
+})
 const selected = defineModel<any[]>('selected', {
   type: Array,
   required: true,
@@ -69,14 +87,21 @@ const emit = defineEmits<{ fetchItems: [searchRequest: SearchRequest] }>()
 
 watch(isOpenModal, async (value) => {
   if (value) {
+    total.value = 0
+    items.value = []
     searchRequest.value = {
-      ...searchRequest.value,
-      page: 1,
       text: null,
+      page: 1,
+      perPage: searchRequest.value.perPage,
     }
     internalSelected.value = [...selected.value]
     await emit('fetchItems', searchRequest.value)
   }
+})
+
+const page = computed(() => searchRequest.value.page)
+watch(page, (value) => {
+  fetch(value)
 })
 
 function save() {

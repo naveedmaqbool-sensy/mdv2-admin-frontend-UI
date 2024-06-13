@@ -1,6 +1,6 @@
 // 商品集計単位
 enum SkuMonitoringUnitTypes {
-  Sku, // SKU
+  Sku = 1, // SKU
   Group, // 部門
   Department, // 中分類
   Line, // 小分類
