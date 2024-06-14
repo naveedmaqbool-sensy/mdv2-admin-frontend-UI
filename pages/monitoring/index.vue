@@ -71,16 +71,16 @@
           </UFormGroup>
           <!-- バリデーションエラー -->
           <div
-            v-if="apiValidationError?.exists('skuMonitoringUnitType')"
-            class="mt-[-0.5rem] pb-3 text-red-400"
-          >
-            {{ apiValidationError.first('skuMonitoringUnitType') }}
-          </div>
-          <div
             v-if="apiValidationError?.exists('skuMonitoringRangeType')"
             class="mt-[-0.5rem] pb-3 text-red-400"
           >
             {{ apiValidationError.first('skuMonitoringRangeType') }}
+          </div>
+          <div
+            v-else-if="apiValidationError?.exists('skuMonitoringUnitType')"
+            class="mt-[-0.5rem] pb-3 text-red-400"
+          >
+            {{ apiValidationError.first('skuMonitoringUnitType') }}
           </div>
 
           <!-- 選択内容を表示 -->
@@ -209,16 +209,16 @@
 
           <!-- バリデーションエラー -->
           <div
-            v-if="apiValidationError?.exists('storeMonitoringUnitType')"
-            class="mt-[-0.5rem] pb-3 text-red-400"
-          >
-            {{ apiValidationError.first('storeMonitoringUnitType') }}
-          </div>
-          <div
             v-if="apiValidationError?.exists('storeMonitoringRangeType')"
             class="mt-[-0.5rem] pb-3 text-red-400"
           >
             {{ apiValidationError.first('storeMonitoringRangeType') }}
+          </div>
+          <div
+            v-else-if="apiValidationError?.exists('storeMonitoringUnitType')"
+            class="mt-[-0.5rem] pb-3 text-red-400"
+          >
+            {{ apiValidationError.first('storeMonitoringUnitType') }}
           </div>
 
           <!-- 選択内容を表示 -->
