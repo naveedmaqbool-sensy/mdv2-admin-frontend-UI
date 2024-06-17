@@ -8,17 +8,14 @@ import type LineMaster from '../../database/SensyCloud/LineMaster'
 import type ClassMaster from '../../database/SensyCloud/ClassMaster'
 import type StoreMaster from '../../database/SensyCloud/StoreMaster'
 import type StoreGroup from '../../database/SensyCloud/StoreGroup'
-import type { PaginationRequest } from '../../common/Pagination'
 
-interface FormData extends PaginationRequest {
+interface FormData {
+  name: string | null
   monitoringType: MonitoringTypes | null
-  monitoringHorizontalAxisType: MonitoringHorizontalAxisTypes | null
   skuMonitoringUnitType: SkuMonitoringUnitTypes | null
-  skuMonitoringRangeType: SkuMonitoringUnitTypes | null
   storeMonitoringUnitType: StoreMonitoringUnitTypes | null
-  storeMonitoringRangeType: StoreMonitoringUnitTypes | null
-  targetDateFrom: Date | null
-  targetDateTo: Date | null
+  threshold: number
+
   // FIXME: rfukuma 型定義作ったら入れる
   skus: any[]
   groups: GroupMaster[]

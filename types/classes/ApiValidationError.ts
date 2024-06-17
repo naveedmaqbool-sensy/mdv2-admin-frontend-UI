@@ -11,10 +11,7 @@ export default class ApiValidationError implements ApiValidationErrorInterface {
   private validationErrors!: ValidationErrors
 
   constructor() {
-    this.validationErrors = useState(
-      AppStateTypes.ValidationErrors,
-      () => ({})
-    ).value
+    this.refresh()
   }
 
   public all() {
@@ -35,5 +32,12 @@ export default class ApiValidationError implements ApiValidationErrorInterface {
       return null
     }
     return this.validationErrors[key][0]
+  }
+
+  public refresh() {
+    this.validationErrors = useState(
+      AppStateTypes.ValidationErrors,
+      () => ({})
+    ).value
   }
 }

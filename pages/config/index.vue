@@ -1,9 +1,446 @@
 <template>
   <div>
     <CommonHeader title="閾値設定" />
+
+    <UForm :state="{}">
+      <section class="rounded border border-gray-300 p-4">
+        <div class="flex flex-row">
+          <!-- アラート名称 -->
+          <div class="flex basis-1/12 flex-col justify-center text-right">
+            <label class="whitespace-nowrap pr-2 font-bold">アラート名称</label>
+          </div>
+          <div class="my-auto flex basis-4/12 flex-col justify-center">
+            <UInput v-model="formData.name" />
+          </div>
+        </div>
+        <div v-if="apiValidationError?.exists('name')" class="flex flex-row">
+          <div class="flex basis-1/12 flex-col justify-center text-right" />
+          <div class="text-red-400">
+            {{ apiValidationError?.first('name') }}
+          </div>
+        </div>
+
+        <!-- 集計項目 -->
+        <div class="flex flex-row pt-2">
+          <div class="flex basis-1/12 flex-col justify-center text-right">
+            <label class="whitespace-nowrap pr-2 font-bold">集計項目</label>
+          </div>
+          <div class="flex basis-2/12 flex-col justify-center">
+            <CommonSelect
+              v-model:selected="formData.monitoringType"
+              class="w-full"
+              :options="MonitoringTypes.getNameValues()"
+            />
+          </div>
+          <div class="flex basis-1/12 flex-col justify-center text-right">
+            <label class="whitespace-nowrap pr-2 font-bold">閾値</label>
+          </div>
+          <div class="flex basis-2/12 flex-col justify-center">
+            <UInput v-model="formData.threshold" />
+          </div>
+        </div>
+        <div
+          v-if="apiValidationError?.exists('monitoringType')"
+          class="flex flex-row"
+        >
+          <div class="flex basis-1/12 flex-col justify-center text-right" />
+          <div class="text-red-400">
+            {{ apiValidationError?.first('monitoringType') }}
+          </div>
+        </div>
+
+        <!-- アラート単位 -->
+        <div class="flex flex-row pt-2">
+          <div class="flex basis-1/12 flex-col justify-center text-right">
+            <label class="whitespace-nowrap pr-2 font-bold">
+              アラート単位
+            </label>
+          </div>
+          <div class="my-auto flex basis-2/12 flex-col justify-center">
+            <CommonSelect
+              v-model:selected="formData.skuMonitoringUnitType"
+              class="w-full"
+              :options="SkuMonitoringUnitTypes.getNameValues()"
+            />
+          </div>
+          <div class="flex flex-col justify-center pl-2">
+            <UButton color="indigo" @click="openSkuModal">選択</UButton>
+          </div>
+        </div>
+        <div
+          v-if="apiValidationError?.exists('skuMonitoringUnitType')"
+          class="flex flex-row"
+        >
+          <div class="flex basis-1/12 flex-col justify-center text-right" />
+          <div class="text-red-400">
+            {{ apiValidationError?.first('skuMonitoringUnitType') }}
+          </div>
+        </div>
+
+        <!-- 選択内容を表示 -->
+        <div class="flex flex-row pt-2">
+          <div class="flex basis-1/12 flex-col justify-center text-right" />
+          <div class="my-auto flex flex-col justify-center">
+            <div v-if="formData.skus.length > 0" class="pb-3">
+              <template v-for="(sku, index) in formData.skus" :key="sku.skuId">
+                <UBadge class="ml-1" color="gray">
+                  {{ sku.skuName }}
+                  <UButton
+                    :padded="false"
+                    color="gray"
+                    variant="link"
+                    icon="i-heroicons-x-mark-20-solid"
+                    @click="formData.skus.splice(index, 1)"
+                  />
+                </UBadge>
+              </template>
+            </div>
+            <div v-if="formData.groups.length > 0" class="pb-3">
+              <template
+                v-for="(group, index) in formData.groups"
+                :key="group.groupId"
+              >
+                <UBadge class="ml-1" color="gray">
+                  {{ group.groupName }}
+                  <UButton
+                    :padded="false"
+                    color="gray"
+                    variant="link"
+                    icon="i-heroicons-x-mark-20-solid"
+                    @click="formData.groups.splice(index, 1)"
+                  />
+                </UBadge>
+              </template>
+            </div>
+            <div v-if="formData.departments.length > 0" class="pb-3">
+              <template
+                v-for="(department, index) in formData.departments"
+                :key="department.departmentId"
+              >
+                <UBadge class="ml-1" color="gray">
+                  {{ department.departmentName }}
+                  <UButton
+                    :padded="false"
+                    color="gray"
+                    variant="link"
+                    icon="i-heroicons-x-mark-20-solid"
+                    @click="formData.departments.splice(index, 1)"
+                  />
+                </UBadge>
+              </template>
+            </div>
+            <div v-if="formData.classes.length > 0" class="pb-3">
+              <template
+                v-for="(clazz, index) in formData.classes"
+                :key="clazz.classId"
+              >
+                <UBadge class="ml-1" color="gray">
+                  {{ clazz.className }}
+                  <UButton
+                    :padded="false"
+                    color="gray"
+                    variant="link"
+                    icon="i-heroicons-x-mark-20-solid"
+                    @click="formData.classes.splice(index, 1)"
+                  />
+                </UBadge>
+              </template>
+            </div>
+            <div v-if="formData.lines.length > 0" class="pb-3">
+              <template
+                v-for="(line, index) in formData.lines"
+                :key="line.lineId"
+              >
+                <UBadge class="ml-1" color="gray">
+                  {{ line.lineName }}
+                  <UButton
+                    :padded="false"
+                    color="gray"
+                    variant="link"
+                    icon="i-heroicons-x-mark-20-solid"
+                    @click="formData.lines.splice(index, 1)"
+                  />
+                </UBadge>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <!-- 対象店舗 -->
+        <div class="flex flex-row pt-2">
+          <div class="flex basis-1/12 flex-col justify-center text-right">
+            <label class="whitespace-nowrap pr-2 font-bold"> 対象店舗 </label>
+          </div>
+          <div class="my-auto flex basis-2/12 flex-col justify-center">
+            <CommonSelect
+              v-model:selected="formData.storeMonitoringUnitType"
+              class="w-full"
+              :options="StoreMonitoringUnitTypes.getNameValues()"
+            />
+          </div>
+          <div class="flex flex-col justify-center pl-2">
+            <UButton
+              color="indigo"
+              :disabled="
+                formData.storeMonitoringUnitType ===
+                StoreMonitoringUnitTypes.All
+              "
+              @click="openStoreModal"
+              >選択</UButton
+            >
+          </div>
+        </div>
+        <div
+          v-if="apiValidationError?.exists('storeMonitoringUnitType')"
+          class="flex flex-row"
+        >
+          <div class="flex basis-1/12 flex-col justify-center text-right" />
+          <div class="text-red-400">
+            {{ apiValidationError?.first('storeMonitoringUnitType') }}
+          </div>
+        </div>
+      </section>
+
+      <section class="pt-2 text-right">
+        <UButton class="text-white" @click="addAlert">
+          <UIcon name="i-heroicons-plus" class="text-white" />
+          追加
+        </UButton>
+      </section>
+    </UForm>
+
+    <MonitoringSelectObjectModal
+      v-model:is-open-modal="isOpenSkuModal"
+      v-model:selected="formData.skus"
+      v-model:items="skus"
+      v-model:total="itemsTotal"
+      :columns="[{ key: 'skuName', label: '商品名' }]"
+      name-column="skuName"
+      @fetch-items="fetchSkus"
+    />
+    <MonitoringSelectObjectModal
+      v-model:is-open-modal="isOpenGroupsModal"
+      v-model:selected="formData.groups"
+      v-model:items="groups"
+      v-model:total="itemsTotal"
+      :columns="[{ key: 'groupName', label: '部門' }]"
+      name-column="groupName"
+      @fetch-items="fetchGroups"
+    />
+    <MonitoringSelectObjectModal
+      v-model:is-open-modal="isOpenDepartmentsModal"
+      v-model:selected="formData.departments"
+      v-model:items="departments"
+      v-model:total="itemsTotal"
+      :columns="[{ key: 'departmentName', label: '中分類' }]"
+      name-column="departmentName"
+      @fetch-items="fetchDepartments"
+    />
+    <MonitoringSelectObjectModal
+      v-model:is-open-modal="isOpenLinesModal"
+      v-model:selected="formData.lines"
+      v-model:items="lines"
+      v-model:total="itemsTotal"
+      :columns="[{ key: 'lineName', label: '小分類' }]"
+      name-column="lineName"
+      @fetch-items="fetchLines"
+    />
+    <MonitoringSelectObjectModal
+      v-model:is-open-modal="isOpenClassesModal"
+      v-model:selected="formData.classes"
+      v-model:items="classes"
+      v-model:total="itemsTotal"
+      :columns="[{ key: 'className', label: '種別' }]"
+      name-column="className"
+      @fetch-items="fetchClasses"
+    />
+    <MonitoringSelectObjectModal
+      v-model:is-open-modal="isOpenStoreMasterModal"
+      v-model:selected="formData.stores"
+      v-model:items="storeMasters"
+      v-model:total="itemsTotal"
+      :columns="[{ key: 'storeName', label: '店舗' }]"
+      name-column="storeName"
+      @fetch-items="fetchStores"
+    />
+    <MonitoringSelectObjectModal
+      v-model:is-open-modal="isOpenStoreGroupModal"
+      v-model:selected="formData.storeGroups"
+      v-model:items="storeGroups"
+      v-model:total="itemsTotal"
+      :columns="[{ key: 'storeGroupName', label: '店舗グループ' }]"
+      name-column="storeGroupName"
+      @fetch-items="fetchStoreGroups"
+    />
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type ApiValidationError from '~/types/classes/ApiValidationError'
+import MonitoringTypes from '~/types/enums/MonitoringTypes'
+import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
+import StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
+import type ClassMaster from '~/types/interfaces/database/SensyCloud/ClassMaster'
+import type DepartmentMaster from '~/types/interfaces/database/SensyCloud/DepartmentMaster'
+import type GroupMaster from '~/types/interfaces/database/SensyCloud/GroupMaster'
+import type LineMaster from '~/types/interfaces/database/SensyCloud/LineMaster'
+import type StoreGroup from '~/types/interfaces/database/SensyCloud/StoreGroup'
+import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
+import type FormData from '~/types/interfaces/page/config/FormData'
+import FormDataFactory from '~/types/interfaces/page/config/FormDataFactory'
+
+const formData = ref<FormData>(new FormDataFactory())
+const isOpenSkuModal = ref(false)
+const skus = ref<any[]>([]) // FIXME: rfukuma 型定義作ったら充てる
+const isOpenGroupsModal = ref(false)
+const groups = ref<GroupMaster[]>([])
+const isOpenDepartmentsModal = ref(false)
+const departments = ref<DepartmentMaster[]>([])
+const isOpenLinesModal = ref(false)
+const lines = ref<LineMaster[]>([])
+const isOpenClassesModal = ref(false)
+const classes = ref<ClassMaster[]>([])
+const isOpenStoreMasterModal = ref(false)
+const storeMasters = ref<StoreMaster[]>([])
+const isOpenStoreGroupModal = ref(false)
+const storeGroups = ref<StoreGroup[]>([])
+const itemsTotal = ref(0)
+const apiValidationError = ref<ApiValidationError>(
+  serviceValidationErrorsInstance()
+)
+
+function openSkuModal() {
+  switch (formData.value.skuMonitoringUnitType) {
+    case SkuMonitoringUnitTypes.Sku:
+      isOpenSkuModal.value = true
+      break
+    case SkuMonitoringUnitTypes.Group:
+      isOpenGroupsModal.value = true
+      break
+    case SkuMonitoringUnitTypes.Department:
+      isOpenDepartmentsModal.value = true
+      break
+    case SkuMonitoringUnitTypes.Line:
+      isOpenLinesModal.value = true
+      break
+    case SkuMonitoringUnitTypes.Class:
+      isOpenClassesModal.value = true
+      break
+  }
+}
+
+function openStoreModal() {
+  switch (formData.value.storeMonitoringUnitType) {
+    case StoreMonitoringUnitTypes.All:
+      break
+    case StoreMonitoringUnitTypes.Store:
+      isOpenStoreMasterModal.value = true
+      break
+    case StoreMonitoringUnitTypes.Area:
+      isOpenStoreGroupModal.value = true
+      break
+  }
+}
+
+async function fetchSkus(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  const response = await apiSkuMasterFetch(searchRequest)
+  skus.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
+  serviceLoadingFinish()
+}
+
+async function fetchGroups(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  const response = await apiGroupMasterFetch(searchRequest)
+  groups.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
+  serviceLoadingFinish()
+}
+
+async function fetchDepartments(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  const response = await apiDepartmentMasterFetch(searchRequest)
+  departments.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
+  serviceLoadingFinish()
+}
+
+async function fetchLines(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  const response = await apiLineMasterFetch(searchRequest)
+  lines.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
+  serviceLoadingFinish()
+}
+
+async function fetchClasses(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  const response = await apiClassMasterFetch(searchRequest)
+  classes.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
+  serviceLoadingFinish()
+}
+
+async function fetchStores(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  const response = await apiStoreMasterFetch(searchRequest)
+  storeMasters.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
+  serviceLoadingFinish()
+}
+
+async function fetchStoreGroups(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  // FIXME: rfukuma 店舗グループの扱いが変わる可能性があるため StoreMaster 参照とする
+  const response = await apiStoreGroupFetch(searchRequest)
+  storeGroups.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
+  serviceLoadingFinish()
+}
+
+async function addAlert() {
+  serviceLoadingStart()
+  const response = await apiConfigCreate(formData.value)
+  apiValidationError.value.refresh()
+  serviceLoadingFinish()
+
+  if (!response || apiValidationError.value.exists()) {
+    return
+  }
+
+  // FIXME: rfukuma 一覧の取得しなおし？
+  // 通知?
+  useNuxtApp().$toast.success('閾値設定を追加しました。')
+}
+</script>
 
 <style scoped></style>
