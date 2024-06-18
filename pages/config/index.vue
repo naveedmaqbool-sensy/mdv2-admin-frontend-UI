@@ -61,6 +61,7 @@
               v-model:selected="formData.skuMonitoringUnitType"
               class="w-full"
               :options="SkuMonitoringUnitTypes.getNameValues()"
+              @change="onChangedSkuMonitoringUnitType"
             />
           </div>
           <div class="flex flex-col justify-center pl-2">
@@ -438,8 +439,16 @@ async function addAlert() {
   }
 
   // FIXME: rfukuma 一覧の取得しなおし？
-  // 通知?
   useNuxtApp().$toast.success('閾値設定を追加しました。')
+}
+
+function onChangedSkuMonitoringUnitType() {
+  // 単位を切り替えたら選択しているものを削除する
+  formData.value.skus = []
+  formData.value.groups = []
+  formData.value.departments = []
+  formData.value.classes = []
+  formData.value.lines = []
 }
 </script>
 
