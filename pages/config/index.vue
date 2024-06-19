@@ -216,7 +216,7 @@
       v-model:items="skus"
       v-model:total="itemsTotal"
       :columns="[{ key: 'skuName', label: '商品名' }]"
-      name-column="skuName"
+      id-column-name="skuId"
       @fetch-items="fetchSkus"
     />
     <MonitoringSelectObjectModal
@@ -225,7 +225,7 @@
       v-model:items="groups"
       v-model:total="itemsTotal"
       :columns="[{ key: 'groupName', label: '部門' }]"
-      name-column="groupName"
+      id-column-name="groupId"
       @fetch-items="fetchGroups"
     />
     <MonitoringSelectObjectModal
@@ -234,7 +234,7 @@
       v-model:items="departments"
       v-model:total="itemsTotal"
       :columns="[{ key: 'departmentName', label: '中分類' }]"
-      name-column="departmentName"
+      id-column-name="departmentId"
       @fetch-items="fetchDepartments"
     />
     <MonitoringSelectObjectModal
@@ -243,7 +243,7 @@
       v-model:items="lines"
       v-model:total="itemsTotal"
       :columns="[{ key: 'lineName', label: '小分類' }]"
-      name-column="lineName"
+      id-column-name="lineId"
       @fetch-items="fetchLines"
     />
     <MonitoringSelectObjectModal
@@ -252,7 +252,7 @@
       v-model:items="classes"
       v-model:total="itemsTotal"
       :columns="[{ key: 'className', label: '種別' }]"
-      name-column="className"
+      id-column-name="classId"
       @fetch-items="fetchClasses"
     />
     <MonitoringSelectObjectModal
@@ -261,7 +261,7 @@
       v-model:items="storeMasters"
       v-model:total="itemsTotal"
       :columns="[{ key: 'storeName', label: '店舗' }]"
-      name-column="storeName"
+      id-column-name="storeId"
       @fetch-items="fetchStores"
     />
     <MonitoringSelectObjectModal
@@ -270,7 +270,7 @@
       v-model:items="storeGroups"
       v-model:total="itemsTotal"
       :columns="[{ key: 'storeGroupName', label: '店舗グループ' }]"
-      name-column="storeGroupName"
+      id-column-name="storeGroupId"
       @fetch-items="fetchStoreGroups"
     />
   </div>

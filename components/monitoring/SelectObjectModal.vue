@@ -20,12 +20,21 @@
         </UForm>
       </template>
 
-      <UTable
-        v-model="internalSelected"
-        :rows="items"
-        :columns="columns"
-        @select="onSelected"
-      />
+      <UTable :rows="items" :columns="headers" @select="onSelected">
+        <template #selected-data="{ row }">
+          <UCheckbox
+            :model-value="
+              internalSelected.findIndex(
+                (v) => v[idColumnName] === row[idColumnName]
+              ) >= 0
+            "
+          />
+        </template>
+        <template #selected-header>
+          <UCheckbox v-model="allSelected" />
+        </template>
+      </UTable>
+
       <template #footer>
         <div class="flex flex-row">
           <div class="basis-3/4 justify-start">
@@ -55,10 +64,10 @@ const isOpenModal = defineModel('isOpenModal', {
   type: Boolean,
   required: true,
 })
-const { columns } = withDefaults(
+const { columns, idColumnName } = withDefaults(
   defineProps<{
     columns: { key: string; label: string }[]
-    nameColumn: string
+    idColumnName: string
   }>(),
   {}
 )
@@ -74,7 +83,8 @@ const selected = defineModel<any[]>('selected', {
   type: Array,
   required: true,
 })
-const internalSelected = ref<any>([])
+
+const internalSelected = ref<any[]>([])
 
 interface SearchRequest extends PaginationRequest {
   text: string | null
@@ -115,12 +125,39 @@ function fetch(page: number) {
 }
 
 function onSelected(row: any) {
-  if (!internalSelected.value.includes(row)) {
+  const index = internalSelected.value.findIndex(
+    (v) => v[idColumnName] === row[idColumnName]
+  )
+  if (index < 0) {
     internalSelected.value.push(row)
   } else {
-    internalSelected.value.splice(internalSelected.value.indexOf(row), 1)
+    internalSelected.value.splice(index, 1)
   }
 }
+
+const headers = computed(() => {
+  return [{ key: 'selected', label: '選択' }, ...columns]
+})
+
+const allSelected = computed({
+  get: () => {
+    return items.value.every((v) => {
+      return internalSelected.value.includes(v)
+    })
+  },
+  set: (value) => {
+    items.value.forEach((v) => {
+      const index = internalSelected.value.findIndex(
+        (v2) => v2[idColumnName] === v[idColumnName]
+      )
+      if (value && index < 0) {
+        internalSelected.value.push(v)
+      } else if (!value && index >= 0) {
+        internalSelected.value.splice(index, 1)
+      }
+    })
+  },
+})
 </script>
 
 <style scoped>
