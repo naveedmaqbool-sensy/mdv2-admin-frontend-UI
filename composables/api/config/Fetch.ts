@@ -12,7 +12,7 @@ export class ConfigFetchRequestFactory implements ConfigFetchRequest {
   // eslint-disable-next-line no-useless-constructor
   public constructor(
     public page: number = 1,
-    public perPage: number = 10,
+    public perPage: number = 100,
     public sortBy: string[] = [],
     public isDescending: boolean = true
   ) {}
