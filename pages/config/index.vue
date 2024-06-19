@@ -259,9 +259,7 @@
           <div class="my-auto basis-2/3">
             {{ SkuMonitoringUnitTypes.getName(row.skuMonitoringUnitType) }}
           </div>
-          <div class="w-full">
-            <UButton color="white" class="text-black-200"> 確認 </UButton>
-          </div>
+          <div class="w-full"></div>
         </div>
       </template>
 
@@ -270,9 +268,7 @@
           <div class="my-auto basis-2/3">
             {{ StoreMonitoringUnitTypes.getName(row.storeMonitoringUnitType) }}
           </div>
-          <div class="w-full">
-            <UButton color="white" class="text-black-200"> 確認 </UButton>
-          </div>
+          <div class="w-full"></div>
         </div>
       </template>
 
