@@ -20,10 +20,10 @@
           </div>
         </div>
 
-        <!-- 集計項目 -->
+        <!-- 項目 -->
         <div class="flex flex-row pt-2">
           <div class="flex basis-1/12 flex-col justify-center text-right">
-            <label class="whitespace-nowrap pr-2 font-bold">集計項目</label>
+            <label class="whitespace-nowrap pr-2 font-bold">項目</label>
           </div>
           <div class="flex basis-2/12 flex-col justify-center">
             <CommonSelect
@@ -49,12 +49,10 @@
           </div>
         </div>
 
-        <!-- アラート単位 -->
+        <!-- 対象単位 -->
         <div class="flex flex-row pt-2">
           <div class="flex basis-1/12 flex-col justify-center text-right">
-            <label class="whitespace-nowrap pr-2 font-bold">
-              アラート単位
-            </label>
+            <label class="whitespace-nowrap pr-2 font-bold">対象単位</label>
           </div>
           <div class="my-auto flex basis-2/12 flex-col justify-center">
             <CommonSelect
