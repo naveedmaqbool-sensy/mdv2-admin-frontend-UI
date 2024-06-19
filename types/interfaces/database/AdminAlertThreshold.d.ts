@@ -3,6 +3,7 @@ import type SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
 import type StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
 
 interface AdminAlertThreshold {
+  id: number
   name: string
   monitoringType: MonitoringTypes
   skuMonitoringUnitType: SkuMonitoringUnitTypes
