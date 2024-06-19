@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CommonHeader title="閾値設定" />
+    <CommonHeader title="閾値編集" />
 
     <UForm :state="{}">
       <section class="rounded border border-gray-300 p-4">
@@ -241,53 +241,13 @@
         </div>
       </section>
 
-      <section class="pt-2 text-left">
-        <UButton class="text-white" @click="addAlert">
-          <UIcon name="i-heroicons-plus" class="text-white" />
-          追加
+      <section class="pt-2">
+        <UButton color="white" @click="useRouter().push('/config')">
+          キャンセル
         </UButton>
+        <UButton class="ml-2 text-white" @click="save"> 保存 </UButton>
       </section>
     </UForm>
-
-    <UTable :rows="thresholds" :columns="headers">
-      <template #monitoringType-data="{ row }">
-        {{ MonitoringTypes.getName(row.monitoringType) }}
-      </template>
-
-      <template #skuMonitoringUnitType-data="{ row }">
-        <div class="flex flex-row">
-          <div class="my-auto basis-2/3">
-            {{ SkuMonitoringUnitTypes.getName(row.skuMonitoringUnitType) }}
-          </div>
-          <div class="w-full">
-            <UButton color="white" class="text-black-200"> 確認 </UButton>
-          </div>
-        </div>
-      </template>
-
-      <template #storeMonitoringUnitType-data="{ row }">
-        <div class="flex flex-row">
-          <div class="my-auto basis-2/3">
-            {{ StoreMonitoringUnitTypes.getName(row.storeMonitoringUnitType) }}
-          </div>
-          <div class="w-full">
-            <UButton color="white" class="text-black-200"> 確認 </UButton>
-          </div>
-        </div>
-      </template>
-
-      <template #actions-data="{ row }">
-        <UButton color="yellow" @click="onEdit(row)">編集</UButton>
-        <UButton color="red" class="ml-2" @click="onDelete(row)">削除</UButton>
-      </template>
-    </UTable>
-    <UPagination
-      v-model="fetchRequest.page"
-      :page-count="fetchRequest.perPage"
-      :max="5"
-      :total="thresholdTotal"
-      @change="fetch(fetchRequest.page)"
-    />
 
     <MonitoringSelectObjectModal
       v-model:is-open-modal="isOpenSkuModal"
@@ -352,13 +312,6 @@
       id-column-name="storeGroupId"
       @fetch-items="fetchStoreGroups"
     />
-
-    <CommonConfirmModal v-model="showDeleteModal" @submit="submitDelete">
-      <template #body>
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <section v-html="deleteBody" />
-      </template>
-    </CommonConfirmModal>
   </div>
 </template>
 
@@ -367,7 +320,6 @@ import type ApiValidationError from '~/types/classes/ApiValidationError'
 import MonitoringTypes from '~/types/enums/MonitoringTypes'
 import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
 import StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
-import type AdminAlertThreshold from '~/types/interfaces/database/AdminAlertThreshold'
 import type ClassMaster from '~/types/interfaces/database/SensyCloud/ClassMaster'
 import type DepartmentMaster from '~/types/interfaces/database/SensyCloud/DepartmentMaster'
 import type GroupMaster from '~/types/interfaces/database/SensyCloud/GroupMaster'
@@ -397,29 +349,26 @@ const apiValidationError = ref<ApiValidationError>(
   serviceValidationErrorsInstance()
 )
 
-const headers = [
-  { key: 'name', label: 'アラート名称' },
-  {
-    key: 'monitoringType',
-    label: '項目',
-  },
-  {
-    key: 'threshold',
-    label: '閾値',
-  },
-  {
-    key: 'skuMonitoringUnitType',
-    label: '対象単位',
-  },
-  {
-    key: 'storeMonitoringUnitType',
-    label: '対象店舗',
-  },
-  {
-    key: 'actions',
-    label: '操作',
-  },
-]
+const response = await apiConfigFind(Number(useRoute().params.id.toString()))
+if (!response) {
+  throw createError({ statusCode: 404, statusMessage: 'Not Found' })
+}
+console.info(response)
+formData.value = {
+  id: response.id,
+  name: response.name,
+  monitoringType: response.monitoringType,
+  skuMonitoringUnitType: response.skuMonitoringUnitType,
+  storeMonitoringUnitType: response.storeMonitoringUnitType,
+  threshold: response.threshold,
+  skus: response.skus ?? [],
+  groups: response.groups ?? [],
+  departments: response.departments ?? [],
+  lines: response.lines ?? [],
+  classes: response.classes ?? [],
+  storeGroups: response.storeGroups ?? [],
+  stores: response.stores ?? [],
+}
 
 function openSkuModal() {
   switch (formData.value.skuMonitoringUnitType) {
@@ -538,17 +487,15 @@ async function fetchStoreGroups(searchRequest: {
   serviceLoadingFinish()
 }
 
-async function addAlert() {
+async function save() {
   serviceLoadingStart()
-  const response = await apiConfigCreate(formData.value)
+  const response = await apiConfigEdit(formData.value)
   apiValidationError.value.refresh()
+  serviceLoadingFinish()
 
   if (!response || apiValidationError.value.exists()) {
-    serviceLoadingFinish()
     return
   }
-  await fetch(1)
-  serviceLoadingFinish()
 
   // FIXME: rfukuma 一覧の取得しなおし？
   useNuxtApp().$toast.success('閾値設定を追加しました。')
@@ -561,56 +508,6 @@ function onChangedSkuMonitoringUnitType() {
   formData.value.departments = []
   formData.value.classes = []
   formData.value.lines = []
-}
-
-const fetchRequest = ref(new ConfigFetchRequestFactory())
-const thresholds = ref<AdminAlertThreshold[]>([])
-const thresholdTotal = ref(0)
-async function fetch(page: number) {
-  fetchRequest.value.page = page
-  serviceLoadingStart()
-  const response = await apiConfigFetch(fetchRequest.value)
-  apiValidationError.value.refresh()
-  serviceLoadingFinish()
-  if (!response) {
-    return
-  }
-
-  thresholds.value = response.data
-  thresholdTotal.value = response.total
-}
-await fetch(1)
-
-const deleteThreshold = ref<AdminAlertThreshold | null>(null)
-const showDeleteModal = computed({
-  get: () => deleteThreshold.value !== null,
-  set: (value) => {
-    if (!value) {
-      deleteThreshold.value = null
-    }
-  },
-})
-const deleteBody = computed(() => {
-  return `閾値 ${deleteThreshold.value?.name} を削除します。<br />本当によろしいですか？`
-})
-function onDelete(threshold: AdminAlertThreshold) {
-  deleteThreshold.value = threshold
-}
-async function submitDelete() {
-  serviceLoadingStart()
-  const response = await apiConfigDelete(deleteThreshold.value!.id)
-  if (!response) {
-    serviceLoadingFinish()
-    return
-  }
-  await fetch(1)
-
-  serviceLoadingFinish()
-  showDeleteModal.value = false
-}
-
-function onEdit(threshold: AdminAlertThreshold) {
-  useRouter().push('/config/' + threshold.id)
 }
 </script>
 

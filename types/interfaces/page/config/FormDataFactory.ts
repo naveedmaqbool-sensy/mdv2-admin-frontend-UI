@@ -6,53 +6,26 @@ import type StoreGroup from '../../database/SensyCloud/StoreGroup'
 import type StoreMaster from '../../database/SensyCloud/StoreMaster'
 import type FormData from './FormData'
 import MonitoringTypes from '~/types/enums/MonitoringTypes'
-import MonitoringHorizontalAxisTypes from '~/types/enums/MonitoringHorizontalAxisTypes'
 import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
 import StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
 
 export default class implements FormData {
-  name!: string | null
-  monitoringType!: MonitoringTypes | null
-  monitoringHorizontalAxisType!: MonitoringHorizontalAxisTypes | null
-  skuMonitoringUnitType!: SkuMonitoringUnitTypes | null
-  storeMonitoringUnitType!: StoreMonitoringUnitTypes | null
-  threshold!: number
-  // FIXME: rfukuma 型定義作ったら入れる
-  skus!: any[]
-  groups!: GroupMaster[]
-  departments!: DepartmentMaster[]
-  lines!: LineMaster[]
-  classes!: ClassMaster[]
-  storeGroups!: StoreGroup[]
-  stores!: StoreMaster[]
-
+  // eslint-disable-next-line no-useless-constructor
   constructor(
-    name: string | null = null,
-    monitoringType: MonitoringTypes | null = MonitoringTypes.OrderPty,
-    skuMonitoringUnitType: SkuMonitoringUnitTypes | null = SkuMonitoringUnitTypes.Sku,
-    storeMonitoringUnitType: StoreMonitoringUnitTypes | null = StoreMonitoringUnitTypes.All,
-    threshold: number = 0,
+    public id: number | null = null,
+    public name: string | null = null,
+    public monitoringType: MonitoringTypes | null = MonitoringTypes.OrderPty,
+    public skuMonitoringUnitType: SkuMonitoringUnitTypes | null = SkuMonitoringUnitTypes.Sku,
+    public storeMonitoringUnitType: StoreMonitoringUnitTypes | null = StoreMonitoringUnitTypes.All,
+    public threshold: number = 0,
 
     // FIXME: rfukuma 型定義作ったら入れる
-    skus: any[] = [],
-    groups: GroupMaster[] = [],
-    departments: DepartmentMaster[] = [],
-    lines: LineMaster[] = [],
-    classes: ClassMaster[] = [],
-    storeGroups: StoreGroup[] = [],
-    stores: StoreMaster[] = []
-  ) {
-    this.name = name
-    this.monitoringType = monitoringType
-    this.skuMonitoringUnitType = skuMonitoringUnitType
-    this.storeMonitoringUnitType = storeMonitoringUnitType
-    this.threshold = threshold
-    this.skus = skus
-    this.groups = groups
-    this.departments = departments
-    this.lines = lines
-    this.classes = classes
-    this.storeGroups = storeGroups
-    this.stores = stores
-  }
+    public skus: any[] = [],
+    public groups: GroupMaster[] = [],
+    public departments: DepartmentMaster[] = [],
+    public lines: LineMaster[] = [],
+    public classes: ClassMaster[] = [],
+    public storeGroups: StoreGroup[] = [],
+    public stores: StoreMaster[] = []
+  ) {}
 }

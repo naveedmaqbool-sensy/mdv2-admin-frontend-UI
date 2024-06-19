@@ -10,6 +10,7 @@ import type StoreMaster from '../../database/SensyCloud/StoreMaster'
 import type StoreGroup from '../../database/SensyCloud/StoreGroup'
 
 interface FormData {
+  id: number | null
   name: string | null
   monitoringType: MonitoringTypes | null
   skuMonitoringUnitType: SkuMonitoringUnitTypes | null
