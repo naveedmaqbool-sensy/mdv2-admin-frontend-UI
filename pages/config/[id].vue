@@ -497,8 +497,8 @@ async function save() {
     return
   }
 
-  // FIXME: rfukuma 一覧の取得しなおし？
-  useNuxtApp().$toast.success('閾値設定を追加しました。')
+  // 通知
+  useNuxtApp().$toast.success('閾値設定を保存しました。')
 }
 
 function onChangedSkuMonitoringUnitType() {
