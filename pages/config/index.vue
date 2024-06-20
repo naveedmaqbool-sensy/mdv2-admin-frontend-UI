@@ -546,7 +546,6 @@ async function addAlert() {
   await fetch(1)
   serviceLoadingFinish()
 
-  // FIXME: rfukuma 一覧の取得しなおし？
   useNuxtApp().$toast.success('閾値設定を追加しました。')
 }
 
