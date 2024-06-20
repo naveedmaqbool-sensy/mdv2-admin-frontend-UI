@@ -20,7 +20,9 @@ namespace StoreMonitoringUnitTypes {
   export function getNameValues() {
     return [
       StoreMonitoringUnitTypes.All,
-      StoreMonitoringUnitTypes.Area,
+      // TODO: rfukuma エリアはいったんなし
+      // https://colorfulboard.slack.com/archives/C06GF2XQL3Y/p1718845719639109?thread_ts=1718689781.188219&cid=C06GF2XQL3Y
+      // StoreMonitoringUnitTypes.Area,
       StoreMonitoringUnitTypes.Store,
     ].map((v) => {
       return {
