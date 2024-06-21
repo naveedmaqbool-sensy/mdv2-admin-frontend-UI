@@ -39,11 +39,26 @@
             @click="onSkuAlert"
           >
             <h1 class="text-lg font-bold">在庫アラート</h1>
-            <div class="text-center">
-              <span class="text-xl">
+            <div class="py-10 text-center">
+              <UIcon
+                name="i-heroicons-check-16-solid"
+                class="-mb-1 text-4xl text-green-500"
+                v-if="skuAlertCount === 0"
+              />
+              <UIcon
+                v-else
+                name="i-heroicons-exclamation-triangle-16-solid"
+                class="-mb-1 text-4xl"
+                :class="{
+                  'text-yellow-400':
+                    skuAlertCount > 0 && skuAlertCount <= warningCount,
+                  'text-red-400': skuAlertCount > warningCount,
+                }"
+              />
+              <span class="ml-5 text-4xl">
                 {{ formatterNumber(skuAlertCount) }}
               </span>
-              <span class="pl-2 text-sm">件</span>
+              <span class="pl-2 text-lg">件</span>
             </div>
           </section>
         </div>
@@ -60,11 +75,26 @@
             @click="onAdminAlert"
           >
             <h1 class="text-lg font-bold">閾値アラート</h1>
-            <div class="text-center">
-              <span class="text-xl">
+            <div class="py-10 text-center">
+              <UIcon
+                name="i-heroicons-check-16-solid"
+                class="-mb-1 text-4xl text-green-500"
+                v-if="adminAlertCount === 0"
+              />
+              <UIcon
+                v-else
+                name="i-heroicons-exclamation-triangle-16-solid"
+                class="-mb-1 text-4xl"
+                :class="{
+                  'text-yellow-400':
+                    adminAlertCount > 0 && adminAlertCount <= warningCount,
+                  'text-red-400': adminAlertCount > warningCount,
+                }"
+              />
+              <span class="ml-5 text-4xl">
                 {{ formatterNumber(adminAlertCount) }}
               </span>
-              <span class="pl-2 text-sm">件</span>
+              <span class="pl-2 text-lg">件</span>
             </div>
           </section>
         </div>
