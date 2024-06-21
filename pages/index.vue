@@ -30,12 +30,13 @@
         <div class="basis-1/2 pr-1">
           <section
             :class="{
-              'border-green-500': skuAlertCount === 0,
-              'border-yellow-400':
+              'border-green-500 hover:shadow-green-500': skuAlertCount === 0,
+              'border-yellow-400 hover:shadow-yellow-400':
                 skuAlertCount > 0 && skuAlertCount <= warningCount,
-              'border-red-400': skuAlertCount > warningCount,
+              'border-red-400 hover:shadow-red-400':
+                skuAlertCount > warningCount,
             }"
-            class="cursor-pointer rounded border p-4 hover:translate-y-[-2px] hover:shadow-lg"
+            class="cursor-pointer rounded border p-4 hover:translate-y-[-2px] hover:shadow"
             @click="onSkuAlert"
           >
             <h1 class="text-lg font-bold">在庫アラート</h1>
@@ -48,7 +49,7 @@
               <UIcon
                 v-else
                 name="i-heroicons-exclamation-triangle-16-solid"
-                class="-mb-1 text-4xl"
+                class="-mb-1 animate-pulse text-4xl"
                 :class="{
                   'text-yellow-400':
                     skuAlertCount > 0 && skuAlertCount <= warningCount,
@@ -65,13 +66,13 @@
         <div class="basis-1/2 pl-1">
           <section
             :class="{
-              'rounded border p-4': true,
-              'border-green-500': adminAlertCount === 0,
-              'border-yellow-400':
+              'border-green-500 hover:shadow-green-500': adminAlertCount === 0,
+              'border-yellow-400 hover:shadow-yellow-400':
                 adminAlertCount > 0 && adminAlertCount <= warningCount,
-              'border-red-400': adminAlertCount > warningCount,
+              'border-red-400 hover:shadow-red-400':
+                adminAlertCount > warningCount,
             }"
-            class="cursor-pointer rounded border p-4 hover:translate-y-[-2px] hover:shadow-lg"
+            class="cursor-pointer rounded border p-4 hover:translate-y-[-2px] hover:shadow"
             @click="onAdminAlert"
           >
             <h1 class="text-lg font-bold">閾値アラート</h1>
@@ -84,7 +85,7 @@
               <UIcon
                 v-else
                 name="i-heroicons-exclamation-triangle-16-solid"
-                class="-mb-1 text-4xl"
+                class="-mb-1 animate-pulse text-4xl"
                 :class="{
                   'text-yellow-400':
                     adminAlertCount > 0 && adminAlertCount <= warningCount,
