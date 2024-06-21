@@ -111,13 +111,15 @@ const formData = ref(new FormDataFactory())
 const skuAlertCount = ref(0)
 const adminAlertCount = ref(0)
 
-function reset() {
+async function reset() {
   formData.value = new FormDataFactory()
-  get()
+  await get()
 }
 
 async function get() {
+  serviceLoadingStart()
   const response = await apiAlertGet(formData.value)
+  serviceLoadingFinish()
   if (!response) {
     return
   }
