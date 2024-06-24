@@ -1,0 +1,28 @@
+import type {
+  PaginationRequest,
+  PaginationResponse,
+} from '~/types/interfaces/common/Pagination'
+import type FormData from '~/types/interfaces/page/alert/FormData'
+
+interface StockAlertFetchRequest extends PaginationRequest, FormData {}
+interface StockAlertFetchResponse extends PaginationResponse<any> {}
+
+export class StockAlertFetchRequestFactory implements StockAlertFetchRequest {
+  public from!: Date
+  public to!: Date
+  constructor(
+    public page: number = 1,
+    public perPage: number = 10,
+    from: Date | null = null,
+    to: Date | null = null
+  ) {
+    this.from = from ?? new Date()
+    this.to = to ?? new Date()
+  }
+}
+
+export function apiStockAlertFetch(
+  request: StockAlertFetchRequest
+): Promise<StockAlertFetchResponse | null> {
+  return apiGet('/stock-alerts', request)
+}
