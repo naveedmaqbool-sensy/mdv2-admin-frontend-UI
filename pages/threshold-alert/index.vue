@@ -11,11 +11,11 @@
             </label>
           </div>
           <div class="basis-2/12">
-            <CommonDatepicker v-model="formData.from" />
+            <CommonDatepicker v-model="request.from" />
           </div>
           <div class="my-auto px-2">～</div>
           <div class="basis-2/12">
-            <CommonDatepicker v-model="formData.to" />
+            <CommonDatepicker v-model="request.to" />
           </div>
         </div>
       </section>
