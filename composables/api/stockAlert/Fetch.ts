@@ -2,10 +2,11 @@ import type {
   PaginationRequest,
   PaginationResponse,
 } from '~/types/interfaces/common/Pagination'
+import type SkuAlert from '~/types/interfaces/database/SkuAlert'
 import type FormData from '~/types/interfaces/page/alert/FormData'
 
 interface StockAlertFetchRequest extends PaginationRequest, FormData {}
-interface StockAlertFetchResponse extends PaginationResponse<any> {}
+interface StockAlertFetchResponse extends PaginationResponse<SkuAlert> {}
 
 export class StockAlertFetchRequestFactory implements StockAlertFetchRequest {
   public from!: Date

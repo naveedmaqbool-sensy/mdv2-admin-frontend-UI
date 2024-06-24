@@ -25,6 +25,28 @@
       </section>
     </UForm>
 
+    <UTable :rows="stockAlerts" :columns="stockAlertHeaders">
+      <template #date-data="{ row }">
+        {{ formatterDate(row.date) }}
+      </template>
+      <template #storeId-data="{ row }">
+        {{ row.storeSkuMaster?.storeMaster?.storeName ?? row.storeId }}
+      </template>
+      <template #skuId-data="{ row }">
+        {{ row.storeSkuMaster?.skuName ?? row.skuId }}
+      </template>
+      <template #skuAlertType-data="{ row }">
+        {{ SkuAlertTypes.getName(row.skuAlertType) }}
+      </template>
+    </UTable>
+    <UPagination
+      v-model="request.page"
+      :page-count="request.perPage"
+      :max="5"
+      :total="stockAlertTotal"
+      @change="get(request.page)"
+    />
+
     <div class="pt-2">
       <UButton color="white" @click="back">戻る</UButton>
     </div>
@@ -33,6 +55,8 @@
 
 <script setup lang="ts">
 import AppStateTypes from '~/types/enums/AppStateTypes'
+import SkuAlertTypes from '~/types/enums/SkuAlertTypes'
+import type SkuAlert from '~/types/interfaces/database/SkuAlert'
 import type FormData from '~/types/interfaces/page/alert/FormData'
 import FormDataFactory from '~/types/interfaces/page/alert/FormDataFactory'
 
@@ -46,13 +70,34 @@ const request = ref({
   from: formData.from,
   to: formData.to,
 })
+const stockAlerts = ref<SkuAlert[]>([])
+const stockAlertTotal = ref(0)
+const stockAlertHeaders = [
+  {
+    key: 'date',
+    label: '対象日',
+  },
+  {
+    key: 'storeId',
+    label: '店舗',
+  },
+  {
+    key: 'skuId',
+    label: 'SKU',
+  },
+  {
+    key: 'skuAlertType',
+    label: '種類',
+  },
+]
 
 async function reset() {
   request.value = new StockAlertFetchRequestFactory()
-  await get()
+  await get(1)
 }
 
-async function get() {
+async function get(page: number) {
+  request.value.page = page
   serviceLoadingStart()
   const response = await apiStockAlertFetch(request.value)
   serviceLoadingFinish()
@@ -60,13 +105,16 @@ async function get() {
     return
   }
 
+  stockAlerts.value = response.data
+  stockAlertTotal.value = response.total
+
   // 検索条件をブラウザに保持する
   servicePersistentStateSet<FormData>(AppStateTypes.AlertFormData, {
     from: formData.from,
     to: formData.to,
   })
 }
-await get()
+await get(1)
 
 function back() {
   useRouter().back()

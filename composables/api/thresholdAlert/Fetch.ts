@@ -2,10 +2,11 @@ import type {
   PaginationRequest,
   PaginationResponse,
 } from '~/types/interfaces/common/Pagination'
+import type AdminAlert from '~/types/interfaces/database/AdminAlert'
 import type FormData from '~/types/interfaces/page/alert/FormData'
 
 interface ThresholdAlertFetchRequest extends PaginationRequest, FormData {}
-interface ThresholdAlertFetchResponse extends PaginationResponse<any> {}
+interface ThresholdAlertFetchResponse extends PaginationResponse<AdminAlert> {}
 
 export class ThresholdAlertFetchRequestFactory
   implements ThresholdAlertFetchRequest
