@@ -353,7 +353,6 @@ const response = await apiConfigFind(Number(useRoute().params.id.toString()))
 if (!response) {
   throw createError({ statusCode: 404, statusMessage: 'Not Found' })
 }
-console.info(response)
 formData.value = {
   id: response.id,
   name: response.name,

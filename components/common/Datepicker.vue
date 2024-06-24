@@ -8,7 +8,7 @@ import 'v-calendar/dist/style.css'
 
 const props = defineProps({
   modelValue: {
-    type: [Date, Object] as PropType<
+    type: [Date, Object, String] as PropType<
       DatePickerDate | DatePickerRangeObject | null
     >,
     default: null,

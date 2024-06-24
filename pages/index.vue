@@ -42,9 +42,9 @@
             <h1 class="text-lg font-bold">在庫アラート</h1>
             <div class="py-10 text-center">
               <UIcon
+                v-if="skuAlertCount === 0"
                 name="i-heroicons-check-16-solid"
                 class="-mb-1 text-4xl text-green-500"
-                v-if="skuAlertCount === 0"
               />
               <UIcon
                 v-else
@@ -78,9 +78,9 @@
             <h1 class="text-lg font-bold">閾値アラート</h1>
             <div class="py-10 text-center">
               <UIcon
+                v-if="adminAlertCount === 0"
                 name="i-heroicons-check-16-solid"
                 class="-mb-1 text-4xl text-green-500"
-                v-if="adminAlertCount === 0"
               />
               <UIcon
                 v-else
@@ -105,10 +105,17 @@
 </template>
 
 <script setup lang="ts">
+import AppStateTypes from '~/types/enums/AppStateTypes'
+import type FormData from '~/types/interfaces/page/alert/FormData'
 import FormDataFactory from '~/types/interfaces/page/alert/FormDataFactory'
 
 const warningCount = 100
-const formData = ref(new FormDataFactory())
+const formData = ref<FormData>(
+  servicePersistentStateGet(AppStateTypes.AlertFormData, {
+    from: (value: string | null) => (value ? new Date(value) : null),
+    to: (value: string | null) => (value ? new Date(value) : null),
+  }) || new FormDataFactory()
+)
 const skuAlertCount = ref(0)
 const adminAlertCount = ref(0)
 
@@ -126,13 +133,16 @@ async function get() {
   }
   skuAlertCount.value = response.skuAlertCount
   adminAlertCount.value = response.adminAlertCount
+
+  // 検索条件をブラウザに保持する
+  servicePersistentStateSet(AppStateTypes.AlertFormData, formData.value)
 }
 await get()
 
 function onSkuAlert() {
-  alert('FIXME: rfukuma 在庫アラートを表示')
+  useRouter().push('/stock-alert')
 }
 function onAdminAlert() {
-  alert('FIXME: rfukuma 閾値アラートを表示')
+  useRouter().push('/threshold-alert')
 }
 </script>
