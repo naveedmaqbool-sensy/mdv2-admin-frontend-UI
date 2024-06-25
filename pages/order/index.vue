@@ -241,11 +241,15 @@
       <template #classId-data="{ row }">
         {{ row.classMaster.className }}
       </template>
-      <template #predictionOrderQty="{ row }">
+      <template #predictionOrderQty-data="{ row }">
         {{ formatterNumber(row.predictionOrderQty) }}
       </template>
-      <template #actualOrderQty="{ row }">
-        {{ formatterNumber(row.actualOrderQty) }}
+      <template #actualOrderQty-data="{ row }">
+        <UInput
+          v-model.lazy="row.actualOrderQty"
+          type="number"
+          @change="onChangedActualOrderQty(row)"
+        />
       </template>
     </UTable>
 
@@ -515,7 +519,24 @@ function onChangedSkuMonitoringUnitType() {
   formData.value.classes = []
   formData.value.lines = []
 }
+
+async function onChangedActualOrderQty(order: any) {
+  serviceLoadingStart()
+
+  const response = await apiOrderUpdate({
+    id: order.id,
+    actualOrderQty: order.actualOrderQty,
+  })
+  serviceLoadingFinish()
+  if (response === null) {
+    return
+  }
+
+  useNuxtApp().$toast.success(
+    order.storeMaster.storeName +
+      'の' +
+      order.storeSkuMaster.skuName +
+      'の発注数を修正しました。'
+  )
+}
 </script>
-~/types/interfaces/page/order/OrderAFormDataFactory~/types/interfaces/page/order/OrderAFormData
-~/types/interfaces/page/order/FormData
-~/types/interfaces/page/order/FormDataFactory
