@@ -106,21 +106,21 @@
 
 <script setup lang="ts">
 import AppStateTypes from '~/types/enums/AppStateTypes'
-import type FormData from '~/types/interfaces/page/alert/FormData'
-import FormDataFactory from '~/types/interfaces/page/alert/FormDataFactory'
+import type AlertFormData from '~/types/interfaces/page/alert/FormData'
+import AlertFormDataFactory from '~/types/interfaces/page/alert/FormDataFactory'
 
 const warningCount = 100
-const formData = ref<FormData>(
+const formData = ref<AlertFormData>(
   servicePersistentStateGet(AppStateTypes.AlertFormData, {
     from: (value: string | null) => (value ? new Date(value) : null),
     to: (value: string | null) => (value ? new Date(value) : null),
-  }) || new FormDataFactory()
+  }) || new AlertFormDataFactory()
 )
 const skuAlertCount = ref(0)
 const adminAlertCount = ref(0)
 
 async function reset() {
-  formData.value = new FormDataFactory()
+  formData.value = new AlertFormDataFactory()
   await get()
 }
 

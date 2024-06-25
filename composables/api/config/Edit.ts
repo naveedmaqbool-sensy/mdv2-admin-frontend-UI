@@ -1,8 +1,8 @@
 import type AdminAlertThreshold from '~/types/interfaces/database/AdminAlertThreshold'
-import type FormData from '~/types/interfaces/page/config/FormData'
+import type ConfigFormData from '~/types/interfaces/page/config/FormData'
 
 export function apiConfigEdit(
-  request: FormData
+  request: ConfigFormData
 ): Promise<AdminAlertThreshold | null> {
   return apiPut('/admin-alert-threshold', request)
 }

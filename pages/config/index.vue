@@ -370,10 +370,10 @@ import type GroupMaster from '~/types/interfaces/database/SensyCloud/GroupMaster
 import type LineMaster from '~/types/interfaces/database/SensyCloud/LineMaster'
 import type StoreGroup from '~/types/interfaces/database/SensyCloud/StoreGroup'
 import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
-import type FormData from '~/types/interfaces/page/config/FormData'
+import type ConfigFormData from '~/types/interfaces/page/config/FormData'
 import FormDataFactory from '~/types/interfaces/page/config/FormDataFactory'
 
-const formData = ref<FormData>(new FormDataFactory())
+const formData = ref<ConfigFormData>(new FormDataFactory())
 const isOpenSkuModal = ref(false)
 const skus = ref<any[]>([]) // FIXME: rfukuma 型定義作ったら充てる
 const isOpenGroupsModal = ref(false)

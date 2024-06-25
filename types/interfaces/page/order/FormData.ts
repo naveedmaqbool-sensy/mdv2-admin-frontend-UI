@@ -1,14 +1,14 @@
-import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
 import type ClassMaster from '../../database/SensyCloud/ClassMaster'
 import type DepartmentMaster from '../../database/SensyCloud/DepartmentMaster'
 import type GroupMaster from '../../database/SensyCloud/GroupMaster'
 import type LineMaster from '../../database/SensyCloud/LineMaster'
 import type StoreMaster from '../../database/SensyCloud/StoreMaster'
-import type StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
 import type StoreGroup from '../../database/SensyCloud/StoreGroup'
 import type { PaginationRequest } from '../../common/Pagination'
+import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
+import StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
 
-interface OrderFormData extends PaginationRequest {
+export default interface OrderFormData extends PaginationRequest {
   from: Date | null
   to: Date | null
   skuMonitoringUnitType: SkuMonitoringUnitTypes | null
@@ -22,5 +22,3 @@ interface OrderFormData extends PaginationRequest {
   stores: StoreMaster[]
   storeGroups: StoreGroup[]
 }
-
-export default OrderFormData

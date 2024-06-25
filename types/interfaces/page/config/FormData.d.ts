@@ -9,7 +9,7 @@ import type ClassMaster from '../../database/SensyCloud/ClassMaster'
 import type StoreMaster from '../../database/SensyCloud/StoreMaster'
 import type StoreGroup from '../../database/SensyCloud/StoreGroup'
 
-interface FormData {
+interface ConfigFormData {
   id: number | null
   name: string | null
   monitoringType: MonitoringTypes | null
@@ -27,4 +27,4 @@ interface FormData {
   stores: StoreMaster[]
 }
 
-export default FormData
+export default ConfigFormData

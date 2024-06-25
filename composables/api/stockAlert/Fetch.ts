@@ -3,9 +3,9 @@ import type {
   PaginationResponse,
 } from '~/types/interfaces/common/Pagination'
 import type SkuAlert from '~/types/interfaces/database/SkuAlert'
-import type FormData from '~/types/interfaces/page/alert/FormData'
+import type AlertFormData from '~/types/interfaces/page/alert/FormData'
 
-interface StockAlertFetchRequest extends PaginationRequest, FormData {}
+interface StockAlertFetchRequest extends PaginationRequest, AlertFormData {}
 interface StockAlertFetchResponse extends PaginationResponse<SkuAlert> {}
 
 export class StockAlertFetchRequestFactory implements StockAlertFetchRequest {

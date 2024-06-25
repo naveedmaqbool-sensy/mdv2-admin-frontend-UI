@@ -132,14 +132,14 @@ import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
 import StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
 import type AdminAlert from '~/types/interfaces/database/AdminAlert'
 import type AdminAlertTarget from '~/types/interfaces/database/AdminAlertTarget'
-import type FormData from '~/types/interfaces/page/alert/FormData'
-import FormDataFactory from '~/types/interfaces/page/alert/FormDataFactory'
+import type AlertFormData from '~/types/interfaces/page/alert/FormData'
+import AlertFormDataFactory from '~/types/interfaces/page/alert/FormDataFactory'
 
 const formData =
-  servicePersistentStateGet<FormData>(AppStateTypes.AlertFormData, {
+  servicePersistentStateGet<AlertFormData>(AppStateTypes.AlertFormData, {
     from: (value: string | null) => (value ? new Date(value) : null),
     to: (value: string | null) => (value ? new Date(value) : null),
-  }) || new FormDataFactory()
+  }) || new AlertFormDataFactory()
 const request = ref({
   ...new ThresholdAlertFetchRequestFactory(),
   from: formData.from,

@@ -4,12 +4,12 @@ import type LineMaster from '../../database/SensyCloud/LineMaster'
 import type ClassMaster from '../../database/SensyCloud/ClassMaster'
 import type StoreGroup from '../../database/SensyCloud/StoreGroup'
 import type StoreMaster from '../../database/SensyCloud/StoreMaster'
-import type FormData from './FormData'
+import type ConfigFormData from './FormData'
 import MonitoringTypes from '~/types/enums/MonitoringTypes'
 import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
 import StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
 
-export default class implements FormData {
+export default class ConfigFormDataFactory implements ConfigFormData {
   // eslint-disable-next-line no-useless-constructor
   constructor(
     public id: number | null = null,

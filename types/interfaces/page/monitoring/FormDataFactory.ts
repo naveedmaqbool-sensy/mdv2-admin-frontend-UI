@@ -4,13 +4,13 @@ import type LineMaster from '../../database/SensyCloud/LineMaster'
 import type ClassMaster from '../../database/SensyCloud/ClassMaster'
 import type StoreGroup from '../../database/SensyCloud/StoreGroup'
 import type StoreMaster from '../../database/SensyCloud/StoreMaster'
-import type FormData from './FormData'
+import type MonitoingFormData from './FormData'
 import MonitoringTypes from '~/types/enums/MonitoringTypes'
 import MonitoringHorizontalAxisTypes from '~/types/enums/MonitoringHorizontalAxisTypes'
 import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
 import StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
 
-export default class implements FormData {
+export default class MonitoringFormDataFactory implements MonitoingFormData {
   monitoringType!: MonitoringTypes | null
   monitoringHorizontalAxisType!: MonitoringHorizontalAxisTypes | null
   skuMonitoringUnitType!: SkuMonitoringUnitTypes | null

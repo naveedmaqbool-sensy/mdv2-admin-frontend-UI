@@ -1,7 +1,7 @@
 import { addDays, endOfWeek, startOfWeek } from 'date-fns'
-import type FormData from './FormData'
+import type AlertFormData from './FormData'
 
-export default class FormDataFactory implements FormData {
+export default class AlertFormDataFactory implements AlertFormData {
   public from!: Date
   public to!: Date
 

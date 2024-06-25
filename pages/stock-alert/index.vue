@@ -57,14 +57,14 @@
 import AppStateTypes from '~/types/enums/AppStateTypes'
 import SkuAlertTypes from '~/types/enums/SkuAlertTypes'
 import type SkuAlert from '~/types/interfaces/database/SkuAlert'
-import type FormData from '~/types/interfaces/page/alert/FormData'
-import FormDataFactory from '~/types/interfaces/page/alert/FormDataFactory'
+import type AlertFormData from '~/types/interfaces/page/alert/FormData'
+import AlertFormDataFactory from '~/types/interfaces/page/alert/FormDataFactory'
 
 const formData =
-  servicePersistentStateGet<FormData>(AppStateTypes.AlertFormData, {
+  servicePersistentStateGet<AlertFormData>(AppStateTypes.AlertFormData, {
     from: (value: string | null) => (value ? new Date(value) : null),
     to: (value: string | null) => (value ? new Date(value) : null),
-  }) || new FormDataFactory()
+  }) || new AlertFormDataFactory()
 const request = ref({
   ...new StockAlertFetchRequestFactory(),
   from: formData.from,
@@ -109,7 +109,7 @@ async function get(page: number) {
   stockAlertTotal.value = response.total
 
   // 検索条件をブラウザに保持する
-  servicePersistentStateSet<FormData>(AppStateTypes.AlertFormData, {
+  servicePersistentStateSet<AlertFormData>(AppStateTypes.AlertFormData, {
     from: formData.from,
     to: formData.to,
   })

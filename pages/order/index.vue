@@ -334,8 +334,8 @@ import type GroupMaster from '~/types/interfaces/database/SensyCloud/GroupMaster
 import type LineMaster from '~/types/interfaces/database/SensyCloud/LineMaster'
 import type StoreGroup from '~/types/interfaces/database/SensyCloud/StoreGroup'
 import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
-import type OrderFormData from '~/types/interfaces/page/order/OrderFormData'
-import OrderFormDataFactory from '~/types/interfaces/page/order/OrderFormDataFactory'
+import type OrderFormData from '~/types/interfaces/page/order/FormData'
+import OrderFormDataFactory from '~/types/interfaces/page/order/FormDataFactory'
 
 const orderColumns = [
   { key: 'objectiveDate', label: '発注日' },
@@ -517,3 +517,5 @@ function onChangedSkuMonitoringUnitType() {
 }
 </script>
 ~/types/interfaces/page/order/OrderAFormDataFactory~/types/interfaces/page/order/OrderAFormData
+~/types/interfaces/page/order/FormData
+~/types/interfaces/page/order/FormDataFactory

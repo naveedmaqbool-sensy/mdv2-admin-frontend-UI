@@ -10,7 +10,7 @@ import type StoreMaster from '../../database/SensyCloud/StoreMaster'
 import type StoreGroup from '../../database/SensyCloud/StoreGroup'
 import type { PaginationRequest } from '../../common/Pagination'
 
-interface FormData extends PaginationRequest {
+interface MonitoingFormData extends PaginationRequest {
   monitoringType: MonitoringTypes | null
   monitoringHorizontalAxisType: MonitoringHorizontalAxisTypes | null
   skuMonitoringUnitType: SkuMonitoringUnitTypes | null
@@ -29,4 +29,4 @@ interface FormData extends PaginationRequest {
   stores: StoreMaster[]
 }
 
-export default FormData
+export default MonitoingFormData
