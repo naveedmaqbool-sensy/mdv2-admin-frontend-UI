@@ -14,6 +14,8 @@ interface AdminAlertTarget {
   classId: string | null
 
   adminAlert?: AdminAlert
+
+  targetName?: string
 }
 
 export default AdminAlertTarget

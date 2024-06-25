@@ -39,7 +39,7 @@
         {{ storeTarget(row) }}
       </template>
       <template #actions-data="{ row }">
-        <UButton color="blue" @click="gotoConfig(row)">対象を確認</UButton>
+        <UButton color="blue" @click="openTargetModal(row)">対象を確認</UButton>
       </template>
     </UTable>
     <UPagination
@@ -53,6 +53,74 @@
     <div class="pt-2">
       <UButton color="white" @click="back">戻る</UButton>
     </div>
+
+    <UModal v-model="showTargetModal">
+      <UCard
+        :ui="{
+          ring: '',
+          divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+        }"
+      >
+        <template #header>
+          <!-- <UForm :state="{}" class="flex flex-row" @submit="fetch(1)">
+            <UInput
+              v-model="searchRequest.text"
+              class="basis-10/12"
+              icon="i-heroicons-magnifying-glass-20-solid"
+              placeholder="検索"
+            />
+            <div class="basis-2/12 text-right">
+              <UButton color="indigo" @click="fetch(1)"> 検索 </UButton>
+            </div>
+          </UForm> -->
+        </template>
+
+        <UTabs
+          :items="[
+            {
+              label: '対象',
+            },
+            { label: '店舗' },
+          ]"
+          @change="onChangedTarget"
+        />
+
+        <UTable
+          :rows="targets"
+          :columns="[
+            {
+              key: 'name',
+              label: '名前',
+            },
+          ]"
+        >
+          <template #name-data="{ row }">
+            {{ row?.targetName }}
+          </template>
+        </UTable>
+
+        <template #footer>
+          <div class="flex flex-row">
+            <div class="basis-3/4 justify-start">
+              <UPagination
+                v-model="targetFetchRequst.page"
+                :page-count="targetFetchRequst.perPage"
+                :max="5"
+                :total="targetTotal"
+                @change="targetFetch(targetFetchRequst.page)"
+              />
+            </div>
+            <div class="basis-1/4 text-right">
+              <UButton
+                color="gray"
+                label="閉じる"
+                @click="showTargetModal = false"
+              />
+            </div>
+          </div>
+        </template>
+      </UCard>
+    </UModal>
   </div>
 </template>
 
@@ -63,6 +131,7 @@ import MonitoringTypes from '~/types/enums/MonitoringTypes'
 import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
 import StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
 import type AdminAlert from '~/types/interfaces/database/AdminAlert'
+import type AdminAlertTarget from '~/types/interfaces/database/AdminAlertTarget'
 import type FormData from '~/types/interfaces/page/alert/FormData'
 import FormDataFactory from '~/types/interfaces/page/alert/FormDataFactory'
 
@@ -131,10 +200,6 @@ function back() {
   useRouter().back()
 }
 
-function gotoConfig(adminAlert: AdminAlert) {
-  useRouter().push('/config/' + adminAlert.adminAlertThresholdId)
-}
-
 function skuTarget(adminAlert: AdminAlert) {
   switch (adminAlert.skuMonitoringUnitType) {
     case SkuMonitoringUnitTypes.Sku:
@@ -176,6 +241,47 @@ function storeTarget(adminAlert: AdminAlert) {
       )
   }
 }
+
+// 対象を確認するモーダル関連の処理 -------------------------------------------------------------
+const showTargetModal = ref(false)
+const targetFetchRequst = ref(new ThresholdAlertTargetFetchRequestFactory())
+const targets = ref<AdminAlertTarget[]>([])
+const targetTotal = ref(0)
+async function openTargetModal(adminAlert: AdminAlert) {
+  targetFetchRequst.value = new ThresholdAlertTargetFetchRequestFactory(
+    adminAlert.id
+  )
+
+  const result = await targetFetch(1)
+
+  // 正常に取得できていたらモーダルを展開
+  if (result) {
+    showTargetModal.value = true
+  }
+}
+
+async function targetFetch(page: number) {
+  targetFetchRequst.value.page = page
+
+  serviceLoadingStart()
+  const response = await apiThresholdAlertTargetFetch(targetFetchRequst.value)
+  serviceLoadingFinish()
+
+  if (!response) {
+    return false
+  }
+
+  targets.value = response.data
+  targetTotal.value = response.total
+  return true
+}
+
+function onChangedTarget(index: number) {
+  targetFetchRequst.value.isStore = index === 1
+
+  targetFetch(1)
+}
+// -------------------------------------------------------------------------------------------
 </script>
 
 <style scoped></style>
