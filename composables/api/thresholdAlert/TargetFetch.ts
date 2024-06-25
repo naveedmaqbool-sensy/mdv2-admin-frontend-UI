@@ -14,6 +14,7 @@ interface ThresholdAlertTargetFetchResponse
 export class ThresholdAlertTargetFetchRequestFactory
   implements ThresholdAlertTargetFetchRequest
 {
+  // eslint-disable-next-line no-useless-constructor
   constructor(
     public adminAlertId: number = 0,
     public isStore: boolean = false,
