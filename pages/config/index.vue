@@ -166,7 +166,7 @@
         </div>
 
         <!-- 対象店舗 -->
-        <div class="flex flex-row pt-2">
+        <div class="flex flex-row">
           <div class="flex basis-1/12 flex-col justify-center text-right">
             <label class="whitespace-nowrap pr-2 font-bold"> 対象店舗 </label>
           </div>
