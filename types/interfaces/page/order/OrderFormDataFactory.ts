@@ -5,11 +5,11 @@ import type LineMaster from '../../database/SensyCloud/LineMaster'
 import type DepartmentMaster from '../../database/SensyCloud/DepartmentMaster'
 import type GroupMaster from '../../database/SensyCloud/GroupMaster'
 import type StoreGroup from '../../database/SensyCloud/StoreGroup'
-import type FormData from './FormData'
+import type OrderFormData from './OrderFormData'
 import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
 import StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
 
-export default class FormDataFactory implements FormData {
+export default class OrderFormDataFactory implements OrderFormData {
   public from!: Date
   public to!: Date
 

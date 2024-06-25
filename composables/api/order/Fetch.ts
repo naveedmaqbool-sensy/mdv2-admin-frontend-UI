@@ -1,7 +1,7 @@
 import type { PaginationResponse } from '~/types/interfaces/common/Pagination'
-import type FormData from '~/types/interfaces/page/order/FormData'
+import type OrderFormData from '~/types/interfaces/page/order/OrderFormData'
 
-interface OrderFetchRequest extends FormData {}
+interface OrderFetchRequest extends OrderFormData {}
 interface OrderFetchResponse extends PaginationResponse<any> {}
 
 export function apiOrderFetch(

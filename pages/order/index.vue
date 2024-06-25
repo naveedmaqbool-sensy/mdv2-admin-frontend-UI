@@ -334,7 +334,8 @@ import type GroupMaster from '~/types/interfaces/database/SensyCloud/GroupMaster
 import type LineMaster from '~/types/interfaces/database/SensyCloud/LineMaster'
 import type StoreGroup from '~/types/interfaces/database/SensyCloud/StoreGroup'
 import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
-import FormDataFactory from '~/types/interfaces/page/order/FormDataFactory'
+import type OrderFormData from '~/types/interfaces/page/order/OrderFormData'
+import OrderFormDataFactory from '~/types/interfaces/page/order/OrderFormDataFactory'
 
 const orderColumns = [
   { key: 'objectiveDate', label: '発注日' },
@@ -350,7 +351,7 @@ const orderColumns = [
 ]
 const orders = ref<any[]>([]) // FIXME: rfukuma 型定義作ったら充てる
 const orderTotal = ref(0)
-const formData = ref(new FormDataFactory())
+const formData = ref<OrderFormData>(new OrderFormDataFactory())
 const isOpenSkuModal = ref(false)
 const skus = ref<any[]>([]) // FIXME: rfukuma 型定義作ったら充てる
 const isOpenGroupsModal = ref(false)
@@ -371,7 +372,7 @@ const apiValidationError = ref<ApiValidationError>(
 )
 
 async function reset() {
-  formData.value = new FormDataFactory()
+  formData.value = new OrderFormDataFactory()
   await get(1)
 }
 
@@ -515,3 +516,4 @@ function onChangedSkuMonitoringUnitType() {
   formData.value.lines = []
 }
 </script>
+~/types/interfaces/page/order/OrderAFormDataFactory~/types/interfaces/page/order/OrderAFormData
