@@ -1,13 +1,13 @@
 import { addDays, endOfWeek, startOfWeek } from 'date-fns'
-import type FormData from './FormData'
 import type StoreMaster from '../../database/SensyCloud/StoreMaster'
 import type ClassMaster from '../../database/SensyCloud/ClassMaster'
 import type LineMaster from '../../database/SensyCloud/LineMaster'
 import type DepartmentMaster from '../../database/SensyCloud/DepartmentMaster'
 import type GroupMaster from '../../database/SensyCloud/GroupMaster'
+import type StoreGroup from '../../database/SensyCloud/StoreGroup'
+import type FormData from './FormData'
 import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
 import StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
-import type StoreGroup from '../../database/SensyCloud/StoreGroup'
 
 export default class FormDataFactory implements FormData {
   public from!: Date

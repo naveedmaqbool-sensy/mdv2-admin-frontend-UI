@@ -1,7 +1,4 @@
-import type {
-  PaginationRequest,
-  PaginationResponse,
-} from '~/types/interfaces/common/Pagination'
+import type { PaginationResponse } from '~/types/interfaces/common/Pagination'
 import type FormData from '~/types/interfaces/page/order/FormData'
 
 interface OrderFetchRequest extends FormData {}
@@ -10,7 +7,6 @@ interface OrderFetchResponse extends PaginationResponse<any> {}
 export function apiOrderFetch(
   request: OrderFetchRequest
 ): Promise<OrderFetchResponse | null> {
-  console.info(request)
   return apiGet('/orders', {
     ...request,
     skuIds: request.skus.map((v) => v.skuId),
