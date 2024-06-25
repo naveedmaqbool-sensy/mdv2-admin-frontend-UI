@@ -33,10 +33,10 @@
         {{ MonitoringTypes.getName(row.monitoringType) }}
       </template>
       <template #skuMonitoringUnitType-data="{ row }">
-        {{ SkuMonitoringUnitTypes.getName(row.skuMonitoringUnitType) }}
+        {{ skuTarget(row) }}
       </template>
       <template #storeMonitoringUnitType-data="{ row }">
-        {{ StoreMonitoringUnitTypes.getName(row.storeMonitoringUnitType) }}
+        {{ storeTarget(row) }}
       </template>
       <template #actions-data="{ row }">
         <UButton color="blue" @click="gotoConfig(row)">対象を確認</UButton>
@@ -133,6 +133,48 @@ function back() {
 
 function gotoConfig(adminAlert: AdminAlert) {
   useRouter().push('/config/' + adminAlert.adminAlertThresholdId)
+}
+
+function skuTarget(adminAlert: AdminAlert) {
+  switch (adminAlert.skuMonitoringUnitType) {
+    case SkuMonitoringUnitTypes.Sku:
+      return (
+        adminAlert.adminAlertTargets?.filter((v) => v.skuId).length +
+        ' 件の商品'
+      )
+    case SkuMonitoringUnitTypes.Group:
+      return (
+        adminAlert.adminAlertTargets?.filter((v) => v.groupId).length +
+        ' 件の部門'
+      )
+    case SkuMonitoringUnitTypes.Department:
+      return (
+        adminAlert.adminAlertTargets?.filter((v) => v.departmentId).length +
+        ' 件の中分類'
+      )
+    case SkuMonitoringUnitTypes.Line:
+      return (
+        adminAlert.adminAlertTargets?.filter((v) => v.lineId).length +
+        ' 件の小分類'
+      )
+    case SkuMonitoringUnitTypes.Class:
+      return (
+        adminAlert.adminAlertTargets?.filter((v) => v.classId).length +
+        ' 件の種別'
+      )
+  }
+}
+
+function storeTarget(adminAlert: AdminAlert) {
+  switch (adminAlert.storeMonitoringUnitType) {
+    case StoreMonitoringUnitTypes.All:
+      return '全店舗'
+    case StoreMonitoringUnitTypes.Store:
+      return (
+        adminAlert.adminAlertTargets?.filter((v) => v.storeId).length +
+        ' 件の店舗'
+      )
+  }
 }
 </script>
 

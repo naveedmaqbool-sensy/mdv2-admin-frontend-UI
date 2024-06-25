@@ -23,6 +23,13 @@ interface AdminAlertThreshold {
   classes?: ClassMaster[]
   storeGroups?: StoreGroup[]
   stores?: StoreMaster[]
+
+  adminAlertThresholdSkus?: any[]
+  adminAlertThresholdGroups?: any[]
+  adminAlertThresholdDepartments?: any[]
+  adminAlertThresholdLines?: any[]
+  adminAlertThresholdClasses?: any[]
+  adminAlertThresholdStores?: any[]
 }
 
 export default AdminAlertThreshold

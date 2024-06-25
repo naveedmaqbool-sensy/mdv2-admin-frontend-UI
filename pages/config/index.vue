@@ -257,7 +257,7 @@
       <template #skuMonitoringUnitType-data="{ row }">
         <div class="flex flex-row">
           <div class="my-auto basis-2/3">
-            {{ SkuMonitoringUnitTypes.getName(row.skuMonitoringUnitType) }}
+            {{ skuTarget(row) }}
           </div>
           <div class="w-full"></div>
         </div>
@@ -266,7 +266,7 @@
       <template #storeMonitoringUnitType-data="{ row }">
         <div class="flex flex-row">
           <div class="my-auto basis-2/3">
-            {{ StoreMonitoringUnitTypes.getName(row.storeMonitoringUnitType) }}
+            {{ storeTarget(row) }}
           </div>
           <div class="w-full"></div>
         </div>
@@ -606,6 +606,49 @@ async function submitDelete() {
 
 function onEdit(threshold: AdminAlertThreshold) {
   useRouter().push('/config/' + threshold.id)
+}
+
+function skuTarget(threshold: AdminAlertThreshold) {
+  switch (threshold.skuMonitoringUnitType) {
+    case SkuMonitoringUnitTypes.Sku:
+      return (
+        formatterNumber(threshold.adminAlertThresholdSkus?.length) + ' 件の商品'
+      )
+    case SkuMonitoringUnitTypes.Group:
+      return (
+        formatterNumber(threshold.adminAlertThresholdGroups?.length) +
+        ' 件の部門'
+      )
+    case SkuMonitoringUnitTypes.Department:
+      return (
+        formatterNumber(threshold.adminAlertThresholdDepartments?.length) +
+        ' 件の中分類'
+      )
+    case SkuMonitoringUnitTypes.Line:
+      return (
+        formatterNumber(threshold.adminAlertThresholdLines?.length) +
+        ' 件の小分類'
+      )
+    case SkuMonitoringUnitTypes.Class:
+      return (
+        formatterNumber(threshold.adminAlertThresholdClasses?.length) +
+        ' 件の種別'
+      )
+  }
+}
+
+function storeTarget(threshold: AdminAlertThreshold) {
+  switch (threshold.storeMonitoringUnitType) {
+    case StoreMonitoringUnitTypes.All:
+      return StoreMonitoringUnitTypes.getName(threshold.storeMonitoringUnitType)
+    case StoreMonitoringUnitTypes.Store:
+      return (
+        formatterNumber(threshold.adminAlertThresholdStores?.length) +
+        ' 件の店舗'
+      )
+    case StoreMonitoringUnitTypes.Area:
+      return '〇〇件の店舗'
+  }
 }
 </script>
 
