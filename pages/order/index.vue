@@ -520,23 +520,24 @@ function onChangedSkuMonitoringUnitType() {
   formData.value.lines = []
 }
 
-async function onChangedActualOrderQty(order: any) {
-  serviceLoadingStart()
+function onChangedActualOrderQty(order: any) {
+  nextTick(async () => {
+    serviceLoadingStart()
+    const response = await apiOrderUpdate({
+      id: order.id,
+      actualOrderQty: order.actualOrderQty,
+    })
+    serviceLoadingFinish()
+    if (response === null) {
+      return
+    }
 
-  const response = await apiOrderUpdate({
-    id: order.id,
-    actualOrderQty: order.actualOrderQty,
+    useNuxtApp().$toast.success(
+      order.storeMaster.storeName +
+        'の' +
+        order.storeSkuMaster.skuName +
+        'の発注数を修正しました。'
+    )
   })
-  serviceLoadingFinish()
-  if (response === null) {
-    return
-  }
-
-  useNuxtApp().$toast.success(
-    order.storeMaster.storeName +
-      'の' +
-      order.storeSkuMaster.skuName +
-      'の発注数を修正しました。'
-  )
 }
 </script>
