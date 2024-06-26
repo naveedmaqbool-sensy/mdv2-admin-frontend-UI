@@ -37,5 +37,10 @@ const links = [
     label: '閾値設定',
     to: '/config',
   },
+  {
+    icon: 'i-heroicons-user-16-solid',
+    label: 'ユーザー管理',
+    to: '/user',
+  },
 ]
 </script>
