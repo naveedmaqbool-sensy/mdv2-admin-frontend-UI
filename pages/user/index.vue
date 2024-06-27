@@ -31,6 +31,9 @@
     </UForm>
 
     <UTable :rows="users" :columns="userHeaders">
+      <template #permission-data="{ row }">
+        {{ UserPermissionTypes.getName(row.permission) }}
+      </template>
       <template #storeMasters-data="{ row }">
         <template v-if="row.storeMasters.length > 0">
           {{ row.storeMasters.map((v: StoreMaster) => v.storeName).join('/') }}
@@ -71,6 +74,7 @@
 
 <script setup lang="ts">
 import type User from '@/types/interfaces/database/User'
+import UserPermissionTypes from '~/types/enums/UserPermissionTypes'
 import type GroupMaster from '~/types/interfaces/database/SensyCloud/GroupMaster'
 import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
 

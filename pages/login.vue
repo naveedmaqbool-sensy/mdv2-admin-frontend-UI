@@ -47,7 +47,7 @@ definePageMeta({
     navigateAuthenticatedTo: '/',
   },
 })
-const email = ref('satoshi.yoneyama@sensy.ai')
+const email = ref('admin@coresoft-net.co.jp')
 const password = ref('password')
 
 const { signIn, status } = useAuth()
