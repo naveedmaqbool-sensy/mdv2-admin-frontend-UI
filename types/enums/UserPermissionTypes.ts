@@ -1,6 +1,6 @@
 enum UserPermissionTypes {
   General = 1,
-  Admin = 255,
+  Admin = 99,
 }
 
 namespace UserPermissionTypes {
