@@ -154,7 +154,7 @@ const thresholdAlertHeaders = [
   },
   {
     key: 'monitoringType',
-    label: '項目',
+    label: 'アラート種類',
   },
   {
     key: 'threshold',

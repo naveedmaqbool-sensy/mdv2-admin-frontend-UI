@@ -20,10 +20,10 @@
           </div>
         </div>
 
-        <!-- 項目 -->
+        <!-- アラート種類 -->
         <div class="flex flex-row pt-2">
           <div class="flex basis-1/12 flex-col justify-center text-right">
-            <label class="whitespace-nowrap pr-2 font-bold">項目</label>
+            <label class="whitespace-nowrap pr-2 font-bold">アラート種類</label>
           </div>
           <div class="flex basis-2/12 flex-col justify-center">
             <CommonSelect
