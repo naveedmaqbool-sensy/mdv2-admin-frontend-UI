@@ -397,7 +397,7 @@ const headers = [
   { key: 'name', label: 'アラート名称' },
   {
     key: 'monitoringType',
-    label: '項目',
+    label: 'アラート種類',
   },
   {
     key: 'threshold',
