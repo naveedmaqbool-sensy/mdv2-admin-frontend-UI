@@ -20,7 +20,7 @@ const selected = defineModel<number | null>('selected', {
 
 const props = withDefaults(
   defineProps<{
-    options: { value: number; name: string }[]
+    options: { value: number | boolean | string; name: string }[]
     title?: string | null
     clearable?: boolean
     placeholder?: string
