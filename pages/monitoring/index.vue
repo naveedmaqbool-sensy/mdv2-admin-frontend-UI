@@ -463,7 +463,9 @@ const skuRangeTypes = computed(() => {
 const storeRangeTypes = computed(() => {
   switch (formData.value.storeMonitoringUnitType) {
     case StoreMonitoringUnitTypes.Store:
-      return [StoreMonitoringUnitTypes.Store, StoreMonitoringUnitTypes.Area]
+      // 店舗グループ排除
+      // return [StoreMonitoringUnitTypes.Store, StoreMonitoringUnitTypes.Area]
+      return [StoreMonitoringUnitTypes.Store]
     case StoreMonitoringUnitTypes.Area:
       return [StoreMonitoringUnitTypes.Area]
   }
