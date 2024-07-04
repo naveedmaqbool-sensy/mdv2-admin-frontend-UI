@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CommonHeader title="ユーザー編集" />
+    <CommonHeader :title="title" />
 
     <UForm :state="{}">
       <section class="rounded border border-gray-300 p-4">
@@ -115,6 +115,10 @@ import UserFactory from '~/types/interfaces/database/UserFactory'
 const userId = useRoute().params.id.toString()
 const isCreate = computed(() => {
   return userId === 'create'
+})
+
+const title = computed(() => {
+  return isCreate.value ? 'ユーザー登録' : 'ユーザー編集'
 })
 
 const user = ref<User>(new UserFactory())
