@@ -8,7 +8,6 @@
           <UInput
             id="email-address"
             v-model="email"
-            type="email"
             autocomplete="sensy-md-email"
             required
             placeholder="メールアドレス"
