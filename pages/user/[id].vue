@@ -106,6 +106,68 @@
             </p>
           </div>
         </div>
+
+        <div class="flex flex-row pt-2">
+          <div class="my-auto basis-2/12 text-right">
+            <label class="pr-2 font-bold">所属店舗</label>
+          </div>
+          <div class="basis-2/12">
+            <UButton color="indigo" @click="isOpenStoreMasterModal = true">
+              選択
+            </UButton>
+          </div>
+        </div>
+        <div v-if="user.storeMasters!.length > 0" class="flex flex-row pt-2">
+          <div class="my-auto basis-2/12 text-right"></div>
+          <div class="basis-10/12">
+            <template
+              v-for="(store, index) in user.storeMasters"
+              :key="store.storeId"
+            >
+              <UBadge class="ml-1" color="gray">
+                {{ store.storeName }}
+                <UButton
+                  :padded="false"
+                  color="gray"
+                  variant="link"
+                  icon="i-heroicons-x-mark-20-solid"
+                  @click="user.storeMasters!.splice(index, 1)"
+                />
+              </UBadge>
+            </template>
+          </div>
+        </div>
+
+        <div class="flex flex-row pt-2">
+          <div class="my-auto basis-2/12 text-right">
+            <label class="pr-2 font-bold">所属部門</label>
+          </div>
+          <div class="basis-2/12">
+            <UButton color="indigo" @click="isOpenGroupMasterModal = true">
+              選択
+            </UButton>
+          </div>
+        </div>
+        <div v-if="user.groupMasters!.length > 0" class="flex flex-row pt-2">
+          <div class="my-auto basis-2/12 text-right"></div>
+          <div class="basis-10/12">
+            <template
+              v-for="(group, index) in user.groupMasters"
+              :key="group.groupId"
+            >
+              <UBadge class="ml-1" color="gray">
+                {{ group.groupName }}
+                <UButton
+                  :padded="false"
+                  color="gray"
+                  variant="link"
+                  icon="i-heroicons-x-mark-20-solid"
+                  @click="user.groupMasters!.splice(index, 1)"
+                />
+              </UBadge>
+            </template>
+          </div>
+        </div>
       </section>
 
       <div class="pt-2">
@@ -113,6 +175,25 @@
         <UButton class="ml-2" @click="onSave">保存</UButton>
       </div>
     </UForm>
+
+    <MonitoringSelectObjectModal
+      v-model:is-open-modal="isOpenStoreMasterModal"
+      v-model:selected="user.storeMasters!"
+      v-model:items="storeMasters"
+      v-model:total="itemsTotal"
+      :columns="[{ key: 'storeName', label: '店舗' }]"
+      id-column-name="storeId"
+      @fetch-items="fetchStores"
+    />
+    <MonitoringSelectObjectModal
+      v-model:is-open-modal="isOpenGroupMasterModal"
+      v-model:selected="user.groupMasters!"
+      v-model:items="groupMasters"
+      v-model:total="itemsTotal"
+      :columns="[{ key: 'groupName', label: '部門' }]"
+      id-column-name="groupId"
+      @fetch-items="fetchGroups"
+    />
   </div>
 </template>
 
@@ -120,6 +201,8 @@
 import ApiValidationError from '~/types/classes/ApiValidationError'
 import UserPermissionTypes from '~/types/enums/UserPermissionTypes'
 import type User from '~/types/interfaces/database/User'
+import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
+import type GroupMaster from '~/types/interfaces/database/SensyCloud/GroupMaster'
 import UserFactory from '~/types/interfaces/database/UserFactory'
 
 const loginUser = useAuth().data.value as User
@@ -169,6 +252,36 @@ async function onSave() {
   }
 
   useNuxtApp().$toast.success('保存しました。')
+}
+
+const itemsTotal = ref(0)
+const isOpenStoreMasterModal = ref(false)
+const isOpenGroupMasterModal = ref(false)
+const storeMasters = ref<StoreMaster[]>([])
+const groupMasters = ref<GroupMaster[]>([])
+
+async function fetchStores(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  const response = await apiStoreMasterFetch(searchRequest)
+  storeMasters.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
+  serviceLoadingFinish()
+}
+
+async function fetchGroups(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  const response = await apiGroupMasterFetch(searchRequest)
+  groupMasters.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
+  serviceLoadingFinish()
 }
 </script>
 

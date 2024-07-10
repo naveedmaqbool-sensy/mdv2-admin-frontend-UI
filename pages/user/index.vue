@@ -28,8 +28,9 @@
           <UButton
             v-if="loginUser.permission === UserPermissionTypes.Admin"
             @click="onCreate"
-            >新規追加</UButton
           >
+            新規追加
+          </UButton>
         </div>
       </section>
     </UForm>
