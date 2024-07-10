@@ -6,7 +6,6 @@ export default interface User {
   id: number | null
   code: string // 社員番号
   name: string
-  email: string
   password?: string
   permission: UserPermissionTypes
   isValid: boolean

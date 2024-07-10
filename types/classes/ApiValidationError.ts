@@ -40,4 +40,8 @@ export default class ApiValidationError implements ApiValidationErrorInterface {
       () => ({})
     ).value
   }
+
+  public set(key: string, message: string) {
+    this.validationErrors[key] = [message]
+  }
 }

@@ -2,7 +2,7 @@
   <div>
     <CommonHeader :title="title" />
 
-    <UForm :state="{}">
+    <UForm :state="{}" @submit="onSave">
       <section class="rounded border border-gray-300 p-4">
         <div class="flex flex-row">
           <div class="my-auto basis-2/12 text-right">
@@ -12,10 +12,35 @@
             <UInput v-model="user.code" />
           </div>
         </div>
-        <div class="flex flex-row" v-if="apiValidationError.exists('code')">
+        <div v-if="apiValidationError.exists('code')" class="flex flex-row">
           <div class="basis-2/12"></div>
           <div class="basis-10/12">
             <p class="text-red-500">{{ apiValidationError.first('code') }}</p>
+          </div>
+        </div>
+
+        <div class="flex flex-row pt-2">
+          <div class="my-auto basis-2/12 text-right">
+            <label class="pr-2 font-bold">パスワード</label>
+          </div>
+          <div class="basis-3/12">
+            <UInput v-model="user.password" type="password" />
+          </div>
+        </div>
+        <div class="flex flex-row pt-2">
+          <div class="my-auto basis-2/12 text-right">
+            <label class="pr-2 font-bold">確認用パスワード</label>
+          </div>
+          <div class="basis-3/12">
+            <UInput v-model="confirmedPassword" type="password" />
+          </div>
+        </div>
+        <div v-if="apiValidationError.exists('password')" class="flex flex-row">
+          <div class="basis-2/12"></div>
+          <div class="basis-10/12">
+            <p class="text-red-500">
+              {{ apiValidationError.first('password') }}
+            </p>
           </div>
         </div>
 
@@ -27,25 +52,10 @@
             <UInput v-model="user.name" />
           </div>
         </div>
-        <div class="flex flex-row" v-if="apiValidationError.exists('name')">
+        <div v-if="apiValidationError.exists('name')" class="flex flex-row">
           <div class="basis-2/12"></div>
           <div class="basis-10/12">
             <p class="text-red-500">{{ apiValidationError.first('name') }}</p>
-          </div>
-        </div>
-
-        <div class="flex flex-row pt-2">
-          <div class="my-auto basis-2/12 text-right">
-            <label class="pr-2 font-bold">メールアドレス</label>
-          </div>
-          <div class="basis-6/12">
-            <UInput v-model="user.email" />
-          </div>
-        </div>
-        <div class="flex flex-row" v-if="apiValidationError.exists('email')">
-          <div class="basis-2/12"></div>
-          <div class="basis-10/12">
-            <p class="text-red-500">{{ apiValidationError.first('email') }}</p>
           </div>
         </div>
 
@@ -62,8 +72,8 @@
           </div>
         </div>
         <div
-          class="flex flex-row"
           v-if="apiValidationError.exists('permission')"
+          class="flex flex-row"
         >
           <div class="basis-2/12"></div>
           <div class="basis-10/12">
@@ -88,7 +98,7 @@
             />
           </div>
         </div>
-        <div class="flex flex-row" v-if="apiValidationError.exists('isValid')">
+        <div v-if="apiValidationError.exists('isValid')" class="flex flex-row">
           <div class="basis-2/12"></div>
           <div class="basis-10/12">
             <p class="text-red-500">
@@ -112,6 +122,7 @@ import UserPermissionTypes from '~/types/enums/UserPermissionTypes'
 import type User from '~/types/interfaces/database/User'
 import UserFactory from '~/types/interfaces/database/UserFactory'
 
+const confirmedPassword = ref('')
 const userId = useRoute().params.id.toString()
 const isCreate = computed(() => {
   return userId === 'create'
@@ -138,6 +149,11 @@ function back() {
 }
 
 async function onSave() {
+  if (user.value.password && user.value.password !== confirmedPassword.value) {
+    apiValidationError.value.set('password', 'パスワードが一致しません。')
+    return
+  }
+
   serviceLoadingStart()
   const response = await apiUserSave(user.value)
   serviceLoadingFinish()

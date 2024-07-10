@@ -84,7 +84,6 @@ const userTotal = ref(0)
 const userHeaders = [
   { key: 'code', label: '社員番号' },
   { key: 'name', label: '氏名' },
-  { key: 'email', label: 'メールアドレス' },
   { key: 'permission', label: '権限' },
   { key: 'storeMasters', label: '所属店舗' },
   { key: 'groupMasters', label: '所属部門' },
