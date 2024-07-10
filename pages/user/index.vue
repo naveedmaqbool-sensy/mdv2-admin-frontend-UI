@@ -25,7 +25,11 @@
           <UButton class="ml-2" color="indigo" @click="fetch(1)">検索</UButton>
         </div>
         <div class="basis-1/2 text-right">
-          <UButton @click="onCreate">新規追加</UButton>
+          <UButton
+            v-if="loginUser.permission === UserPermissionTypes.Admin"
+            @click="onCreate"
+            >新規追加</UButton
+          >
         </div>
       </section>
     </UForm>
@@ -90,6 +94,10 @@ const userHeaders = [
   { key: 'isValid', label: '有効区分' },
   { key: 'actions', label: '操作' },
 ]
+const loginUser = useAuth().data.value as User
+if (loginUser.permission === UserPermissionTypes.General) {
+  userHeaders.splice(userHeaders.length - 1, 1)
+}
 
 function reset() {
   fetchRequest.value = new UserFetchRequestFactory()

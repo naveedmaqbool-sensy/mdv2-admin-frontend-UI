@@ -122,6 +122,11 @@ import UserPermissionTypes from '~/types/enums/UserPermissionTypes'
 import type User from '~/types/interfaces/database/User'
 import UserFactory from '~/types/interfaces/database/UserFactory'
 
+const loginUser = useAuth().data.value as User
+if (loginUser.permission === UserPermissionTypes.General) {
+  throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+}
+
 const confirmedPassword = ref('')
 const userId = useRoute().params.id.toString()
 const isCreate = computed(() => {
