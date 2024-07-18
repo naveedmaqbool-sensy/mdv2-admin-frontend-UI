@@ -254,11 +254,10 @@
     </UTable>
 
     <UPagination
-      v-model="formData.page"
+      v-model="paginationPage"
       :page-count="formData.perPage"
       :max="5"
       :total="orderTotal"
-      @change="get(formData.page)"
     />
 
     <MonitoringSelectObjectModal
@@ -374,6 +373,12 @@ const itemsTotal = ref(0)
 const apiValidationError = ref<ApiValidationError>(
   serviceValidationErrorsInstance()
 )
+const paginationPage = computed({
+  get: () => formData.value.page,
+  set: (value) => {
+    get(value)
+  },
+})
 
 async function reset() {
   formData.value = new OrderFormDataFactory()

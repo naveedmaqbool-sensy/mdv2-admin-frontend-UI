@@ -4,6 +4,7 @@ interface ApiMonitoringFetchRequest extends MonitoingFormData {}
 interface ApiMonitoringFetchResponse {
   headers: string[]
   rows: string[][]
+  total: number
 }
 
 export function apiMonitoringFetch(

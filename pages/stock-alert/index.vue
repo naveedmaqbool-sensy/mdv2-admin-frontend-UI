@@ -40,11 +40,10 @@
       </template>
     </UTable>
     <UPagination
-      v-model="request.page"
+      v-model="paginationPage"
       :page-count="request.perPage"
       :max="5"
       :total="stockAlertTotal"
-      @change="get(request.page)"
     />
 
     <div class="pt-2">
@@ -69,6 +68,12 @@ const request = ref({
   ...new StockAlertFetchRequestFactory(),
   from: formData.from,
   to: formData.to,
+})
+const paginationPage = computed({
+  get: () => request.value.page,
+  set: (value) => {
+    get(value)
+  },
 })
 const stockAlerts = ref<SkuAlert[]>([])
 const stockAlertTotal = ref(0)

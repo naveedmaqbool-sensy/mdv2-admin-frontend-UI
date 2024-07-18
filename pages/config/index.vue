@@ -278,11 +278,10 @@
       </template>
     </UTable>
     <UPagination
-      v-model="fetchRequest.page"
+      v-model="paginationPage"
       :page-count="fetchRequest.perPage"
       :max="5"
       :total="thresholdTotal"
-      @change="fetch(fetchRequest.page)"
     />
 
     <MonitoringSelectObjectModal
@@ -559,6 +558,12 @@ function onChangedSkuMonitoringUnitType() {
 }
 
 const fetchRequest = ref(new ConfigFetchRequestFactory())
+const paginationPage = computed({
+  get: () => fetchRequest.value.page,
+  set: (value) => {
+    fetch(value)
+  },
+})
 const thresholds = ref<AdminAlertThreshold[]>([])
 const thresholdTotal = ref(0)
 async function fetch(page: number) {

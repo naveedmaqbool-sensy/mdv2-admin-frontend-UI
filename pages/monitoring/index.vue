@@ -294,7 +294,7 @@
       </section>
 
       <section class="pt-2 text-left">
-        <UButton color="indigo" @click="fetch">画面表示</UButton>
+        <UButton color="indigo" @click="fetch(1)">画面表示</UButton>
         <UButton
           color="primary"
           class="ml-2"
@@ -324,6 +324,12 @@
             return result
           })
         "
+      />
+      <UPagination
+        v-model="paginationPage"
+        :page-count="formData.perPage"
+        :max="5"
+        :total="kpiItemTotal"
       />
     </template>
 
@@ -427,6 +433,7 @@ const itemsTotal = ref(0)
 
 const kpiRows = ref<string[][]>([])
 const kpiHeaders = ref<string[]>([])
+const kpiItemTotal = ref(0)
 const apiValidationError = ref<ApiValidationError | null>(null)
 
 const skuRangeTypes = computed(() => {
@@ -472,8 +479,16 @@ const storeRangeTypes = computed(() => {
   return []
 })
 
-async function fetch() {
+const paginationPage = computed({
+  get: () => formData.value.page,
+  set: (page: number) => {
+    fetch(page)
+  },
+})
+
+async function fetch(page: number) {
   // FIXME: rfukuma バリデーションがあればここで
+  formData.value.page = page
 
   // 検索できない分類をはじく
 
@@ -490,11 +505,16 @@ async function fetch() {
 
   kpiRows.value = response.rows
   kpiHeaders.value = response.headers
+  kpiItemTotal.value = response.total
 }
 
-function csvExport() {
-  // FIXME: rfukuma CSV出力
-  alert('CSV 出力を行います')
+async function csvExport() {
+  serviceLoadingStart()
+  const response = await apiMonitoringCsvExport(formData.value)
+  serviceLoadingFinish()
+  if (!response) {
+    useNuxtApp().$toast.error('予期せぬエラーが発生しました。')
+  }
 }
 
 async function fetchSkus(searchRequest: {

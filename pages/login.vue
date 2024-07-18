@@ -46,7 +46,7 @@ definePageMeta({
     navigateAuthenticatedTo: '/',
   },
 })
-const email = ref('admin@coresoft-net.co.jp')
+const email = ref('system-admin')
 const password = ref('password')
 
 const { signIn, status } = useAuth()

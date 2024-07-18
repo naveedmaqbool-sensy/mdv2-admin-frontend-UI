@@ -43,11 +43,10 @@
       </template>
     </UTable>
     <UPagination
-      v-model="request.page"
+      v-model="paginationPage"
       :page-count="request.perPage"
       :max="5"
       :total="thresholdAlertTotal"
-      @change="get(request.page)"
     />
 
     <div class="pt-2">
@@ -103,11 +102,10 @@
           <div class="flex flex-row">
             <div class="basis-3/4 justify-start">
               <UPagination
-                v-model="targetFetchRequst.page"
+                v-model="targetPaginationPage"
                 :page-count="targetFetchRequst.perPage"
                 :max="5"
                 :total="targetTotal"
-                @change="targetFetch(targetFetchRequst.page)"
               />
             </div>
             <div class="basis-1/4 text-right">
@@ -144,6 +142,12 @@ const request = ref({
   ...new ThresholdAlertFetchRequestFactory(),
   from: formData.from,
   to: formData.to,
+})
+const paginationPage = computed({
+  get: () => request.value.page,
+  set: (value) => {
+    get(value)
+  },
 })
 const thresholdAlerts = ref<AdminAlert[]>([])
 const thresholdAlertTotal = ref(0)
@@ -245,6 +249,12 @@ function storeTarget(adminAlert: AdminAlert) {
 // 対象を確認するモーダル関連の処理 -------------------------------------------------------------
 const showTargetModal = ref(false)
 const targetFetchRequst = ref(new ThresholdAlertTargetFetchRequestFactory())
+const targetPaginationPage = computed({
+  get: () => targetFetchRequst.value.page,
+  set: (value) => {
+    targetFetch(value)
+  },
+})
 const targets = ref<AdminAlertTarget[]>([])
 const targetTotal = ref(0)
 async function openTargetModal(adminAlert: AdminAlert) {

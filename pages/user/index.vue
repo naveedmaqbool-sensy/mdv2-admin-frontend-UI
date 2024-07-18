@@ -58,11 +58,10 @@
     </UTable>
 
     <UPagination
-      v-model="fetchRequest.page"
+      v-model="paginationPage"
       :page-count="fetchRequest.perPage"
       :max="5"
       :total="userTotal"
-      @change="fetch(fetchRequest.page)"
     />
 
     <CommonConfirmModal v-model="showDeleteModal" @submit="submitDelete">
@@ -81,6 +80,12 @@ import type GroupMaster from '~/types/interfaces/database/SensyCloud/GroupMaster
 import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
 
 const fetchRequest = ref(new UserFetchRequestFactory())
+const paginationPage = computed({
+  get: () => fetchRequest.value.page,
+  set: (value) => {
+    fetch(value)
+  },
+})
 const users = ref<User[]>([])
 const userTotal = ref(0)
 const userHeaders = [

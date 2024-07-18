@@ -39,11 +39,10 @@
         <div class="flex flex-row">
           <div class="basis-3/4 justify-start">
             <UPagination
-              v-model="searchRequest.page"
+              v-model="paginationPage"
               :page-count="searchRequest.perPage"
               :max="5"
               :total="total"
-              @change="fetch(searchRequest.page)"
             />
           </div>
           <div class="basis-1/4 text-right">
@@ -92,6 +91,12 @@ interface SearchRequest extends PaginationRequest {
 const searchRequest = ref<SearchRequest>({
   text: null,
   ...new PaginationRequestFactory(),
+})
+const paginationPage = computed({
+  get: () => searchRequest.value.page,
+  set: (value) => {
+    fetch(value)
+  },
 })
 const emit = defineEmits<{ fetchItems: [searchRequest: SearchRequest] }>()
 
