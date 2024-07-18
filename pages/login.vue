@@ -4,13 +4,13 @@
   >
     <div class="mt-[-10rem] w-full max-w-md space-y-6">
       <UForm :state="{}" class="space-y-3" @submit="login">
-        <UFormGroup label="メールアドレス" name="email">
+        <UFormGroup label="ログインＩＤ" name="email">
           <UInput
             id="email-address"
             v-model="email"
             autocomplete="sensy-md-email"
             required
-            placeholder="メールアドレス"
+            placeholder="ログインＩＤ"
           />
         </UFormGroup>
         <UFormGroup label="パスワード" name="password">

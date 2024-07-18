@@ -12,10 +12,7 @@
             </label>
           </div>
           <div class="basis-5/12">
-            <UInput
-              v-model="fetchRequest.text"
-              placeholder="社員番号・氏名・メールアドレス"
-            />
+            <UInput v-model="fetchRequest.text" placeholder="社員番号・氏名" />
           </div>
         </div>
       </section>
