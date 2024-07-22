@@ -46,8 +46,11 @@ definePageMeta({
     navigateAuthenticatedTo: '/',
   },
 })
-const email = ref('system-admin')
-const password = ref('password')
+
+const environment = useNuxtApp().$config.public.environment
+const isDevelop = environment !== 'production'
+const email = ref(isDevelop ? 'system-admin' : '')
+const password = ref(isDevelop ? 'password' : '')
 
 const { signIn, status } = useAuth()
 

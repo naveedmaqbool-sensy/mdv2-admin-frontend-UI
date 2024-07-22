@@ -38,6 +38,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiUrl,
+      environment: process.env.ENVIRONMENT,
     },
   },
   $production: {},
