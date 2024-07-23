@@ -117,6 +117,14 @@
             </UButton>
           </div>
         </div>
+        <div v-if="apiValidationError.exists('storeIds')" class="flex flex-row">
+          <div class="basis-2/12"></div>
+          <div class="basis-10/12">
+            <p class="text-red-500">
+              {{ apiValidationError.first('storeIds') }}
+            </p>
+          </div>
+        </div>
         <div v-if="user.storeMasters!.length > 0" class="flex flex-row pt-2">
           <div class="my-auto basis-2/12 text-right"></div>
           <div class="basis-10/12">
