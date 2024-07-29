@@ -22,7 +22,7 @@
                 <CommonSelect
                   v-model:selected="formData.monitoringType"
                   class="w-full"
-                  :options="MonitoringTypes.getNameValues()"
+                  :options="MonitoringTypes.getMonitoringNameValues()"
                 />
                 <div></div>
               </div>
