@@ -21,7 +21,9 @@
       </section>
       <section class="pt-2">
         <UButton color="white" @click="reset">リセット</UButton>
-        <UButton class="ml-2" color="indigo" @click="get">確認</UButton>
+        <UButton class="ml-2" color="indigo" @click="get(request.page)">
+          確認
+        </UButton>
       </section>
     </UForm>
 
