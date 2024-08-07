@@ -26,11 +26,11 @@ variables:
 # ＣＩの共通処理を読み込み（案件グループ内の private レポジトリを参照）
 include:
   - project: infrastructure-templates/gitlab-ci
-    ref: v1.0.4
     file:
       - .notification/.gitlab-ci.yml
       - .security/.gitlab-ci.yml
       - .clsl-develop-server/.gitlab-ci.yml
+      - .gcp/.gitlab-ci.yml
 
 # security -----------------------------------------------------------------------------------------------
 .security_rules: &security_rules
