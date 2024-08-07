@@ -152,7 +152,6 @@ staging-docker-build-notification:
     - staging-docker-build
   dependencies:
     - staging-docker-build
-
 # cloud run service デプロイ
 # staging-cloud-run-service-deploy:
 #   stage: deploy
@@ -178,14 +177,14 @@ staging-docker-build-notification:
 #     - gcloud run deploy ${CLOUD_RUN_SERVICE_NAME} --image=${IMAGE_NAME}:latest --region=${REGION}
 
 # デプロイ通知
-staging-cloud-run-service-deploy-notification:
-  extends: .notification-send
-  tags: [$BUILD_RUNNER]
-  when: on_failure
-  <<: *staging_deploy_rules
-  variables:
-    BODY: '##### [${CI_PROJECT_NAME}] デプロイに失敗しました'
-  needs:
-    - staging-cloud-run-service-deploy
-  dependencies:
-    - staging-cloud-run-service-deploy
+# staging-cloud-run-service-deploy-notification:
+#   extends: .notification-send
+#   tags: [$BUILD_RUNNER]
+#   when: on_failure
+#   <<: *staging_deploy_rules
+#   variables:
+#     BODY: '##### [${CI_PROJECT_NAME}] デプロイに失敗しました'
+#   needs:
+#     - staging-cloud-run-service-deploy
+#   dependencies:
+#     - staging-cloud-run-service-deploy
