@@ -157,36 +157,25 @@ staging-docker-build-notification:
 
 # cloud run service デプロイ
 staging-cloud-run-service-deploy:
-  stage: deploy
+  extends: .gcp-cloud-run-service-deploy
   tags: [$BUILD_RUNNER]
   <<: *staging_deploy_rules
-  image: google/cloud-sdk:487.0.0-alpine
   variables:
     GCLOUD_AUTH_CODE: ${STAGING_GCLOUD_AUTH_CODE}
     GCLOUD_PROJECT: ${STAGING_GCLOUD_PROJECT}
     REGION: ${STAGING_ARTIFACT_REGISTRY_REGION}
     IMAGE_NAME: ${STAGING_ARTIFACT_REGISTRY_REPOSITORY}
     CLOUD_RUN_SERVICE_NAME: ${STAGING_CLOUD_RUN_SERVICE_NAME}
-  before_script:
-    # base64 化された認証コードを json に戻す
-    - echo ${GCLOUD_AUTH_CODE} | base64 -d > ./gcloud_auth.json
-    # 戻した 認証コードを使って認証する
-    - gcloud auth activate-service-account --key-file ./gcloud_auth.json
-    # 認証が済んだらファイルを削除
-    - rm -f ./gcloud_auth.json
-    # 操作を行う GCP プロジェクトを設定
-    - gcloud config set project ${GCLOUD_PROJECT}
-  script:
-    - gcloud run deploy ${CLOUD_RUN_SERVICE_NAME} --image=${IMAGE_NAME}:latest --region=${REGION}
+
 # デプロイ通知
-# staging-cloud-run-service-deploy-notification:
-#   extends: .notification-send
-#   tags: [$BUILD_RUNNER]
-#   when: on_failure
-#   <<: *staging_deploy_rules
-#   variables:
-#     BODY: '##### [${CI_PROJECT_NAME}] デプロイに失敗しました'
-#   needs:
-#     - staging-cloud-run-service-deploy
-#   dependencies:
-#     - staging-cloud-run-service-deploy
+staging-cloud-run-service-deploy-notification:
+  extends: .notification-send
+  tags: [$BUILD_RUNNER]
+  when: on_failure
+  <<: *staging_deploy_rules
+  variables:
+    BODY: '##### [${CI_PROJECT_NAME}] デプロイに失敗しました'
+  needs:
+    - staging-cloud-run-service-deploy
+  dependencies:
+    - staging-cloud-run-service-deploy
