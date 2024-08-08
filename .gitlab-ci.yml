@@ -23,7 +23,12 @@ variables:
   STAGING_ARTIFACT_REGISTRY_REGION: asia-northeast1
   STAGING_ARTIFACT_REGISTRY_REPOSITORY: ${STAGING_ARTIFACT_REGISTRY_REGION}-docker.pkg.dev/sensy-develop/frontend/admin
   STAGING_CLOUD_RUN_SERVICE_NAME: admin-frontend
-  # 開発環境 -------------------------------------------
+  # ｊｈ様本番環境 -------------------------------------------
+  PRODUCTION_JH_GCLOUD_AUTH_CODE: ewogICJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsCiAgInByb2plY3RfaWQiOiAic2Vuc3ktbWQtam95ZnVsaG9uZGEiLAogICJwcml2YXRlX2tleV9pZCI6ICJiMzZjMWEwZWFiMzFjN2NlNDA0MDc3ZjljMTUwMjRmNTkwOTY5YmFjIiwKICAicHJpdmF0ZV9rZXkiOiAiLS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tXG5NSUlFdmdJQkFEQU5CZ2txaGtpRzl3MEJBUUVGQUFTQ0JLZ3dnZ1NrQWdFQUFvSUJBUUMzWkJrazZkUHM3aTVHXG52Zmo0YUI5cFVBRWsvQ1RhRXJsSVVZWkt6TFdjVmJWcW0wWElOV1h0bzFkTktINzgwVGtKbVUwQzYrZXRFQWg1XG4zZXV4UktuRy9wYnZiZysxek9ONjVQVFVFYnEwV2JwVHdkSWtuYUVXdlBBbXBEb3lJbXd6MDE1VDJFQzdwc3FMXG43dk1SU09tTGVOaEJjeFc2VmI4MTZ1YWdleEEwbmpkVTlhd2dSa1laZG0wWVVGRGdLQWNLS0Nyb1daamJBWnZnXG44ZG1LdnYzVnBjNy91eEd5R0cxanZKV0RyYmZqNDJodmd4dDY0cnUxaW1Md1o3NkErNWl5TmZSM3BmRExjYlE5XG5OZUZVL3BzTGp1emlsNWFqek1ZbG5jaFRaMnlDMVZnWDhKSlhnT2Z1UTY3SE1WUFlHS2ZWVndvaldnWkc1VzI5XG4vM1hpMWpVUEFnTUJBQUVDZ2dFQVEydEVKeUxqS3g0ZzJ4YnAyWUNGMDdSNnh6ciszVUMyNXRRNXQzUHNiQTNDXG5STy9TUnBrQzRNc0V4RFBZQTE5elJZa2JHN0RZR2ZKaisxRlBYWHJ0bzE5aTQ2Q2xtK00zMmEwa0tIWmdHZjlHXG5sWllTaUMxKzFCb2ZlMFV5czgyZDA2dW42TkQrY3o0TkJrYVJDMUN2c3Z0NUhRNk85VktpbWRMQ2VFcmxtVUhVXG5pbEVoL3lmQnZhVW1zSkxiSjdKRElmM1YxWDdOcDFySWk4N3d1SElOV2lKSmY0TWNmdENTbnc2RC93NHMvV2dhXG5wSkF6ZnlmdjBHQTJPU3dKa1VMcFI1ei8zZG9OMnVKWHdJOUJDc3A1VllKdEVWOFBpcUNzNkx0WEpjRzlQRmExXG5odW1KZ29CbGJBREdEVkZwUDdCQld0MmtJbW1WSVZ4ZzE5ZE5vRlc0S1FLQmdRRDBFTzdKT29JdU4xQjFiSjVZXG5sMEpGd3BPaGREbnNTTVlGTGxCOUtIMjF5WnhjQ013VFdqdDhFY3ZKczFzMEx6QjJ3YnVVMFJQU1kxdVIvaDltXG55MnM0ZHhYdFg4UThBVGYxZE0zblRnV3F5Z3poRTBYT3VVdHpQUEo2dDZIT0pveXhZMjA2VUZIR0FlOE1FUVJMXG40THd1U04wVDhHMkJ1bUNaZnE2aG5paWJaUUtCZ1FEQVc2d09aK1ltSzUvdkZwVDBXNnNWTlNxbEpwZm1aTHJSXG53ak8rSDZWdHlXczlTV2IwakJ1ZUtJVmZNYU91b0d5d0VlZXpDczNEb1F1Rnh4RGhXL3hwQUlYRnQxbVRWTGRVXG44WDZ3QlN2VlVnaCt0MUNxaWpRNjd2VHdhVWZqSUxwK2dKWHBxU0RVMTNNT1NIdm9wQ2lFQTNpcVY4d2dJTUtsXG5ZdlowVXV4Wll3S0JnUUNJNU9KNlhlWGN0RXZkd1JIRDBQdHNFMm9vMmY4UEovWmh1NHVMMStWQ3pKVjJEYjBoXG5jYkFCdEIyZ3dZZjdhaWg5dzhaSi8wZGw3ekxTWFQ0UnN6RXRsNlhsNFp3NHA5cFNRN1NsODE0OFlGMys5SWRvXG5Id2hSMTdLTjRHZlNNRThqeEFmaytGNFZlTW95ODJ4OGZzNHVDOUpzdDZORWExeDVXOVBwZE1PRC9RS0JnUUNnXG42VTdoOGlwRnpnS0pOOE85TWgzSXJPUVNxVmt5WXhzZ3N5c2pwVWQyc3FLaDd4QlFEQkJpV3BWUFQ3QVVPYUVTXG5ITGhOUHdGbjRBVktrSDdmZGxxTTMrSUh4bHdKY2ptMnRobjdWeWdXMS92QlBNb2ZEMk9uMVJOVE5VN3NnZ2xnXG5IMkxJeHpGdXV4aEZYMzgvMm1zR0cvMUp5ZzQ0NWc3TjJSNC9xc3FKN3dLQmdCZzhTTHIxR0NFRi9HbEtMS3FZXG5YT1ZzN29BV0Z6YWk5WHRaRzMyQ1NOZDRXZy9YNEY4MUowOHpuQ01pR1pCZ05HMzNjaStsZzNmazkwRFJBNTBKXG5DNVJWZ25FT2pXeHZIWFFGamdyWnZKYUdVeFM0UFIvMFJOYnAxMWp1UGlQYUNnNlI5dm4vcGc2dmk3WlpneXhCXG5lK1FVSy93MTF6a3hxRVZVZWJqS1FzMzRcbi0tLS0tRU5EIFBSSVZBVEUgS0VZLS0tLS1cbiIsCiAgImNsaWVudF9lbWFpbCI6ICJkZXBsb3lhY2NvdW50QHNlbnN5LW1kLWpveWZ1bGhvbmRhLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwKICAiY2xpZW50X2lkIjogIjEwOTEyOTEyMjU5MzY1MjA1MTk4OSIsCiAgImF1dGhfdXJpIjogImh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbS9vL29hdXRoMi9hdXRoIiwKICAidG9rZW5fdXJpIjogImh0dHBzOi8vb2F1dGgyLmdvb2dsZWFwaXMuY29tL3Rva2VuIiwKICAiYXV0aF9wcm92aWRlcl94NTA5X2NlcnRfdXJsIjogImh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL29hdXRoMi92MS9jZXJ0cyIsCiAgImNsaWVudF94NTA5X2NlcnRfdXJsIjogImh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL3JvYm90L3YxL21ldGFkYXRhL3g1MDkvZGVwbG95YWNjb3VudCU0MHNlbnN5LW1kLWpveWZ1bGhvbmRhLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwKICAidW5pdmVyc2VfZG9tYWluIjogImdvb2dsZWFwaXMuY29tIgp9Cg==
+  PRODUCTION_JH_GCLOUD_PROJECT: sensy-md-joyfulhonda
+  PRODUCTION_JH_ARTIFACT_REGISTRY_REGION: asia-northeast1
+  PRODUCTION_JH_ARTIFACT_REGISTRY_REPOSITORY: ${PRODUCTIN_JH_ARTIFACT_REGISTRY_REGION}-docker.pkg.dev/sensy-md-joyfulhonda/frontend/admin
+  PRODUCTION_JH_CLOUD_RUN_SERVICE_NAME: admin
 
 # ＣＩの共通処理を読み込み（案件グループ内の private レポジトリを参照）
 include:
@@ -179,3 +184,58 @@ staging-cloud-run-service-deploy-notification:
     - staging-cloud-run-service-deploy
   dependencies:
     - staging-cloud-run-service-deploy
+
+# ＪＨ様本番環境（ＧＣＰ） ------------------------------------------------------
+# デプロイ用起動条件
+.production_jh_deploy_rules: &production_jh_deploy_rules
+  only: [main]
+
+# docker build
+production-jh-docker-build:
+  extends: .gcp-artifact-registry-build-and-push
+  tags: [$BUILD_RUNNER]
+  <<: *production_jh_deploy_rules
+  variables:
+    ENVIRONMENT: production-jh
+    GCLOUD_AUTH_CODE: ${PRODUCTION_JH_GCLOUD_AUTH_CODE}
+    GCLOUD_PROJECT: ${PRODUCTION_JH_GCLOUD_PROJECT}
+    REGION: ${PRODUCTION_JH_ARTIFACT_REGISTRY_REGION}
+    IMAGE_NAME: ${PRODUCTION_JH_ARTIFACT_REGISTRY_REPOSITORY}
+
+# ビルド通知
+production-jh-docker-build-notification:
+  extends: .notification-send
+  tags: [$BUILD_RUNNER]
+  when: on_failure
+  <<: *production_jh_deploy_rules
+  variables:
+    BODY: '##### [${CI_PROJECT_NAME}] docker image のビルド / プッシュに失敗しました'
+  needs:
+    - production-jh-docker-build
+  dependencies:
+    - production-jh-docker-build
+
+# cloud run service デプロイ
+production-jh-cloud-run-service-deploy:
+  extends: .gcp-cloud-run-service-deploy
+  tags: [$BUILD_RUNNER]
+  <<: *production_jh_deploy_rules
+  variables:
+    GCLOUD_AUTH_CODE: ${PRODUCTION_JH_GCLOUD_AUTH_CODE}
+    GCLOUD_PROJECT: ${PRODUCTION_JH_GCLOUD_PROJECT}
+    REGION: ${PRODUCTION_JH_ARTIFACT_REGISTRY_REGION}
+    IMAGE_NAME: ${PRODUCTION_JH_ARTIFACT_REGISTRY_REPOSITORY}
+    CLOUD_RUN_SERVICE_NAME: ${PRODUCTION_JH_CLOUD_RUN_SERVICE_NAME}
+
+# デプロイ通知
+production-jh-cloud-run-service-deploy-notification:
+  extends: .notification-send
+  tags: [$BUILD_RUNNER]
+  when: on_failure
+  <<: *production_jh_deploy_rules
+  variables:
+    BODY: '##### [${CI_PROJECT_NAME}] デプロイに失敗しました'
+  needs:
+    - production-jh-cloud-run-service-deploy
+  dependencies:
+    - production-jh-cloud-run-service-deploy
