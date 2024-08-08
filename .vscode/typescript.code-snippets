@@ -1,0 +1,80 @@
+{
+  // Place your front-reseller ワークスペース snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and
+  // description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope
+  // is left empty or omitted, the snippet gets applied to all languages. The prefix is what is
+  // used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+  // $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders.
+  // Placeholders with the same ids are connected.
+  // Example:
+  "promise all": {
+    "scope": "typescript",
+    "prefix": "promise-all-template",
+    "body": ["const [] = await Promise.all([])"],
+    "description": "Promise.all template",
+  },
+  "interface": {
+    "scope": "typescript",
+    "prefix": "interface-template",
+    "body": [
+      "interface ${1:Hoge} { ${2:Params} }",
+      "// eslint-disable-next-line no-redeclare",
+      "namespace ${1:Hoge} {",
+      "export function empty(): ${1:Hoge} {",
+      "return { ${2:Params} }",
+      "}",
+      "}",
+    ],
+    "description": "interface template",
+  },
+  "enum": {
+    "scope": "typescript",
+    "prefix": "enum-template",
+    "body": [
+      "enum ${1:Hoge} {  }",
+      "// eslint-disable-next-line no-redeclare",
+      "namespace ${1:Hoge} {",
+      "export function getName($type: ${1:Hoge}): string {",
+      "switch (type) {",
+      "default:",
+      "return ''",
+      "}",
+      "}",
+      "}",
+    ],
+    "description": "enum template",
+  },
+  "dictionary": {
+    "scope": "typescript",
+    "prefix": "dictionary-template",
+    "body": ["{ [name: string]: string[] }"],
+    "description": "dictionary template",
+  },
+  "model": {
+    "scope": "typescript",
+    "prefix": "model-template",
+    "body": [
+      "const ${1:hoge} = defineModel('${1:hoge}', {",
+      "type: ${2:String},",
+      "required: ${3:true},",
+      "default: () => {",
+      "return ${4:'hoge'}",
+      "},",
+      "})",
+    ],
+    "description": "defineModel template.",
+  },
+  "props": {
+    "scope": "typescript",
+    "prefix": "props-template",
+    "body": [
+      "const { ${1:hoge} } = withDefaults(defineProps<{ ${1:hoge}: ${2:boolean} }>(), {})",
+    ],
+    "description": "defineProps template.",
+  },
+  "emit": {
+    "scope": "typescript",
+    "prefix": "emit-template",
+    "body": ["const emit = defineEmits<{ ${1: change}: [$2] }>()"],
+    "description": "defineEmits template.",
+  },
+}
