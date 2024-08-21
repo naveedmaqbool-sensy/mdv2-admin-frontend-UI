@@ -50,6 +50,7 @@ definePageMeta({
 const environment = useNuxtApp().$config.public.environment
 const isDevelop = ['local', 'develop', 'staging'].includes(environment)
 const email = ref(isDevelop ? 'system-admin' : '')
+
 const password = ref(isDevelop ? 'password' : '')
 
 const { signIn, status } = useAuth()
