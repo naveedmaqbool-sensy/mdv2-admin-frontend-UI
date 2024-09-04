@@ -3,7 +3,9 @@
     <AppHeader />
     <div class="flex">
       <aside class="min-h-[100vh] w-64 bg-gray-200 p-4">
-        <UVerticalNavigation :links="links" />
+        <div class="sticky top-3">
+          <UVerticalNavigation :links="links" />
+        </div>
       </aside>
       <main class="w-full">
         <UContainer class="my-4">
