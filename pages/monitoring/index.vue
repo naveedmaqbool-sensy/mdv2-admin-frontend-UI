@@ -309,6 +309,7 @@
     <!-- 集計結果 -->
     <template v-if="kpiRows.length > 0 && kpiHeaders.length > 0">
       <UTable
+        class="fixed-name"
         :columns="
           kpiHeaders.map((v, index) => ({
             key: index.toString(),
@@ -691,4 +692,34 @@ function onChangedStoreMonitoringRangeType() {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+::v-deep div.fixed-name > table {
+  > thead > tr > th:first-child {
+    z-index: 5;
+    position: sticky;
+    left: 0;
+    background: white;
+    &:before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: -1px;
+      border: 1px solid #ccc;
+    }
+  }
+
+  > tbody > tr > td:first-child {
+    z-index: 5;
+    position: sticky;
+    left: 0;
+    background: white;
+    &:before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: -1px;
+      border: 1px solid #ccc;
+    }
+  }
+}
+</style>
