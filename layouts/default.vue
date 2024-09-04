@@ -2,7 +2,7 @@
   <section>
     <AppHeader />
     <div class="flex">
-      <aside class="h-[100vh] w-64 bg-gray-200 p-4">
+      <aside class="min-h-[100vh] w-64 bg-gray-200 p-4">
         <UVerticalNavigation :links="links" />
       </aside>
       <main class="w-full">
