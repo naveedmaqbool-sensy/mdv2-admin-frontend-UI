@@ -414,7 +414,21 @@ import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster
 import type MonitoingFormData from '~/types/interfaces/page/monitoring/FormData'
 import FormDataFactory from '~/types/interfaces/page/monitoring/FormDataFactory'
 
+// 初期表示の検索条件は最後に検索した設定を参照する
+const cacheFormData = frontCacheGet('monitoringFormData', true)
 const formData = ref<MonitoingFormData>(new FormDataFactory())
+if (cacheFormData !== null) {
+  formData.value = {
+    ...cacheFormData,
+    targetDateFrom: cacheFormData.targetDateFrom
+      ? new Date(cacheFormData.targetDateFrom)
+      : null,
+    targetDateTo: cacheFormData.targetDateTo
+      ? new Date(cacheFormData.targetDateTo)
+      : null,
+  }
+}
+
 const isOpenSkuModal = ref(false)
 const skus = ref<any[]>([]) // FIXME: rfukuma 型定義作ったら充てる
 const isOpenGroupsModal = ref(false)
@@ -506,6 +520,9 @@ async function fetch(page: number) {
   kpiRows.value = response.rows
   kpiHeaders.value = response.headers
   kpiItemTotal.value = response.total
+
+  // 最後に検索した設定を保持
+  frontCacheSet('monitoringFormData', formData.value, true)
 }
 
 async function csvExport() {
