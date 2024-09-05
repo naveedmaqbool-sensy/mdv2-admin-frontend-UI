@@ -693,7 +693,7 @@ function onChangedStoreMonitoringRangeType() {
 </script>
 
 <style scoped>
-::v-deep div.fixed-name > table {
+:deep(div.fixed-name > table) {
   > thead > tr > th:first-child {
     z-index: 5;
     position: sticky;
