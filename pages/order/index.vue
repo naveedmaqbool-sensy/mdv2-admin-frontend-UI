@@ -224,28 +224,39 @@
         {{ formatterDate(row.deliveryDate) }}
       </template>
       <template #storeId-data="{ row }">
-        {{ row.storeMaster.storeName }}
+        {{ row.storeMaster?.storeName }}
       </template>
       <template #skuId-data="{ row }">
-        {{ row.storeSkuMaster.skuName }}
+        {{ row.storeSkuMaster?.skuName }}
       </template>
       <template #groupId-data="{ row }">
-        {{ row.groupMaster.groupName }}
+        {{ row.groupMaster?.groupName }}
       </template>
       <template #departmentId-data="{ row }">
-        {{ row.departmentMaster.departmentName }}
+        {{ row.departmentMaster?.departmentName }}
       </template>
       <template #lineId-data="{ row }">
-        {{ row.lineMaster.lineName }}
+        {{ row.lineMaster?.lineName }}
       </template>
       <template #classId-data="{ row }">
-        {{ row.classMaster.className }}
+        {{ row.classMaster?.className }}
       </template>
       <template #predictionOrderQty-data="{ row }">
         {{ formatterNumber(row.predictionOrderQty) }}
       </template>
       <template #actualOrderQty-data="{ row }">
+        <UTooltip
+          v-if="
+            new Date(row.objectiveDate).getTime() <
+            new Date().setHours(0, 0, 0, 0)
+          "
+          text="当日以外の発注は変更できません"
+          :popper="{ placement: 'top' }"
+        >
+          <UInput v-model.lazy="row.actualOrderQty" type="number" disabled />
+        </UTooltip>
         <UInput
+          v-else
           v-model.lazy="row.actualOrderQty"
           type="number"
           @change="onChangedActualOrderQty(row)"
