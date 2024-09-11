@@ -1,10 +1,22 @@
 <template>
   <section>
-    <AppHeader />
+    <AppHeader class="sticky top-0 z-50" @on-menu-click="onMenuClick" />
     <div class="flex">
-      <aside class="h-[100vh] w-64 bg-gray-200 p-4">
-        <UVerticalNavigation :links="links" />
-      </aside>
+      <transition
+        :duration="{ enter: 100, leave: 100 }"
+        enter-active-class="transition ease-in-out transform"
+        enter-from-class="-translate-x-full"
+        enter-to-class="translate-x-0"
+        leave-active-class="transition ease-in-out transform"
+        leave-from-class="translate-x-0"
+        leave-to-class="-translate-x-full"
+      >
+        <aside v-if="isActiveMenu" class="min-h-[100vh] bg-gray-200">
+          <div class="sticky top-16 w-64 pl-6">
+            <UVerticalNavigation :links="links" />
+          </div>
+        </aside>
+      </transition>
       <main class="w-full">
         <UContainer class="my-4">
           <slot />
@@ -43,4 +55,10 @@ const links = [
     to: '/user',
   },
 ]
+
+const isActiveMenu = ref(false)
+
+function onMenuClick() {
+  isActiveMenu.value = !isActiveMenu.value
+}
 </script>

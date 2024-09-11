@@ -231,7 +231,7 @@ function skuTarget(adminAlert: AdminAlert) {
     case SkuMonitoringUnitTypes.Class:
       return (
         adminAlert.adminAlertTargets?.filter((v) => v.classId).length +
-        ' 件の種別'
+        ' 件の細分類'
       )
   }
 }

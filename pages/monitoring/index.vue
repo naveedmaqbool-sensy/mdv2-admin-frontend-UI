@@ -309,6 +309,7 @@
     <!-- 集計結果 -->
     <template v-if="kpiRows.length > 0 && kpiHeaders.length > 0">
       <UTable
+        class="fixed-name"
         :columns="
           kpiHeaders.map((v, index) => ({
             key: index.toString(),
@@ -356,7 +357,10 @@
       v-model:selected="formData.departments"
       v-model:items="departments"
       v-model:total="itemsTotal"
-      :columns="[{ key: 'departmentName', label: '中分類' }]"
+      :columns="[
+        { key: 'groupName', label: '部門' },
+        { key: 'departmentName', label: '中分類' },
+      ]"
       id-column-name="departmentId"
       @fetch-items="fetchDepartments"
     />
@@ -365,7 +369,10 @@
       v-model:selected="formData.lines"
       v-model:items="lines"
       v-model:total="itemsTotal"
-      :columns="[{ key: 'lineName', label: '小分類' }]"
+      :columns="[
+        { key: 'groupName', label: '部門' },
+        { key: 'lineName', label: '小分類' },
+      ]"
       id-column-name="lineId"
       @fetch-items="fetchLines"
     />
@@ -374,7 +381,10 @@
       v-model:selected="formData.classes"
       v-model:items="classes"
       v-model:total="itemsTotal"
-      :columns="[{ key: 'className', label: '種別' }]"
+      :columns="[
+        { key: 'groupName', label: '部門' },
+        { key: 'className', label: '細分類' },
+      ]"
       id-column-name="classId"
       @fetch-items="fetchClasses"
     />
@@ -414,7 +424,21 @@ import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster
 import type MonitoingFormData from '~/types/interfaces/page/monitoring/FormData'
 import FormDataFactory from '~/types/interfaces/page/monitoring/FormDataFactory'
 
+// 初期表示の検索条件は最後に検索した設定を参照する
+const cacheFormData = frontCacheGet('monitoringFormData', true)
 const formData = ref<MonitoingFormData>(new FormDataFactory())
+if (cacheFormData !== null) {
+  formData.value = {
+    ...cacheFormData,
+    targetDateFrom: cacheFormData.targetDateFrom
+      ? new Date(cacheFormData.targetDateFrom)
+      : null,
+    targetDateTo: cacheFormData.targetDateTo
+      ? new Date(cacheFormData.targetDateTo)
+      : null,
+  }
+}
+
 const isOpenSkuModal = ref(false)
 const skus = ref<any[]>([]) // FIXME: rfukuma 型定義作ったら充てる
 const isOpenGroupsModal = ref(false)
@@ -506,6 +530,9 @@ async function fetch(page: number) {
   kpiRows.value = response.rows
   kpiHeaders.value = response.headers
   kpiItemTotal.value = response.total
+
+  // 最後に検索した設定を保持
+  frontCacheSet('monitoringFormData', formData.value, true)
 }
 
 async function csvExport() {
@@ -674,4 +701,34 @@ function onChangedStoreMonitoringRangeType() {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+:deep(div.fixed-name > table) {
+  > thead > tr > th:first-child {
+    z-index: 5;
+    position: sticky;
+    left: 0;
+    background: white;
+    &:before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: -1px;
+      border: 1px solid #ccc;
+    }
+  }
+
+  > tbody > tr > td:first-child {
+    z-index: 5;
+    position: sticky;
+    left: 0;
+    background: white;
+    &:before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: -1px;
+      border: 1px solid #ccc;
+    }
+  }
+}
+</style>

@@ -7,7 +7,7 @@ interface OrderFetchResponse extends PaginationResponse<any> {}
 export function apiOrderFetch(
   request: OrderFetchRequest
 ): Promise<OrderFetchResponse | null> {
-  return apiGet('/orders', {
+  return apiPost('/orders', {
     ...request,
     skuIds: request.skus.map((v) => v.skuId),
     lineIds: request.lines.map((v) => v.lineId),

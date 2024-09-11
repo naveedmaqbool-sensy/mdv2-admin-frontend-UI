@@ -1,5 +1,5 @@
 export function apiUserDelete(userId: number) {
-  return apiDelete('/user', {
+  return apiDelete<{ id: number }, boolean>('/user', {
     id: userId,
   })
 }
