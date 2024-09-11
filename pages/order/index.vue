@@ -294,7 +294,10 @@
       v-model:selected="formData.departments"
       v-model:items="departments"
       v-model:total="itemsTotal"
-      :columns="[{ key: 'departmentName', label: '中分類' }]"
+      :columns="[
+        { key: 'groupName', label: '部門' },
+        { key: 'departmentName', label: '中分類' },
+      ]"
       id-column-name="departmentId"
       @fetch-items="fetchDepartments"
     />
@@ -303,7 +306,10 @@
       v-model:selected="formData.lines"
       v-model:items="lines"
       v-model:total="itemsTotal"
-      :columns="[{ key: 'lineName', label: '小分類' }]"
+      :columns="[
+        { key: 'groupName', label: '部門' },
+        { key: 'lineName', label: '小分類' },
+      ]"
       id-column-name="lineId"
       @fetch-items="fetchLines"
     />
@@ -312,7 +318,10 @@
       v-model:selected="formData.classes"
       v-model:items="classes"
       v-model:total="itemsTotal"
-      :columns="[{ key: 'className', label: '細分類' }]"
+      :columns="[
+        { key: 'groupName', label: '部門' },
+        { key: 'className', label: '細分類' },
+      ]"
       id-column-name="classId"
       @fetch-items="fetchClasses"
     />
