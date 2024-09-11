@@ -312,7 +312,7 @@
       v-model:selected="formData.classes"
       v-model:items="classes"
       v-model:total="itemsTotal"
-      :columns="[{ key: 'className', label: '種別' }]"
+      :columns="[{ key: 'className', label: '細分類' }]"
       id-column-name="classId"
       @fetch-items="fetchClasses"
     />
@@ -359,7 +359,7 @@ const orderColumns = [
   { key: 'groupId', label: '部門' },
   { key: 'departmentId', label: '中分類' },
   { key: 'lineId', label: '小分類' },
-  { key: 'classId', label: '種別' },
+  { key: 'classId', label: '細分類' },
   { key: 'predictionOrderQty', label: '予測発注数' },
   { key: 'actualOrderQty', label: '実発注数' },
 ]

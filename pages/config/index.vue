@@ -325,7 +325,7 @@
       v-model:selected="formData.classes"
       v-model:items="classes"
       v-model:total="itemsTotal"
-      :columns="[{ key: 'className', label: '種別' }]"
+      :columns="[{ key: 'className', label: '細分類' }]"
       id-column-name="classId"
       @fetch-items="fetchClasses"
     />
@@ -637,7 +637,7 @@ function skuTarget(threshold: AdminAlertThreshold) {
     case SkuMonitoringUnitTypes.Class:
       return (
         formatterNumber(threshold.adminAlertThresholdClasses?.length) +
-        ' 件の種別'
+        ' 件の細分類'
       )
   }
 }

@@ -4,7 +4,7 @@ enum SkuMonitoringUnitTypes {
   Group, // 部門
   Department, // 中分類
   Line, // 小分類
-  Class, // 種別
+  Class, // 細分類
 }
 
 namespace SkuMonitoringUnitTypes {
@@ -19,7 +19,7 @@ namespace SkuMonitoringUnitTypes {
       case SkuMonitoringUnitTypes.Line:
         return '小分類'
       case SkuMonitoringUnitTypes.Class:
-        return '種別'
+        return '細分類'
     }
   }
 

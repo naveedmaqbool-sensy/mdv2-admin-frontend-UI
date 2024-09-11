@@ -290,7 +290,7 @@
       v-model:selected="formData.classes"
       v-model:items="classes"
       v-model:total="itemsTotal"
-      :columns="[{ key: 'className', label: '種別' }]"
+      :columns="[{ key: 'className', label: '細分類' }]"
       id-column-name="classId"
       @fetch-items="fetchClasses"
     />
