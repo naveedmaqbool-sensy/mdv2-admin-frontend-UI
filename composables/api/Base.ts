@@ -53,6 +53,7 @@ export async function apiBase<RequestT, ResponseT>(
       const statusCode = error.response.status
       switch (statusCode) {
         case 403:
+        case 401:
           // 権限エラーの場合はログイン画面に飛ばす
           location.href = '/login'
           break
