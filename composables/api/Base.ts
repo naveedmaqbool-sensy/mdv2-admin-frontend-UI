@@ -55,7 +55,9 @@ export async function apiBase<RequestT, ResponseT>(
         case 403:
         case 401:
           // 権限エラーの場合はログイン画面に飛ばす
-          location.href = '/login'
+          if (location.href !== '/login') {
+            location.href = '/login'
+          }
           break
         case 422:
           // Laravel のバリデーションエラーを格納
