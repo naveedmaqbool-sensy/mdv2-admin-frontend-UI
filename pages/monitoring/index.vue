@@ -310,21 +310,22 @@
     <template v-if="kpiRows.length > 0 && kpiHeaders.length > 0">
       <UTable
         class="fixed-name"
-        :columns="
-          kpiHeaders.map((v, index) => ({
+        :columns="[
+          ...kpiHeaders.map((v, index) => ({
             key: index.toString(),
             label: v,
-          }))
-        "
+          })),
+        ]"
         :rows="
           kpiRows.map((values) => {
             const result: { [key: string]: string } = {}
-            values.forEach((v, index) => {
-              result[index.toString()] = v
+            Object.keys(values).forEach((key) => {
+              result[key] = values[key]
             })
             return result
           })
         "
+        @select="onSelectRow"
       />
       <UPagination
         v-model="paginationPage"
@@ -406,15 +407,29 @@
       id-column-name="storeGroupId"
       @fetch-items="fetchStoreGroups"
     />
+    <MonitoringDetailModal
+      v-if="!!monitoringDetailRequest"
+      v-model:is-open-modal="isOpenModal"
+      v-model:page="monitoringDetailRequest.page"
+      v-model:perPage="monitoringDetailRequest.page"
+      v-model:search-text="monitoringDetailRequest.searchText"
+      :items="monitoringDetails"
+      :total="monitoringDetailTotal"
+      :monitoring-type="monitoringDetailRequest.monitoringType!"
+      @fetch-items="fetchMonitoringDetail"
+      @csv-export="csvExportMonitoringDetail"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import type { ApiMonitoringDetailRequest } from '~/composables/api/monitoring/Detail'
 import ApiValidationError from '~/types/classes/ApiValidationError'
 import MonitoringHorizontalAxisTypes from '~/types/enums/MonitoringHorizontalAxisTypes'
 import MonitoringTypes from '~/types/enums/MonitoringTypes'
 import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
 import StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
+import PaginationReqeustFactory from '~/types/interfaces/common/PaginationRequestFactory'
 import type ClassMaster from '~/types/interfaces/database/SensyCloud/ClassMaster'
 import type DepartmentMaster from '~/types/interfaces/database/SensyCloud/DepartmentMaster'
 import type GroupMaster from '~/types/interfaces/database/SensyCloud/GroupMaster'
@@ -455,7 +470,7 @@ const isOpenStoreGroupModal = ref(false)
 const storeGroups = ref<StoreGroup[]>([])
 const itemsTotal = ref(0)
 
-const kpiRows = ref<string[][]>([])
+const kpiRows = ref<{ [key: string]: string }[]>([])
 const kpiHeaders = ref<string[]>([])
 const kpiItemTotal = ref(0)
 const apiValidationError = ref<ApiValidationError | null>(null)
@@ -509,6 +524,11 @@ const paginationPage = computed({
     fetch(page)
   },
 })
+
+const isOpenModal = ref(false)
+const monitoringDetailRequest = ref<ApiMonitoringDetailRequest>()
+const monitoringDetails = ref<any[]>([])
+const monitoringDetailTotal = ref(0)
 
 async function fetch(page: number) {
   // FIXME: rfukuma バリデーションがあればここで
@@ -699,9 +719,42 @@ function onChangedStoreMonitoringRangeType() {
   formData.value.storeGroups = []
   formData.value.stores = []
 }
+
+async function onSelectRow(row: { [key: string]: string }) {
+  const fetchRequest = frontCacheGet('monitoringFormData', true)
+
+  monitoringDetailRequest.value = {
+    targetId: row.targetId,
+    searchText: '',
+    ...fetchRequest,
+    ...new PaginationReqeustFactory(),
+  }
+
+  const result = await fetchMonitoringDetail()
+  isOpenModal.value = result
+}
+
+async function fetchMonitoringDetail() {
+  serviceLoadingStart()
+  const response = await apiMonitoringDetail(monitoringDetailRequest.value!)
+  if (response === null) {
+    serviceLoadingFinish()
+    return false
+  }
+
+  monitoringDetails.value = response.data
+  monitoringDetailTotal.value = response.total
+  serviceLoadingFinish()
+
+  return true
+}
+
+function csvExportMonitoringDetail() {
+  alert('FIXME: rfukuma 実装中')
+}
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 :deep(div.fixed-name > table) {
   > thead > tr > th:first-child {
     z-index: 5;
@@ -729,6 +782,10 @@ function onChangedStoreMonitoringRangeType() {
       left: -1px;
       border: 1px solid #ccc;
     }
+  }
+
+  > tbody > tr:hover > td {
+    @apply bg-gray-50;
   }
 }
 </style>
