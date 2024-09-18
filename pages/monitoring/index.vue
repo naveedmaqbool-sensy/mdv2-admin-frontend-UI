@@ -411,7 +411,7 @@
       v-if="!!monitoringDetailRequest"
       v-model:is-open-modal="isOpenModal"
       v-model:page="monitoringDetailRequest.page"
-      v-model:perPage="monitoringDetailRequest.page"
+      v-model:perPage="monitoringDetailRequest.perPage"
       v-model:search-text="monitoringDetailRequest.searchText"
       :items="monitoringDetails"
       :total="monitoringDetailTotal"
