@@ -730,6 +730,18 @@ async function onSelectRow(row: { [key: string]: string }) {
     ...new PaginationReqeustFactory(),
   }
 
+  // 発注修正数と発注修正率以外の場合は処理しない
+  if (
+    ![MonitoringTypes.OrderChangePty, MonitoringTypes.OrderChangeRate].includes(
+      monitoringDetailRequest.value!.monitoringType!
+    )
+  ) {
+    useNuxtApp().$toast.info(
+      '明細情報は\n・発注修正数\n・発注修正率\nのみ対応しています。'
+    )
+    return
+  }
+
   const result = await fetchMonitoringDetail()
   isOpenModal.value = result
 }

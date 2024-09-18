@@ -85,6 +85,8 @@ const headerTitle = computed(() => {
   switch (props.monitoringType) {
     case MonitoringTypes.OrderChangePty:
       return '発注修正数明細'
+    case MonitoringTypes.OrderChangeRate:
+      return '発注修正率明細'
     default:
       return ''
   }
@@ -93,6 +95,7 @@ const headers = computed(() => {
   // FIXME: rfukuma 種類に応じたヘッダー
   switch (props.monitoringType) {
     case MonitoringTypes.OrderChangePty:
+    case MonitoringTypes.OrderChangeRate:
       return [
         {
           key: 'date',
