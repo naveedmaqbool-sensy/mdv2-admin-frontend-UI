@@ -761,8 +761,10 @@ async function fetchMonitoringDetail() {
   return true
 }
 
-function csvExportMonitoringDetail() {
-  alert('FIXME: rfukuma 実装中')
+async function csvExportMonitoringDetail() {
+  serviceLoadingStart()
+  await apiMonitoringDetailCsvEport(monitoringDetailRequest.value!)
+  serviceLoadingFinish()
 }
 </script>
 
@@ -799,5 +801,15 @@ function csvExportMonitoringDetail() {
   > tbody > tr:hover > td {
     @apply bg-gray-50;
   }
+}
+
+:deep(table > tbody > tr > td) {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+:deep(table > thead > tr > th) {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 </style>

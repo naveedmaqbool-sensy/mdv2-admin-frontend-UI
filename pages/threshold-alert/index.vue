@@ -296,4 +296,14 @@ function onChangedTarget(index: number) {
 // -------------------------------------------------------------------------------------------
 </script>
 
-<style scoped></style>
+<style scoped>
+:deep(table > tbody > tr > td) {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+:deep(table > thead > tr > th) {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+</style>
