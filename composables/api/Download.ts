@@ -6,7 +6,9 @@ export async function apiDownload<RequestT>(
   request: RequestT
 ) {
   // ＡＰＩ発行
-  const response = await apiPost<RequestT, Blob>(endpoint, request, 'blob')
+  const response = await apiPost<RequestT, Blob>(endpoint, request, 'blob', {
+    500: 'データ量が多すぎる可能性があります。\n件数を絞ってもう一度お試しください。',
+  })
   if (response === null) {
     return false
   }

@@ -1,6 +1,7 @@
 export function apiGet<RequestT, ResponseT>(
   endpoint: string,
-  request: RequestT
+  request: RequestT,
+  errorMessages: ErrorMessages | null = null
 ): Promise<ResponseT | null> {
-  return apiBase(endpoint, request, 'GET')
+  return apiBase(endpoint, request, 'GET', undefined, errorMessages)
 }

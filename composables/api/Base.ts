@@ -10,11 +10,14 @@ export type ResponseType =
   | 'stream'
   | undefined
 
+export type ErrorMessages = { [key: number]: string }
+
 export async function apiBase<RequestT, ResponseT>(
   endpoint: string,
   request: RequestT,
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',
-  responseType: ResponseType = undefined
+  responseType: ResponseType = undefined,
+  errorMessages: ErrorMessages | null = null
 ): Promise<ResponseT | null> {
   let params: any = null
   let body: any = null
@@ -78,13 +81,16 @@ export async function apiBase<RequestT, ResponseT>(
         case 405:
         case 500:
           if (process.client) {
-            useNuxtApp().$toast.error('予期せぬエラーが発生しました。')
+            useNuxtApp().$toast.error(
+              errorMessages?.[statusCode] ?? '予期せぬエラーが発生しました。'
+            )
           }
           break
         case 409:
           if (process.client) {
             useNuxtApp().$toast.error(
-              'データの重複があります。\n画面を再読み込みしてください。'
+              errorMessages?.[statusCode] ??
+                'データの重複があります。\n画面を再読み込みしてください。'
             )
           }
           break
