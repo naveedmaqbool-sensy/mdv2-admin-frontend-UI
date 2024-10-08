@@ -16,6 +16,7 @@ interface ConfigFormData {
   skuMonitoringUnitType: SkuMonitoringUnitTypes | null
   storeMonitoringUnitType: StoreMonitoringUnitTypes | null
   threshold: number
+  isAllTarget: boolean
 
   // FIXME: rfukuma 型定義作ったら入れる
   skus: any[]

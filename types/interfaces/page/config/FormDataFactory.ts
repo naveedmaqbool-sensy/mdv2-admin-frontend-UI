@@ -18,6 +18,7 @@ export default class ConfigFormDataFactory implements ConfigFormData {
     public skuMonitoringUnitType: SkuMonitoringUnitTypes | null = SkuMonitoringUnitTypes.Sku,
     public storeMonitoringUnitType: StoreMonitoringUnitTypes | null = StoreMonitoringUnitTypes.All,
     public threshold: number = 0,
+    public isAllTarget: boolean = false,
 
     // FIXME: rfukuma 型定義作ったら入れる
     public skus: any[] = [],
