@@ -63,7 +63,15 @@
             />
           </div>
           <div class="flex flex-col justify-center pl-2">
-            <UButton color="indigo" @click="openSkuModal">選択</UButton>
+            <UButton
+              color="indigo"
+              :disabled="formData.isAllTarget"
+              @click="openSkuModal"
+              >選択</UButton
+            >
+          </div>
+          <div class="flex flex-col justify-center pl-5">
+            <UCheckbox v-model="formData.isAllTarget" label="全選択" />
           </div>
         </div>
         <div
@@ -543,6 +551,15 @@ async function fetchStoreGroups(searchRequest: {
 }
 
 async function addAlert() {
+  // 全選択の場合は選択しているものを削除する
+  if (formData.value.isAllTarget) {
+    formData.value.skus = []
+    formData.value.groups = []
+    formData.value.departments = []
+    formData.value.classes = []
+    formData.value.lines = []
+  }
+
   serviceLoadingStart()
   const response = await apiConfigCreate(formData.value)
   apiValidationError.value.refresh()
@@ -625,29 +642,30 @@ function onEdit(threshold: AdminAlertThreshold) {
 function skuTarget(threshold: AdminAlertThreshold) {
   switch (threshold.skuMonitoringUnitType) {
     case SkuMonitoringUnitTypes.Sku:
-      return (
-        formatterNumber(threshold.adminAlertThresholdSkus?.length) + ' 件の商品'
-      )
+      return threshold.isAllTarget
+        ? 'すべての商品'
+        : formatterNumber(threshold.adminAlertThresholdSkus?.length) +
+            ' 件の商品'
     case SkuMonitoringUnitTypes.Group:
-      return (
-        formatterNumber(threshold.adminAlertThresholdGroups?.length) +
-        ' 件の部門'
-      )
+      return threshold.isAllTarget
+        ? 'すべての部門'
+        : formatterNumber(threshold.adminAlertThresholdGroups?.length) +
+            ' 件の部門'
     case SkuMonitoringUnitTypes.Department:
-      return (
-        formatterNumber(threshold.adminAlertThresholdDepartments?.length) +
-        ' 件の中分類'
-      )
+      return threshold.isAllTarget
+        ? 'すべての中分類'
+        : formatterNumber(threshold.adminAlertThresholdDepartments?.length) +
+            ' 件の中分類'
     case SkuMonitoringUnitTypes.Line:
-      return (
-        formatterNumber(threshold.adminAlertThresholdLines?.length) +
-        ' 件の小分類'
-      )
+      return threshold.isAllTarget
+        ? 'すべての小分類'
+        : formatterNumber(threshold.adminAlertThresholdLines?.length) +
+            ' 件の小分類'
     case SkuMonitoringUnitTypes.Class:
-      return (
-        formatterNumber(threshold.adminAlertThresholdClasses?.length) +
-        ' 件の細分類'
-      )
+      return threshold.isAllTarget
+        ? 'すべての細分類'
+        : formatterNumber(threshold.adminAlertThresholdClasses?.length) +
+            ' 件の細分類'
   }
 }
 
