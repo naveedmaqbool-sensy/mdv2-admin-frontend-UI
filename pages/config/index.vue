@@ -83,94 +83,98 @@
             {{ apiValidationError?.first('skuMonitoringUnitType') }}
           </div>
         </div>
-
         <!-- 選択内容を表示 -->
         <div class="flex flex-row pt-2">
-          <div class="flex basis-1/12 flex-col justify-center text-right" />
-          <div class="my-auto flex flex-col justify-center">
-            <div v-if="formData.skus.length > 0" class="pb-3">
-              <template v-for="(sku, index) in formData.skus" :key="sku.skuId">
-                <UBadge class="ml-1" color="gray">
-                  {{ sku.skuName }}
-                  <UButton
-                    :padded="false"
-                    color="gray"
-                    variant="link"
-                    icon="i-heroicons-x-mark-20-solid"
-                    @click="formData.skus.splice(index, 1)"
-                  />
-                </UBadge>
-              </template>
+          <template v-if="!formData.isAllTarget">
+            <div class="flex basis-1/12 flex-col justify-center text-right" />
+            <div class="my-auto flex flex-col justify-center">
+              <div v-if="formData.skus.length > 0" class="pb-3">
+                <template
+                  v-for="(sku, index) in formData.skus"
+                  :key="sku.skuId"
+                >
+                  <UBadge class="ml-1" color="gray">
+                    {{ sku.skuName }}
+                    <UButton
+                      :padded="false"
+                      color="gray"
+                      variant="link"
+                      icon="i-heroicons-x-mark-20-solid"
+                      @click="formData.skus.splice(index, 1)"
+                    />
+                  </UBadge>
+                </template>
+              </div>
+              <div v-if="formData.groups.length > 0" class="pb-3">
+                <template
+                  v-for="(group, index) in formData.groups"
+                  :key="group.groupId"
+                >
+                  <UBadge class="ml-1" color="gray">
+                    {{ group.groupName }}
+                    <UButton
+                      :padded="false"
+                      color="gray"
+                      variant="link"
+                      icon="i-heroicons-x-mark-20-solid"
+                      @click="formData.groups.splice(index, 1)"
+                    />
+                  </UBadge>
+                </template>
+              </div>
+              <div v-if="formData.departments.length > 0" class="pb-3">
+                <template
+                  v-for="(department, index) in formData.departments"
+                  :key="department.departmentId"
+                >
+                  <UBadge class="ml-1" color="gray">
+                    {{ department.departmentName }}
+                    <UButton
+                      :padded="false"
+                      color="gray"
+                      variant="link"
+                      icon="i-heroicons-x-mark-20-solid"
+                      @click="formData.departments.splice(index, 1)"
+                    />
+                  </UBadge>
+                </template>
+              </div>
+              <div v-if="formData.classes.length > 0" class="pb-3">
+                <template
+                  v-for="(clazz, index) in formData.classes"
+                  :key="clazz.classId"
+                >
+                  <UBadge class="ml-1" color="gray">
+                    {{ clazz.className }}
+                    <UButton
+                      :padded="false"
+                      color="gray"
+                      variant="link"
+                      icon="i-heroicons-x-mark-20-solid"
+                      @click="formData.classes.splice(index, 1)"
+                    />
+                  </UBadge>
+                </template>
+              </div>
+              <div v-if="formData.lines.length > 0" class="pb-3">
+                <template
+                  v-for="(line, index) in formData.lines"
+                  :key="line.lineId"
+                >
+                  <UBadge class="ml-1" color="gray">
+                    {{ line.lineName }}
+                    <UButton
+                      :padded="false"
+                      color="gray"
+                      variant="link"
+                      icon="i-heroicons-x-mark-20-solid"
+                      @click="formData.lines.splice(index, 1)"
+                    />
+                  </UBadge>
+                </template>
+              </div>
             </div>
-            <div v-if="formData.groups.length > 0" class="pb-3">
-              <template
-                v-for="(group, index) in formData.groups"
-                :key="group.groupId"
-              >
-                <UBadge class="ml-1" color="gray">
-                  {{ group.groupName }}
-                  <UButton
-                    :padded="false"
-                    color="gray"
-                    variant="link"
-                    icon="i-heroicons-x-mark-20-solid"
-                    @click="formData.groups.splice(index, 1)"
-                  />
-                </UBadge>
-              </template>
-            </div>
-            <div v-if="formData.departments.length > 0" class="pb-3">
-              <template
-                v-for="(department, index) in formData.departments"
-                :key="department.departmentId"
-              >
-                <UBadge class="ml-1" color="gray">
-                  {{ department.departmentName }}
-                  <UButton
-                    :padded="false"
-                    color="gray"
-                    variant="link"
-                    icon="i-heroicons-x-mark-20-solid"
-                    @click="formData.departments.splice(index, 1)"
-                  />
-                </UBadge>
-              </template>
-            </div>
-            <div v-if="formData.classes.length > 0" class="pb-3">
-              <template
-                v-for="(clazz, index) in formData.classes"
-                :key="clazz.classId"
-              >
-                <UBadge class="ml-1" color="gray">
-                  {{ clazz.className }}
-                  <UButton
-                    :padded="false"
-                    color="gray"
-                    variant="link"
-                    icon="i-heroicons-x-mark-20-solid"
-                    @click="formData.classes.splice(index, 1)"
-                  />
-                </UBadge>
-              </template>
-            </div>
-            <div v-if="formData.lines.length > 0" class="pb-3">
-              <template
-                v-for="(line, index) in formData.lines"
-                :key="line.lineId"
-              >
-                <UBadge class="ml-1" color="gray">
-                  {{ line.lineName }}
-                  <UButton
-                    :padded="false"
-                    color="gray"
-                    variant="link"
-                    icon="i-heroicons-x-mark-20-solid"
-                    @click="formData.lines.splice(index, 1)"
-                  />
-                </UBadge>
-              </template>
-            </div>
-          </div>
+          </template>
         </div>
 
         <!-- 対象店舗 -->
