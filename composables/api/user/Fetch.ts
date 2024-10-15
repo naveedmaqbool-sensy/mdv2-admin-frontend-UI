@@ -13,7 +13,7 @@ export class UserFetchRequestFactory implements UserFetchRequest {
   public constructor(
     public text: string | null = null,
     public page: number = 1,
-    public perPage: number = 10
+    public perPage: number = 20
   ) {}
 }
 

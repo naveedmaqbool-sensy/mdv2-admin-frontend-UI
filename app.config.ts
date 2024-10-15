@@ -30,5 +30,16 @@ export default defineAppConfig({
         padding: 'px-4 py-1',
       },
     },
+    pagination: {
+      base: 'px-5',
+      default: {
+        prevButton: {
+          class: 'px-2',
+        },
+        nextButton: {
+          class: 'px-2',
+        },
+      },
+    },
   },
 })
