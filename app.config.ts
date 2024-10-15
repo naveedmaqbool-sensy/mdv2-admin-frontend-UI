@@ -13,5 +13,10 @@ export default defineAppConfig({
         },
       },
     },
+    table: {
+      td: {
+        padding: 'px-1 py-1',
+      },
+    },
   },
 })
