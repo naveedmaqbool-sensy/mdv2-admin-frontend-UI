@@ -333,6 +333,7 @@
       v-model:total="itemsTotal"
       :columns="[
         { key: 'groupName', label: '部門' },
+        { key: 'departmentName', label: '中分類' },
         { key: 'lineName', label: '小分類' },
       ]"
       id-column-name="lineId"
@@ -345,6 +346,8 @@
       v-model:total="itemsTotal"
       :columns="[
         { key: 'groupName', label: '部門' },
+        { key: 'departmentName', label: '中分類' },
+        { key: 'lineName', label: '小分類' },
         { key: 'className', label: '細分類' },
       ]"
       id-column-name="classId"
