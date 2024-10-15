@@ -1,5 +1,5 @@
 <template>
-  <UModal v-model="isOpenModal">
+  <UModal v-model="isOpenModal" :ui="{ width: modalWidth }">
     <UCard
       :ui="{
         ring: '',
@@ -140,7 +140,7 @@ function onSelected(row: any) {
 }
 
 const headers = computed(() => {
-  return [{ key: 'selected', label: '選択' }, ...columns]
+  return [{ key: 'selected', label: '選択', class: 'w-8' }, ...columns]
 })
 
 const allSelected = computed({
@@ -161,6 +161,16 @@ const allSelected = computed({
       }
     })
   },
+})
+
+// 表示する項目の数次第でモーダル自体の大きさを変える
+const modalWidth = computed(() => {
+  if (headers.value.length <= 2) {
+    return 'w-full sm:max-w-lg'
+  } else if (headers.value.length <= 4) {
+    return 'w-full sm:max-w-xl'
+  }
+  return 'w-full sm:max-w-3xl'
 })
 </script>
 
