@@ -18,5 +18,14 @@ export default defineAppConfig({
         padding: 'px-1 py-1',
       },
     },
+    card: {
+      divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+      header: {
+        padding: 'px-4 pb-5 pt-8',
+      },
+      body: {
+        padding: 'px-4 py-1',
+      },
+    },
   },
 })
