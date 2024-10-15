@@ -10,11 +10,11 @@
         <UForm :state="{}" class="flex flex-row" @submit="fetch(1)">
           <UInput
             v-model="searchRequest.text"
-            class="basis-10/12"
+            class="basis-11/12"
             icon="i-heroicons-magnifying-glass-20-solid"
             placeholder="検索"
           />
-          <div class="basis-2/12 text-right">
+          <div class="basis-1/12 text-right">
             <UButton color="indigo" @click="fetch(1)"> 検索 </UButton>
           </div>
         </UForm>
