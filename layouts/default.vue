@@ -12,7 +12,7 @@
         leave-to-class="-translate-x-full"
       >
         <aside v-if="isActiveMenu" class="min-h-[100vh] bg-gray-200">
-          <div class="sticky top-16 w-64 pl-6">
+          <div class="sticky top-16 w-44 pl-6">
             <UVerticalNavigation :links="links" />
           </div>
         </aside>

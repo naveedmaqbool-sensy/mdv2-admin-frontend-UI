@@ -6,13 +6,11 @@
     <UForm :state="{}">
       <section class="rounded border border-gray-300 px-4 py-2">
         <div class="flex flex-row">
-          <div class="basis-1/4">
+          <div class="basis-1/6">
             <div class="flex items-center gap-1">
               <div class="basis-1/12"></div>
               <div class="basis-3/12 text-center font-bold">&nbsp;</div>
-              <div class="w-full text-center indent-[-3rem] font-bold">
-                &nbsp;
-              </div>
+              <div class="w-full text-center -indent-3 font-bold">&nbsp;</div>
             </div>
             <UFormGroup class="pb-3">
               <div class="flex items-center gap-1">
@@ -60,26 +58,27 @@
                   placeholder="-"
                   @change="onChangedSkuMonitoringRangeType"
                 />
-                <UButton
-                  class="basis-12"
-                  color="indigo"
-                  :disabled="formData.skuMonitoringRangeType === null"
-                  @click="openSkuModal"
-                >
-                  選択
-                </UButton>
+                <div class="basis-12">
+                  <UButton
+                    color="indigo"
+                    :disabled="formData.skuMonitoringRangeType === null"
+                    @click="openSkuModal"
+                  >
+                    選択
+                  </UButton>
+                </div>
               </div>
             </UFormGroup>
             <!-- バリデーションエラー -->
             <div
               v-if="apiValidationError?.exists('skuMonitoringRangeType')"
-              class="mt-[-0.5rem] pb-3 text-red-400"
+              class="-mt-1 pb-3 text-red-400"
             >
               {{ apiValidationError.first('skuMonitoringRangeType') }}
             </div>
             <div
               v-else-if="apiValidationError?.exists('skuMonitoringUnitType')"
-              class="mt-[-0.5rem] pb-3 text-red-400"
+              class="-mt-1 pb-3 text-red-400"
             >
               {{ apiValidationError.first('skuMonitoringUnitType') }}
             </div>
@@ -197,27 +196,28 @@
                   "
                   @change="onChangedStoreMonitoringRangeType"
                 />
-                <UButton
-                  class="basis-12"
-                  color="indigo"
-                  :disabled="formData.storeMonitoringRangeType === null"
-                  @click="openStoreModal"
-                >
-                  選択
-                </UButton>
+                <div class="basis-12">
+                  <UButton
+                    color="indigo"
+                    :disabled="formData.storeMonitoringRangeType === null"
+                    @click="openStoreModal"
+                  >
+                    選択
+                  </UButton>
+                </div>
               </div>
             </UFormGroup>
 
             <!-- バリデーションエラー -->
             <div
               v-if="apiValidationError?.exists('storeMonitoringRangeType')"
-              class="mt-[-0.5rem] pb-3 text-red-400"
+              class="-mt-1 pb-3 text-red-400"
             >
               {{ apiValidationError.first('storeMonitoringRangeType') }}
             </div>
             <div
               v-else-if="apiValidationError?.exists('storeMonitoringUnitType')"
-              class="mt-[-0.5rem] pb-3 text-red-400"
+              class="-mt-1 pb-3 text-red-400"
             >
               {{ apiValidationError.first('storeMonitoringUnitType') }}
             </div>
@@ -279,13 +279,13 @@
             <!-- バリデーションエラー -->
             <div
               v-if="apiValidationError?.exists('targetDateFrom')"
-              class="mt-[-0.5rem] pb-3 text-red-400"
+              class="-mt-1 pb-3 text-red-400"
             >
               {{ apiValidationError.first('targetDateFrom') }}
             </div>
             <div
               v-if="apiValidationError?.exists('targetDateTo')"
-              class="mt-[-0.5rem] pb-3 text-red-400"
+              class="-mt-1 pb-3 text-red-400"
             >
               {{ apiValidationError.first('targetDateTo') }}
             </div>
@@ -804,15 +804,5 @@ async function csvExportMonitoringDetail() {
   > tbody > tr:hover > td {
     @apply bg-gray-50;
   }
-}
-
-:deep(table > tbody > tr > td) {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-}
-
-:deep(table > thead > tr > th) {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
 }
 </style>

@@ -65,9 +65,6 @@ export default defineNuxtConfig({
   build: {
     transpile: ['jsonwebtoken'],
   },
-  tailwindcss: {
-    // Options
-  },
   basicAuth,
   auth: {
     baseURL: `${apiUrl}/auth`,
