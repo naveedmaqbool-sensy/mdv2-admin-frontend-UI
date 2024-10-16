@@ -3,6 +3,9 @@ enum SkuAlertTypes {
   FictitiousInventory = '102', // 架空在庫
   MinusStock1 = '201', // マイナス在庫（SENSY計算理論在庫 < 0
   MinusStock2 = '202', // マイナス在庫（クライアント理論在庫 < 0
+  ZeroStockFromMonth = '203', // ゼロ在庫（１か月以上ゼロのまま）
+  ZeroStockFromWeek = '204', // ゼロ在庫（１週間以上ゼロのまま）
+
   OverStock = '301', // 在庫過多
 
   // 以下発注時に作成するエラー
@@ -19,6 +22,10 @@ namespace SkuAlertTypes {
       case SkuAlertTypes.MinusStock1:
       case SkuAlertTypes.MinusStock2:
         return 'マイナス在庫'
+      case SkuAlertTypes.ZeroStockFromMonth:
+        return 'ゼロ在庫(長期)'
+      case SkuAlertTypes.ZeroStockFromWeek:
+        return 'ゼロ在庫'
       case SkuAlertTypes.OverStock:
         return '在庫過多'
 
