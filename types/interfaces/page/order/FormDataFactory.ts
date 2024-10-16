@@ -24,7 +24,7 @@ export default class implements OrderFormData {
     public stores: StoreMaster[] = [],
     public storeGroups: StoreGroup[] = [],
     public page: number = 1,
-    public perPage: number = 10,
+    public perPage: number = 20,
     from: Date | null = null,
     to: Date | null = null
   ) {

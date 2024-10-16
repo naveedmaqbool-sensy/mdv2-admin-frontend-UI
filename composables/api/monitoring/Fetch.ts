@@ -3,7 +3,7 @@ import type MonitoingFormData from '~/types/interfaces/page/monitoring/FormData'
 interface ApiMonitoringFetchRequest extends MonitoingFormData {}
 interface ApiMonitoringFetchResponse {
   headers: string[]
-  rows: string[][]
+  rows: { [key: string]: string }[]
   total: number
 }
 

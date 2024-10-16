@@ -3,7 +3,8 @@ import type { ResponseType } from './Base'
 export function apiPost<RequestT, ResponseT>(
   endpoint: string,
   request: RequestT,
-  responseType: ResponseType = undefined
+  responseType: ResponseType = undefined,
+  errorMessages: ErrorMessages | null = null
 ): Promise<ResponseT | null> {
-  return apiBase(endpoint, request, 'POST', responseType)
+  return apiBase(endpoint, request, 'POST', responseType, errorMessages)
 }

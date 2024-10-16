@@ -19,7 +19,7 @@ export class ThresholdAlertTargetFetchRequestFactory
     public adminAlertId: number = 0,
     public isStore: boolean = false,
     public page: number = 1,
-    public perPage: number = 10
+    public perPage: number = 20
   ) {}
 }
 

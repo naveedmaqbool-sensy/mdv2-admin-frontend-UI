@@ -276,7 +276,13 @@
       v-model:selected="formData.skus"
       v-model:items="skus"
       v-model:total="itemsTotal"
-      :columns="[{ key: 'skuName', label: '商品名' }]"
+      :columns="[
+        { key: 'groupName', label: '部門' },
+        { key: 'departmentName', label: '中分類' },
+        { key: 'lineName', label: '小分類' },
+        { key: 'className', label: '細分類' },
+        { key: 'skuName', label: '商品名' },
+      ]"
       id-column-name="skuId"
       @fetch-items="fetchSkus"
     />
@@ -308,6 +314,7 @@
       v-model:total="itemsTotal"
       :columns="[
         { key: 'groupName', label: '部門' },
+        { key: 'departmentName', label: '中分類' },
         { key: 'lineName', label: '小分類' },
       ]"
       id-column-name="lineId"
@@ -320,6 +327,8 @@
       v-model:total="itemsTotal"
       :columns="[
         { key: 'groupName', label: '部門' },
+        { key: 'departmentName', label: '中分類' },
+        { key: 'lineName', label: '小分類' },
         { key: 'className', label: '細分類' },
       ]"
       id-column-name="classId"
@@ -566,3 +575,5 @@ function onChangedActualOrderQty(order: any) {
   })
 }
 </script>
+
+<style scoped></style>

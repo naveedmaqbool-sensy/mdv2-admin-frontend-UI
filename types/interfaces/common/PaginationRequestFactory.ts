@@ -6,7 +6,7 @@ export default class PaginationReqeustFactory implements PaginationRequest {
 
   public constructor() {
     this.page = 1
-    this.perPage = 10
+    this.perPage = 20
   }
 
   public all() {

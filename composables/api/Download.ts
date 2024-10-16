@@ -6,7 +6,9 @@ export async function apiDownload<RequestT>(
   request: RequestT
 ) {
   // ＡＰＩ発行
-  const response = await apiPost<RequestT, Blob>(endpoint, request, 'blob')
+  const response = await apiPost<RequestT, Blob>(endpoint, request, 'blob', {
+    500: 'データ量が多すぎる可能性があります。\n件数を絞ってもう一度お試しください。',
+  })
   if (response === null) {
     return false
   }
@@ -52,11 +54,11 @@ function parseDispotisionFileName(contentDisposition: string) {
   }
   const fileName = fileNames[0]
 
-  // ファイル名が取得でない場合は取得しない
+  // ファイル名が取得でない場合は返却しない
   if (!fileName.split('.')[0]) {
     return null
   }
-  return fileNames[0]
+  return decodeURIComponent(fileNames[0])
 }
 
 function parseDispotisionFileNameAsterisk(contentDisposition: string) {
@@ -68,5 +70,6 @@ function parseDispotisionFileNameAsterisk(contentDisposition: string) {
   if (fileNames.length === 0) {
     return null
   }
-  return fileNames[0].split("''")[1].replace("'", '')
+  const fileName = fileNames[0].split("''")[1].replace("'", '')
+  return decodeURIComponent(fileName)
 }

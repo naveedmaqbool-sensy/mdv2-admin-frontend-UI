@@ -15,6 +15,7 @@ interface AdminAlertThreshold {
   skuMonitoringUnitType: SkuMonitoringUnitTypes
   storeMonitoringUnitType: StoreMonitoringUnitTypes
   threshold: number
+  isAllTarget: boolean
 
   skus?: any[]
   groups?: GroupMaster[]
