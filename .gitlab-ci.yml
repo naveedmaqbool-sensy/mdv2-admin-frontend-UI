@@ -252,29 +252,29 @@ production-jh-cloud-run-service-deploy-notification:
   only: [feature/izumi-ci]
 
 # docker build
-# production-izumi-docker-build:
-#   extends: .gcp-artifact-registry-build-and-push
-#   tags: [$BUILD_RUNNER]
-#   <<: *production_izumi_deploy_rules
-#   variables:
-#     ENVIRONMENT: production-izumi
-#     GCLOUD_AUTH_CODE: ${PRODUCTION_IZUMI_GCLOUD_AUTH_CODE}
-#     GCLOUD_PROJECT: ${PRODUCTION_IZUMI_GCLOUD_PROJECT}
-#     REGION: ${PRODUCTION_IZUMI_ARTIFACT_REGISTRY_REGION}
-#     IMAGE_NAME: ${PRODUCTION_IZUMI_ARTIFACT_REGISTRY_REPOSITORY}
+production-izumi-docker-build:
+  extends: .gcp-artifact-registry-build-and-push
+  tags: [$BUILD_RUNNER]
+  <<: *production_izumi_deploy_rules
+  variables:
+    ENVIRONMENT: production-izumi
+    GCLOUD_AUTH_CODE: ${PRODUCTION_IZUMI_GCLOUD_AUTH_CODE}
+    GCLOUD_PROJECT: ${PRODUCTION_IZUMI_GCLOUD_PROJECT}
+    REGION: ${PRODUCTION_IZUMI_ARTIFACT_REGISTRY_REGION}
+    IMAGE_NAME: ${PRODUCTION_IZUMI_ARTIFACT_REGISTRY_REPOSITORY}
 
-# # ビルド通知
-# production-izumi-docker-build-notification:
-#   extends: .notification-send
-#   tags: [$BUILD_RUNNER]
-#   when: on_failure
-#   <<: *production_izumi_deploy_rules
-#   variables:
-#     BODY: '##### [${CI_PROJECT_NAME}] docker image のビルド / プッシュに失敗しました'
-#   needs:
-#     - production-izumi-docker-build
-#   dependencies:
-#     - production-izumi-docker-build
+# ビルド通知
+production-izumi-docker-build-notification:
+  extends: .notification-send
+  tags: [$BUILD_RUNNER]
+  when: on_failure
+  <<: *production_izumi_deploy_rules
+  variables:
+    BODY: '##### [${CI_PROJECT_NAME}] docker image のビルド / プッシュに失敗しました'
+  needs:
+    - production-izumi-docker-build
+  dependencies:
+    - production-izumi-docker-build
 
 # cloud run service デプロイ
 production-izumi-cloud-run-service-deploy:
