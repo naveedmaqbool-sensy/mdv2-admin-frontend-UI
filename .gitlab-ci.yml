@@ -275,28 +275,27 @@ production-izumi-docker-build-notification:
     - production-izumi-docker-build
   dependencies:
     - production-izumi-docker-build
-
 # cloud run service デプロイ
-production-izumi-cloud-run-service-deploy:
-  extends: .gcp-cloud-run-service-deploy
-  tags: [$BUILD_RUNNER]
-  <<: *production_izumi_deploy_rules
-  variables:
-    GCLOUD_AUTH_CODE: ${PRODUCTION_IZUMI_GCLOUD_AUTH_CODE}
-    GCLOUD_PROJECT: ${PRODUCTION_IZUMI_GCLOUD_PROJECT}
-    REGION: ${PRODUCTION_IZUMI_ARTIFACT_REGISTRY_REGION}
-    IMAGE_NAME: ${PRODUCTION_IZUMI_ARTIFACT_REGISTRY_REPOSITORY}
-    CLOUD_RUN_SERVICE_NAME: ${PRODUCTION_IZUMI_CLOUD_RUN_SERVICE_NAME}
+# production-izumi-cloud-run-service-deploy:
+#   extends: .gcp-cloud-run-service-deploy
+#   tags: [$BUILD_RUNNER]
+#   <<: *production_izumi_deploy_rules
+#   variables:
+#     GCLOUD_AUTH_CODE: ${PRODUCTION_IZUMI_GCLOUD_AUTH_CODE}
+#     GCLOUD_PROJECT: ${PRODUCTION_IZUMI_GCLOUD_PROJECT}
+#     REGION: ${PRODUCTION_IZUMI_ARTIFACT_REGISTRY_REGION}
+#     IMAGE_NAME: ${PRODUCTION_IZUMI_ARTIFACT_REGISTRY_REPOSITORY}
+#     CLOUD_RUN_SERVICE_NAME: ${PRODUCTION_IZUMI_CLOUD_RUN_SERVICE_NAME}
 
-# デプロイ通知
-production-izumi-cloud-run-service-deploy-notification:
-  extends: .notification-send
-  tags: [$BUILD_RUNNER]
-  when: on_failure
-  <<: *production_izumi_deploy_rules
-  variables:
-    BODY: '##### [${CI_PROJECT_NAME}] デプロイに失敗しました'
-  needs:
-    - production-izumi-cloud-run-service-deploy
-  dependencies:
-    - production-izumi-cloud-run-service-deploy
+# # デプロイ通知
+# production-izumi-cloud-run-service-deploy-notification:
+#   extends: .notification-send
+#   tags: [$BUILD_RUNNER]
+#   when: on_failure
+#   <<: *production_izumi_deploy_rules
+#   variables:
+#     BODY: '##### [${CI_PROJECT_NAME}] デプロイに失敗しました'
+#   needs:
+#     - production-izumi-cloud-run-service-deploy
+#   dependencies:
+#     - production-izumi-cloud-run-service-deploy
