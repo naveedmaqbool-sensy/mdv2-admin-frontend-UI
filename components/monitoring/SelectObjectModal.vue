@@ -22,15 +22,22 @@
       <UTable :rows="items" :columns="headers" @select="onSelected">
         <template #selected-data="{ row }">
           <UCheckbox
+            v-if="!isRadio"
             :model-value="
               internalSelected.findIndex(
                 (v) => v[idColumnName] === row[idColumnName]
               ) >= 0
             "
           />
+          <URadio
+            v-if="isRadio"
+            v-bind="{ value: row[idColumnName], name: '' }"
+            v-model="selectedRadio"
+          />
         </template>
         <template #selected-header>
-          <UCheckbox v-model="allSelected" />
+          <UCheckbox v-if="!isRadio" v-model="allSelected" />
+          <span v-else></span>
         </template>
       </UTable>
 
@@ -62,12 +69,15 @@ const isOpenModal = defineModel('isOpenModal', {
   type: Boolean,
   required: true,
 })
-const { columns, idColumnName } = withDefaults(
+const { columns, idColumnName, isRadio } = withDefaults(
   defineProps<{
     columns: { key: string; label: string }[]
     idColumnName: string
+    isRadio?: boolean
   }>(),
-  {}
+  {
+    isRadio: false,
+  }
 )
 const items = defineModel<any[]>('items', {
   type: Array,
@@ -129,6 +139,10 @@ function fetch(page: number) {
 }
 
 function onSelected(row: any) {
+  if (isRadio) {
+    internalSelected.value = [row]
+    return
+  }
   const index = internalSelected.value.findIndex(
     (v) => v[idColumnName] === row[idColumnName]
   )
@@ -141,6 +155,22 @@ function onSelected(row: any) {
 
 const headers = computed(() => {
   return [{ key: 'selected', label: '選択', class: 'w-8' }, ...columns]
+})
+
+const selectedRadio = computed({
+  get: () => {
+    if (internalSelected.value.length > 0) {
+      return internalSelected.value[0][idColumnName]
+    }
+    return null
+  },
+  set: (id) => {
+    if (id) {
+      internalSelected.value = [items.value.find((v) => v[idColumnName] === id)]
+    } else {
+      internalSelected.value = []
+    }
+  },
 })
 
 const allSelected = computed({

@@ -7,6 +7,7 @@
     "build:develop": "node -e \"require('fs').copyFileSync('./.env.develop', './.env')\" && nuxt build",
     "build:staging": "node -e \"require('fs').copyFileSync('./.env.staging', './.env')\" && nuxt build",
     "build:production-jh": "node -e \"require('fs').copyFileSync('./.env.production-jh', './.env')\" && nuxt build",
+    "build:production-izumi": "node -e \"require('fs').copyFileSync('./.env.production-izumi', './.env')\" && nuxt build",
     "start": "nuxt start",
     "dev": "yarn install && node -e \"require('fs').copyFileSync('./.env.local', './.env')\" && nuxt dev --port 3001",
     "generate": "nuxt generate",

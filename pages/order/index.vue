@@ -210,9 +210,19 @@
           </div>
         </div>
       </section>
-      <section class="pt-2">
-        <UButton color="white" @click="reset">リセット</UButton>
-        <UButton class="ml-2" color="indigo" @click="get(1)">検索</UButton>
+      <section class="flex pt-2">
+        <div class="basis-1/2">
+          <UButton color="white" @click="reset">リセット</UButton>
+          <UButton class="ml-2" color="indigo" @click="get(1)">検索</UButton>
+        </div>
+        <div class="basis-1/2 text-right">
+          <UButton
+            color="primary"
+            class="ml-2"
+            label="エビデンス出力"
+            @click="onExport"
+          />
+        </div>
       </section>
     </UForm>
 
@@ -242,7 +252,7 @@
         {{ row.classMaster?.className }}
       </template>
       <template #predictionOrderQty-data="{ row }">
-        {{ formatterNumber(row.predictionOrderQty) }}
+        <p class="text-right">{{ formatterNumber(row.predictionOrderQty) }}</p>
       </template>
       <template #actualOrderQty-data="{ row }">
         <UTooltip
@@ -352,6 +362,14 @@
       id-column-name="storeGroupId"
       @fetch-items="fetchStoreGroups"
     />
+    <OrderEvidenceExportModal
+      v-model:is-open-modal="isActiveExportModal"
+      :target-date-to="formData.to"
+      :target-date-from="formData.from"
+      :selected-skus="formData.skus"
+      :selected-stores="formData.stores"
+      @submit="exportOrderEvidence"
+    />
   </div>
 </template>
 
@@ -378,14 +396,14 @@ const orderColumns = [
   { key: 'departmentId', label: '中分類' },
   { key: 'lineId', label: '小分類' },
   { key: 'classId', label: '細分類' },
-  { key: 'predictionOrderQty', label: '予測発注数' },
+  { key: 'predictionOrderQty', label: '発注推奨数' },
   { key: 'actualOrderQty', label: '実発注数' },
 ]
 const orders = ref<any[]>([]) // FIXME: rfukuma 型定義作ったら充てる
 const orderTotal = ref(0)
 const formData = ref<OrderFormData>(new OrderFormDataFactory())
 const isOpenSkuModal = ref(false)
-const skus = ref<any[]>([]) // FIXME: rfukuma 型定義作ったら充てる
+const skus = ref<any[]>([])
 const isOpenGroupsModal = ref(false)
 const groups = ref<GroupMaster[]>([])
 const isOpenDepartmentsModal = ref(false)
@@ -470,7 +488,7 @@ async function fetchSkus(searchRequest: {
   const response = await apiSkuMasterFetch(searchRequest)
   skus.value = response ? response.data : []
   itemsTotal.value = response ? response.total : 0
-  serviceLoadingFinish()
+  nextTick(serviceLoadingFinish)
 }
 
 async function fetchGroups(searchRequest: {
@@ -482,7 +500,7 @@ async function fetchGroups(searchRequest: {
   const response = await apiGroupMasterFetch(searchRequest)
   groups.value = response ? response.data : []
   itemsTotal.value = response ? response.total : 0
-  serviceLoadingFinish()
+  nextTick(serviceLoadingFinish)
 }
 
 async function fetchDepartments(searchRequest: {
@@ -573,6 +591,42 @@ function onChangedActualOrderQty(order: any) {
         'の発注数を修正しました。'
     )
   })
+}
+
+const isActiveExportModal = ref(false)
+function onExport() {
+  const isSingleStore =
+    formData.value.storeMonitoringUnitType === StoreMonitoringUnitTypes.Store &&
+    formData.value.stores.length === 1
+  const isSingleSku =
+    formData.value.skuMonitoringUnitType === SkuMonitoringUnitTypes.Sku &&
+    formData.value.skus.length === 1
+
+  if (
+    formData.value.from &&
+    formData.value.to &&
+    isSingleStore &&
+    isSingleSku
+  ) {
+    exportOrderEvidence({
+      from: formData.value.from!,
+      to: formData.value.to!,
+      sku: formData.value.skus[0],
+      store: formData.value.stores[0],
+    })
+    return
+  }
+
+  isActiveExportModal.value = true
+}
+
+function exportOrderEvidence(params: {
+  from: Date
+  to: Date
+  sku: any
+  store: StoreMaster
+}) {
+  alert(params)
 }
 </script>
 
