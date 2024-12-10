@@ -1,15 +1,9 @@
 enum SkuAlertTypes {
   TheoreticalInventoryMismatch = '101', // 理論在庫不一致
   FictitiousInventory = '102', // 架空在庫
-  MinusStock1 = '201', // マイナス在庫（SENSY計算理論在庫 < 0
-  MinusStock2 = '202', // マイナス在庫（クライアント理論在庫 < 0
-  ZeroStockFromMonth = '203', // ゼロ在庫（１か月以上ゼロのまま）
-  ZeroStockFromWeek = '204', // ゼロ在庫（１週間以上ゼロのまま）
-
-  OverStock = '301', // 在庫過多
-
-  // 以下発注時に作成するエラー
-  OrderCaseMinusStock = '901', // 発注時マイナス在庫
+  MinusStock = '201', // マイナス在庫（SENSY計算理論在庫 < 0
+  ZeroStockFromMonth = '203', // ゼロ在庫（理論在庫が１か月以上ゼロのまま）
+  ZeroStockFromWeek = '204', // ゼロ在庫（理論在庫が１週間以上ゼロのまま）
 }
 
 namespace SkuAlertTypes {
@@ -19,19 +13,12 @@ namespace SkuAlertTypes {
         return '理論在庫不一致'
       case SkuAlertTypes.FictitiousInventory:
         return '架空在庫'
-      case SkuAlertTypes.MinusStock1:
-      case SkuAlertTypes.MinusStock2:
+      case SkuAlertTypes.MinusStock:
         return 'マイナス在庫'
       case SkuAlertTypes.ZeroStockFromMonth:
         return 'ゼロ在庫(長期)'
       case SkuAlertTypes.ZeroStockFromWeek:
         return 'ゼロ在庫'
-      case SkuAlertTypes.OverStock:
-        return '在庫過多'
-
-      // 以下発注時に作成するエラー
-      case SkuAlertTypes.OrderCaseMinusStock:
-        return '発注時マイナス在庫'
     }
   }
 }
