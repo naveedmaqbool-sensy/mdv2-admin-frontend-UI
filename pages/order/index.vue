@@ -620,14 +620,15 @@ function onExport() {
   isActiveExportModal.value = true
 }
 
-function exportOrderEvidence(params: {
+async function exportOrderEvidence(params: {
   from: Date
   to: Date
   sku: any
   store: StoreMaster
 }) {
-  alert(params)
+  // 出力処理を実行
+  serviceLoadingStart()
+  await apiOrderEvidenceExport(params)
+  serviceLoadingFinish()
 }
 </script>
-
-<style scoped></style>
