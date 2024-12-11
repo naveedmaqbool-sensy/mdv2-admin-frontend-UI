@@ -256,12 +256,22 @@ function onSubmit() {
 
   if (selectedSkus.value.length === 0) {
     apiValidationError.value.set('selectedSkus', '対象商品を指定してください。')
+  } else if (selectedSkus.value.length > 1) {
+    apiValidationError.value.set(
+      'selectedSkus',
+      '対象商品を1つに絞り込んでください。'
+    )
   }
 
   if (selectedStores.value.length === 0) {
     apiValidationError.value.set(
       'selectedStores',
       '対象店舗を指定してください。'
+    )
+  } else if (selectedStores.value.length > 1) {
+    apiValidationError.value.set(
+      'selectedStores',
+      '対象店舗を1つに絞り込んでください。'
     )
   }
 
