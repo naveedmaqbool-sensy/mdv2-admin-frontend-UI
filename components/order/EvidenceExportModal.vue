@@ -176,7 +176,12 @@ const props = withDefaults(
     selectedSkus: any[]
     selectedStores: StoreMaster[]
   }>(),
-  {}
+  {
+    targetDateFrom: null,
+    targetDateTo: null,
+    selectedSkus: () => [],
+    selectedStores: () => [],
+  }
 )
 
 const from = ref<Date | null>(props.targetDateFrom)
