@@ -199,8 +199,10 @@ const modalWidth = computed(() => {
     return 'w-full sm:max-w-lg'
   } else if (headers.value.length <= 4) {
     return 'w-full sm:max-w-xl'
+  } else if (headers.value.length <= 6) {
+    return 'w-full sm:max-w-3xl'
   }
-  return 'w-full sm:max-w-3xl'
+  return 'w-full sm:max-w-4xl'
 })
 </script>
 

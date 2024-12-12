@@ -128,6 +128,7 @@
         { key: 'departmentName', label: '中分類' },
         { key: 'lineName', label: '小分類' },
         { key: 'className', label: '細分類' },
+        { key: 'skuId', label: 'JAN' },
         { key: 'skuName', label: '商品名' },
       ]"
       id-column-name="skuId"
