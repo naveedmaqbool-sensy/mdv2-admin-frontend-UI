@@ -24,10 +24,23 @@
       </main>
     </div>
     <AppFooter />
+    <OrderEvidenceExportModal
+      v-model:is-open-modal="isActiveExportModal"
+      :target-date-from="evidenceTargetDateFrom"
+      :target-date-to="evidenceTargetDateTo"
+      @submit="exportOrderEvidence"
+    />
   </section>
 </template>
 
 <script setup lang="ts">
+import { addDays, endOfWeek, startOfWeek } from 'date-fns'
+import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
+
+const isActiveExportModal = ref(false)
+const evidenceTargetDateFrom = ref(addDays(startOfWeek(new Date()), 1))
+const evidenceTargetDateTo = ref(addDays(endOfWeek(new Date()), 1))
+
 const links = [
   {
     icon: 'i-heroicons-home',
@@ -43,6 +56,13 @@ const links = [
     icon: 'i-heroicons-arrow-up-tray-16-solid',
     label: '発注修正',
     to: '/order',
+  },
+  {
+    icon: 'i-heroicons-arrow-down-tray-16-solid',
+    label: '発注数量算出\nエビデンス',
+    click: () => {
+      isActiveExportModal.value = true
+    },
   },
   {
     icon: 'i-heroicons-cog-6-tooth',
@@ -61,4 +81,23 @@ const isActiveMenu = ref(false)
 function onMenuClick() {
   isActiveMenu.value = !isActiveMenu.value
 }
+
+async function exportOrderEvidence(params: {
+  from: Date
+  to: Date
+  sku: any
+  store: StoreMaster
+}) {
+  // 出力処理を実行
+  serviceLoadingStart()
+  await apiOrderEvidenceExport(params)
+  serviceLoadingFinish()
+}
 </script>
+
+<style scoped>
+:deep(span.truncate) {
+  white-space: pre-line;
+  text-align: left;
+}
+</style>
