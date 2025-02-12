@@ -34,12 +34,12 @@
 </template>
 
 <script setup lang="ts">
-import { addDays, endOfWeek, startOfWeek } from 'date-fns'
+import { addDays, endOfDay, startOfDay, subDays } from 'date-fns'
 import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
 
 const isActiveExportModal = ref(false)
-const evidenceTargetDateFrom = ref(addDays(startOfWeek(new Date()), 1))
-const evidenceTargetDateTo = ref(addDays(endOfWeek(new Date()), 1))
+const evidenceTargetDateFrom = ref(startOfDay(subDays(new Date(), 7)))
+const evidenceTargetDateTo = ref(endOfDay(addDays(new Date(), 7)))
 
 const links = [
   {
