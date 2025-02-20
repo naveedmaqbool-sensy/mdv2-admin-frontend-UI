@@ -2,10 +2,10 @@ import type {
   PaginationRequest,
   PaginationResponse,
 } from '~/types/interfaces/common/Pagination'
-import type MonitoingFormData from '~/types/interfaces/page/monitoring/FormData'
+import type MonitoringFormData from '~/types/interfaces/page/monitoring/FormData'
 
 export interface ApiMonitoringDetailRequest
-  extends MonitoingFormData,
+  extends MonitoringFormData,
     PaginationRequest {
   targetId: string
   searchText: string
