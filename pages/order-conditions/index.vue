@@ -226,8 +226,135 @@
       </section>
     </UForm>
 
-    {{ orderConditionsTotal }}
-    {{ orderConditionsMasters }}
+    <UTable :rows="orderConditionsMasters" :columns="orderConditionsColumns">
+      <template #actions-data="{ row }">
+        <UButton
+          color="indigo"
+          variant="link"
+          :to="`/order-conditions/${row.id}`"
+        >
+          編集
+        </UButton>
+      </template>
+
+      <template #date-data="{ row }">
+        {{ formatterDate(row.orderConditionStartDate) }} ~
+        {{ formatterDate(row.orderConditionEndDate) }}
+      </template>
+
+      <template #orderingMethod-header="{ column }">
+        <UTooltip
+          :ui="{
+            base: 'h-auto',
+          }"
+        >
+          <template #text>
+            <div
+              v-for="orderingMethodType in OrderingMethodTypes.all()"
+              :key="orderingMethodType"
+            >
+              {{ orderingMethodType }} :
+              {{ OrderingMethodTypes.getName(orderingMethodType) }}
+            </div>
+          </template>
+          <template #default>
+            <span>
+              {{ column.label }}
+              <UIcon name="i-heroicons-question-mark-circle" class="h-4 w-4" />
+            </span>
+          </template>
+        </UTooltip>
+      </template>
+      <template #orderingMethod-data="{ row }">
+        <UTooltip placement="top" :popper="{ placement: 'right' }">
+          <template #text>
+            {{ OrderingMethodTypes.getName(row.orderingMethod) }}
+          </template>
+          <template #default>
+            {{ row.orderingMethod }}
+          </template>
+        </UTooltip>
+      </template>
+
+      <template #roundUpDownDefinition-header="{ column }">
+        <UTooltip
+          :ui="{
+            base: 'h-auto',
+          }"
+        >
+          <template #text>
+            <div
+              v-for="roundUpDownType in RoundUpDownTypes.all()"
+              :key="roundUpDownType"
+            >
+              {{ roundUpDownType }} :
+              {{ RoundUpDownTypes.getName(roundUpDownType) }}
+            </div>
+          </template>
+          <template #default>
+            <span>
+              {{ column.label }}
+              <UIcon name="i-heroicons-question-mark-circle" class="h-4 w-4" />
+            </span>
+          </template>
+        </UTooltip>
+      </template>
+      <template #roundUpDownDefinition-data="{ row }">
+        <UTooltip placement="top" :popper="{ placement: 'right' }">
+          <template #text>
+            {{ RoundUpDownTypes.getName(row.roundUpDownDefinition) }}
+          </template>
+          <template #default>
+            {{ row.roundUpDownDefinition }}
+          </template>
+        </UTooltip>
+      </template>
+
+      <template #deliveryType-header="{ column }">
+        <UTooltip
+          :ui="{
+            base: 'h-auto',
+          }"
+        >
+          <template #text>
+            <div
+              v-for="deliveryDateType in DeliveryDateTypes.all()"
+              :key="deliveryDateType"
+            >
+              {{ deliveryDateType }} :
+              {{ DeliveryDateTypes.getName(deliveryDateType) }}
+            </div>
+          </template>
+          <template #default>
+            <span>
+              {{ column.label }}
+              <UIcon name="i-heroicons-question-mark-circle" class="h-4 w-4" />
+            </span>
+          </template>
+        </UTooltip>
+      </template>
+      <template #deliveryType-data="{ row }">
+        <UTooltip placement="top" :popper="{ placement: 'right' }">
+          <template #text>
+            {{ DeliveryDateTypes.getName(row.deliveryType) }}
+          </template>
+          <template #default>
+            {{ row.deliveryType }}
+          </template>
+        </UTooltip>
+      </template>
+
+      <template #cutDate-data="{ row }">
+        {{ formatterDate(row.cutDate) }}
+      </template>
+    </UTable>
+
+    <UPagination
+      v-model="paginationPage"
+      :page-count="formData.perPage"
+      :max="5"
+      :total="orderConditionsTotal"
+    />
 
     <!-- 各種モーダル -->
     <MonitoringSelectObjectModal
@@ -241,7 +368,7 @@
         { key: 'lineName', label: '小分類' },
         { key: 'className', label: '細分類' },
         { key: 'skuId', label: 'JAN' },
-        { key: 'skuName', label: '商品名' },
+        { key: 'skuName', label: '商品' },
       ]"
       id-column-name="skuId"
       @fetch-items="fetchSkus"
@@ -317,6 +444,9 @@
 
 <script setup lang="ts">
 import type ApiValidationError from '~/types/classes/ApiValidationError'
+import DeliveryDateTypes from '~/types/enums/DeliveryDateTypes'
+import OrderingMethodTypes from '~/types/enums/OrderingMethodTypes'
+import RoundUpDownTypes from '~/types/enums/RoundUpTypes'
 import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
 import StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
 import type OrderConditionsMaster from '~/types/interfaces/database/OrderConditionsMaster'
@@ -352,6 +482,42 @@ const itemsTotal = ref(0)
 
 const orderConditionsMasters = ref<OrderConditionsMaster[]>([])
 const orderConditionsTotal = ref(0)
+const paginationPage = computed({
+  get: () => formData.value.page,
+  set: (value) => {
+    fetch(value)
+  },
+})
+const orderConditionsColumns = [
+  { key: 'actions', label: '操作' },
+  { key: 'storeName', label: '店舗' },
+  { key: 'skuId', label: 'JAN' },
+  { key: 'groupName', label: '部門' },
+  { key: 'departmentName', label: '中分類' },
+  { key: 'lineName', label: '小分類' },
+  { key: 'className', label: '細分類' },
+  { key: 'skuName', label: '商品' },
+  { key: 'date', label: '対象期間' },
+  { key: 'orderConditionPriority', label: '優先度' },
+  { key: 'orderingMethod', label: '発注方式' },
+  { key: 'roundUpDownDefinition', label: '切上下区分' },
+  { key: 'deliveryType', label: '納品区分' },
+  { key: 'leadTimeOnMonday', label: '月LT' },
+  { key: 'leadTimeOnTuesday', label: '火LT' },
+  { key: 'leadTimeOnWednesday', label: '水LT' },
+  { key: 'leadTimeOnThursday', label: '木LT' },
+  { key: 'leadTimeOnFriday', label: '金LT' },
+  { key: 'leadTimeOnSaturday', label: '土LT' },
+  { key: 'leadTimeOnSunday', label: '日LT' },
+  { key: 'orderLot', label: 'ロット数' },
+  { key: 'minimumOrderQty', label: '最低発注数' },
+  {
+    key: 'displayStockQty',
+    label: useNuxtApp().$config.public.displayStockName,
+  },
+  { key: 'displayLimitQty', label: '陳列上限在庫' },
+  { key: 'cutDate', label: '終売日' },
+]
 
 async function fetch(page: number) {
   const response = await apiOrderConditionsFetch({

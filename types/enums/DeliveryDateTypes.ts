@@ -19,5 +19,37 @@ enum DeliveryDateTypes {
    */
   MonSatEx = 6,
 }
+namespace DeliveryDateTypes {
+  export function getName(type: DeliveryDateTypes) {
+    switch (type) {
+      case DeliveryDateTypes.MonSat:
+        return '月～土（祝日を除く）'
+      case DeliveryDateTypes.AllDays:
+        return '全日（月～日＋祝日）'
+      case DeliveryDateTypes.MonFri:
+        return '月～金（祝日を除く）'
+      case DeliveryDateTypes.MonSatEx:
+        return '月～土（祝日を除く） + 納品日前日の日曜祝祭日考慮'
+    }
+  }
+
+  export function all() {
+    return [
+      DeliveryDateTypes.MonSat,
+      DeliveryDateTypes.AllDays,
+      DeliveryDateTypes.MonFri,
+      DeliveryDateTypes.MonSatEx,
+    ]
+  }
+
+  export function getNameValues() {
+    return all().map((v) => {
+      return {
+        name: getName(v),
+        value: v,
+      }
+    })
+  }
+}
 
 export default DeliveryDateTypes

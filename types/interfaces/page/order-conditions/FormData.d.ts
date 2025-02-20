@@ -7,8 +7,11 @@ import type StoreGroup from '../../database/SensyCloud/StoreGroup'
 import type { PaginationRequest } from '../../common/Pagination'
 import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
 import StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
+import type Sortable from '../../common/Sortable'
 
-export default interface OrderConditionsFormData extends PaginationRequest {
+export default interface OrderConditionsFormData
+  extends PaginationRequest,
+    Sortable {
   from: Date | null
   to: Date | null
   skuMonitoringUnitType: SkuMonitoringUnitTypes | null

@@ -25,6 +25,8 @@ export default class implements OrderConditionsFormData {
     public storeGroups: StoreGroup[] = [],
     public page: number = 1,
     public perPage: number = 20,
+    public sortBy: string[] = [],
+    public isDescending: boolean = true,
     from: Date | null = null,
     to: Date | null = null
   ) {
