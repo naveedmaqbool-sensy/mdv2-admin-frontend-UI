@@ -169,7 +169,7 @@
         "
       />
       <div class="flex pt-5">
-        <UFormGroup label="ロット数" class="basis-1/12 pr-5">
+        <UFormGroup label="発注ロット" class="basis-1/12 pr-5">
           <CommonInput
             v-model="orderCondition.orderLot!"
             type="number"

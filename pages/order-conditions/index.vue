@@ -216,12 +216,12 @@
           <UButton class="ml-2" color="indigo" @click="fetch(1)">検索</UButton>
         </div>
         <div class="basis-1/2 text-right">
-          <!-- <UButton
+          <UButton
             color="primary"
             class="ml-2"
-            label="エビデンス出力"
+            label="CSV出力"
             @click="onExport"
-          /> -->
+          />
         </div>
       </section>
     </UForm>
@@ -509,7 +509,7 @@ const orderConditionsColumns = [
   { key: 'leadTimeOnFriday', label: '金LT' },
   { key: 'leadTimeOnSaturday', label: '土LT' },
   { key: 'leadTimeOnSunday', label: '日LT' },
-  { key: 'orderLot', label: 'ロット数' },
+  { key: 'orderLot', label: '発注ロット' },
   { key: 'minimumOrderQty', label: '最低発注数' },
   {
     key: 'displayStockQty',
@@ -671,5 +671,20 @@ async function fetchStoreGroups(searchRequest: {
   storeGroups.value = response ? response.data : []
   itemsTotal.value = response ? response.total : 0
   serviceLoadingFinish()
+}
+
+async function onExport() {
+  await apiOrderConditionsCsvExport({
+    storeIds: formData.value.stores.map((v) => v.storeId),
+    skuIds: formData.value.skus.map((v) => v.skuId),
+    groupIds: formData.value.groups.map((v) => v.groupId),
+    departmentIds: formData.value.departments.map((v) => v.departmentId),
+    lineIds: formData.value.lines.map((v) => v.lineId),
+    classIds: formData.value.classes.map((v) => v.classId),
+    from: formData.value.from,
+    to: formData.value.to,
+    sortBy: formData.value.sortBy,
+    isDescending: formData.value.isDescending,
+  })
 }
 </script>
