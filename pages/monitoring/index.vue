@@ -293,16 +293,21 @@
         </div>
       </section>
 
-      <section class="pt-2 text-left">
-        <UButton color="indigo" @click="fetch(1)">画面表示</UButton>
-        <UButton
-          color="primary"
-          class="ml-2"
-          :disabled="kpiRows.length === 0 || kpiHeaders.length === 0"
-          @click="csvExport"
-        >
-          CSV出力
-        </UButton>
+      <section class="flex pt-2">
+        <div class="basis-1/2 text-left">
+          <UButton class="mr-2" color="white" @click="reset">リセット</UButton>
+          <UButton color="indigo" @click="fetch(1)">画面表示</UButton>
+        </div>
+        <div class="basis-1/2 text-right">
+          <UButton
+            color="primary"
+            class="ml-2"
+            :disabled="kpiRows.length === 0 || kpiHeaders.length === 0"
+            @click="csvExport"
+          >
+            CSV出力
+          </UButton>
+        </div>
       </section>
     </UForm>
 
@@ -539,6 +544,10 @@ const isOpenModal = ref(false)
 const monitoringDetailRequest = ref<ApiMonitoringDetailRequest>()
 const monitoringDetails = ref<any[]>([])
 const monitoringDetailTotal = ref(0)
+
+function reset() {
+  formData.value = new FormDataFactory()
+}
 
 async function fetch(page: number) {
   // FIXME: rfukuma バリデーションがあればここで
