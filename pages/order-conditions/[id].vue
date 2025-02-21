@@ -124,6 +124,9 @@
           <CommonDatepicker v-model="orderCondition.cutDate" />
         </UFormGroup>
       </div>
+
+      <UButton color="white" @click="onCancel">戻る</UButton>
+      <UButton color="indigo" class="ml-5" @click="onSubmit">保存</UButton>
     </UForm>
   </div>
 </template>
@@ -147,9 +150,18 @@ if (!orderConditionFindResponse) {
 }
 const orderCondition = ref<OrderConditionsMaster>(orderConditionFindResponse)
 
-function onSubmit(event: FormSubmitEvent<OrderConditionsMaster>) {
-  // Do something with event.data
-  console.log(event.data)
+function onCancel() {
+  navigateTo('/order-conditions')
+}
+
+async function onSubmit(_event: FormSubmitEvent<OrderConditionsMaster>) {
+  const response = await apiOrderConditionsUpdate(orderCondition.value)
+
+  if (!response) {
+    return
+  }
+
+  useNuxtApp().$toast.success('入力内容を保存しました。')
 }
 </script>
 
