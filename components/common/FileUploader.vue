@@ -49,9 +49,14 @@ const uploadFiles = defineModel<File[]>('uploadFiles', {
   required: true,
 })
 
-const { acceptTypes } = withDefaults(
-  defineProps<{ acceptTypes: FileTypes[] }>(),
-  {}
+const { acceptTypes, fileSizeLimit } = withDefaults(
+  defineProps<{
+    acceptTypes: FileTypes[]
+    fileSizeLimit: number
+  }>(),
+  {
+    fileSizeLimit: 100 * 1024 * 1024, // 100MB
+  }
 )
 
 function onDrop(
@@ -65,8 +70,11 @@ function onDrop(
 
   const isAccept = acceptTypes
     .map((v) => FileTypes.getAcceptMimeTypes(v))
-    .some((v) => {
-      return acceptFiles.every((f) => v.includes(f.type))
+    .every((v) => {
+      return (
+        acceptFiles.every((f) => v.includes(f.type)) &&
+        acceptFiles.every((f) => f.size <= fileSizeLimit)
+      )
     })
   if (!isAccept) {
     useNuxtApp().$toast.error(
