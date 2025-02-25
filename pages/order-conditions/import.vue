@@ -4,6 +4,7 @@
     <UForm :state="{}">
       <CommonFileUploader
         v-model:upload-files="uploadFiles"
+        class="w-1/2"
         :accept-types="[FileTypes.CSV]"
       />
 
