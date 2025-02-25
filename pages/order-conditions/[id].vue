@@ -87,7 +87,7 @@
             :options="RoundUpDownTypes.getNameValues()"
           />
         </UFormGroup>
-        <UFormGroup label="納品区分" class="basis-4/12 pr-5">
+        <UFormGroup label="納品日判定区分" class="basis-4/12 pr-5">
           <CommonSelect
             v-model:selected="orderCondition.deliveryType"
             class="w-full"
@@ -193,7 +193,7 @@
             :has-error="apiValidationError.exists('displayStockQty')"
           />
         </UFormGroup>
-        <UFormGroup label="陳列上限在庫" class="basis-1/12 pr-5">
+        <UFormGroup label="陳列上限数" class="basis-1/12 pr-5">
           <CommonInput
             v-model="orderCondition.displayLimitQty!"
             type="number"

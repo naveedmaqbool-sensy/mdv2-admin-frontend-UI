@@ -501,7 +501,7 @@ const orderConditionsColumns = [
   { key: 'orderConditionPriority', label: '優先度' },
   { key: 'orderingMethod', label: '発注方式' },
   { key: 'roundUpDownDefinition', label: '切上下区分' },
-  { key: 'deliveryType', label: '納品区分' },
+  { key: 'deliveryType', label: '納品日判定区分' },
   { key: 'leadTimeOnMonday', label: '月LT' },
   { key: 'leadTimeOnTuesday', label: '火LT' },
   { key: 'leadTimeOnWednesday', label: '水LT' },
@@ -515,7 +515,7 @@ const orderConditionsColumns = [
     key: 'displayStockQty',
     label: useNuxtApp().$config.public.displayStockName,
   },
-  { key: 'displayLimitQty', label: '陳列上限在庫' },
+  { key: 'displayLimitQty', label: '陳列上限数' },
   { key: 'cutDate', label: '終売日' },
 ]
 
