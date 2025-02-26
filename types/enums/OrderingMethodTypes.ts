@@ -1,6 +1,7 @@
 enum OrderingMethodTypes {
   PredictionDemand = 1, // 需要予測
   SellOneBuyOne = 2, // セルワンバイワン
+  OrderingPoint = 3, // 発注点
 }
 namespace OrderingMethodTypes {
   export function getName(orderingMethodType: OrderingMethodTypes) {
@@ -9,6 +10,8 @@ namespace OrderingMethodTypes {
         return '需要予測'
       case OrderingMethodTypes.SellOneBuyOne:
         return 'セルワンバイワン'
+      case OrderingMethodTypes.OrderingPoint:
+        return '発注点'
     }
   }
 
@@ -16,6 +19,7 @@ namespace OrderingMethodTypes {
     return [
       OrderingMethodTypes.PredictionDemand,
       OrderingMethodTypes.SellOneBuyOne,
+      OrderingMethodTypes.OrderingPoint,
     ]
   }
 
