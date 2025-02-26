@@ -23,13 +23,13 @@ namespace DeliveryDateTypes {
   export function getName(type: DeliveryDateTypes) {
     switch (type) {
       case DeliveryDateTypes.MonSat:
-        return '月～土（祝日を除く）'
+        return '平日のみ納品可'
       case DeliveryDateTypes.AllDays:
-        return '全日（月～日＋祝日）'
+        return '全日'
       case DeliveryDateTypes.MonFri:
-        return '月～金（祝日を除く）'
+        return '土日祝祭日以外納品可'
       case DeliveryDateTypes.MonSatEx:
-        return '月～土（祝日を除く） + 納品日前日の日曜祝祭日考慮'
+        return '平日のみ納品可（納品日前日の日祝祭日考慮）'
     }
   }
 
