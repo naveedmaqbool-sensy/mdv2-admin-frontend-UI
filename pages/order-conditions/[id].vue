@@ -223,8 +223,10 @@
         :messages="apiValidationError.get(['cutDate']) as string[]"
       />
 
-      <UButton color="white" @click="onCancel">戻る</UButton>
-      <UButton color="indigo" class="ml-5" @click="onSubmit">保存</UButton>
+      <div class="pt-5">
+        <UButton color="white" @click="onCancel">戻る</UButton>
+        <UButton color="indigo" class="ml-5" @click="onSubmit">保存</UButton>
+      </div>
     </UForm>
   </div>
 </template>
