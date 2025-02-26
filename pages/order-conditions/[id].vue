@@ -80,31 +80,6 @@
             :options="OrderingMethodTypes.getNameValues()"
           />
         </UFormGroup>
-        <UFormGroup label="切上切下げ区分" class="basis-2/12 pr-5">
-          <CommonSelect
-            v-model:selected="orderCondition.roundUpDownDefinition"
-            class="w-full"
-            :options="RoundUpDownTypes.getNameValues()"
-          />
-        </UFormGroup>
-        <UFormGroup label="納品日判定区分" class="basis-4/12 pr-5">
-          <CommonSelect
-            v-model:selected="orderCondition.deliveryType"
-            class="w-full"
-            :options="DeliveryDateTypes.getNameValues()"
-          />
-        </UFormGroup>
-      </div>
-      <CommonErrorMessages
-        :messages="
-          apiValidationError.get([
-            'orderingMethod',
-            'roundUpDownDefinition',
-            'deliveryType',
-          ]) as string[]
-        "
-      />
-      <div class="flex pt-5">
         <UFormGroup label="月曜LT" class="basis-1/12 pr-5">
           <CommonInput
             v-model="orderCondition.leadTimeOnMonday!"
@@ -158,6 +133,7 @@
       <CommonErrorMessages
         :messages="
           apiValidationError.get([
+            'orderingMethod',
             'leadTimeOnMonday',
             'leadTimeOnTuesday',
             'leadTimeOnWednesday',
@@ -176,6 +152,14 @@
             :has-error="apiValidationError.exists('orderLot')"
           />
         </UFormGroup>
+        <UFormGroup label="切上切下区分" class="basis-1/12 pr-5">
+          <CommonSelect
+            v-model:selected="orderCondition.roundUpDownDefinition"
+            class="w-full"
+            :options="RoundUpDownTypes.getNameValues()"
+          />
+        </UFormGroup>
+
         <UFormGroup label="最低発注数" class="basis-1/12 pr-5">
           <CommonInput
             v-model="orderCondition.minimumOrderQty!"
@@ -205,6 +189,7 @@
         :messages="
           apiValidationError.get([
             'orderLot',
+            'roundUpDownDefinition',
             'minimumOrderQty',
             'displayStockQty',
             'displayLimitQty',
@@ -218,9 +203,18 @@
             :has-error="apiValidationError.exists('cutDate')"
           />
         </UFormGroup>
+        <UFormGroup label="納品日判定区分" class="basis-4/12 pr-5">
+          <CommonSelect
+            v-model:selected="orderCondition.deliveryType"
+            class="w-full"
+            :options="DeliveryDateTypes.getNameValues()"
+          />
+        </UFormGroup>
       </div>
       <CommonErrorMessages
-        :messages="apiValidationError.get(['cutDate']) as string[]"
+        :messages="
+          apiValidationError.get(['cutDate', 'deliveryType']) as string[]
+        "
       />
 
       <div class="pt-5">

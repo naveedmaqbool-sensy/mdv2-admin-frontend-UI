@@ -500,8 +500,6 @@ const orderConditionsColumns = [
   { key: 'date', label: '対象期間' },
   { key: 'orderConditionPriority', label: '優先度' },
   { key: 'orderingMethod', label: '発注方式' },
-  { key: 'roundUpDownDefinition', label: '切上下区分' },
-  { key: 'deliveryType', label: '納品日判定区分' },
   { key: 'leadTimeOnMonday', label: '月LT' },
   { key: 'leadTimeOnTuesday', label: '火LT' },
   { key: 'leadTimeOnWednesday', label: '水LT' },
@@ -510,6 +508,7 @@ const orderConditionsColumns = [
   { key: 'leadTimeOnSaturday', label: '土LT' },
   { key: 'leadTimeOnSunday', label: '日LT' },
   { key: 'orderLot', label: '発注ロット' },
+  { key: 'roundUpDownDefinition', label: '切上下区分' },
   { key: 'minimumOrderQty', label: '最低発注数' },
   {
     key: 'displayStockQty',
@@ -517,6 +516,7 @@ const orderConditionsColumns = [
   },
   { key: 'displayLimitQty', label: '陳列上限数' },
   { key: 'cutDate', label: '終売日' },
+  { key: 'deliveryType', label: '納品日判定区分' },
 ]
 
 async function fetch(page: number) {
