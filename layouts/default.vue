@@ -83,7 +83,7 @@ const links = [
     },
     {
       icon: 'i-heroicons-arrow-down-tray-16-solid',
-      label: '発注数量算出\nエビデンス',
+      label: '発注推奨数\nエビデンス出力',
       click: () => {
         isActiveExportModal.value = true
       },

@@ -7,16 +7,12 @@
     v-bind="getRootProps()"
   >
     <input v-bind="getInputProps()" />
-    <section class="py-10 text-center text-gray-500">
-      <p class="text-lg font-bold">
+    <section class="text-center text-gray-500">
+      <p v-if="uploadFiles.length === 0" class="my-10 text-lg font-bold">
         <UIcon name="i-heroicons-arrow-up-tray-solid" class="mr-2 mt-2" />
         ファイルアップロード
       </p>
-      <p v-if="uploadFiles.length === 0">
-        ファイルをドラッグ &
-        ドロップするか、クリックしてファイルを選択してください。
-      </p>
-      <p v-else>
+      <p v-if="uploadFiles.length > 0">
         <UCard
           v-for="(uploadFile, index) in uploadFiles"
           :key="index"
@@ -25,14 +21,27 @@
         >
           <div class="flex items-center">
             <UIcon class="text-2xl" name="i-heroicons-document-text-16-solid" />
-            <span class="ml-2">{{ uploadFile.name }}</span>
+            <span class="ml-2 text-xs">{{ uploadFile.name }}</span>
             <UButton variant="link" color="red" @click="removeFile(index)">
               <UIcon class="text-xl" name="i-heroicons-x-mark-16-solid" />
             </UButton>
           </div>
           <UBadge color="white">{{ uploadFile.type }}</UBadge>
-          <UBadge color="white" class="ml-2">
-            {{ formatterNumber(uploadFile.size) }} bytes
+          <UBadge v-if="lineLengths[index] ?? false" color="white" class="ml-2">
+            {{ formatterNumber(lineLengths[index]) }} 行
+          </UBadge>
+          <UBadge v-if="uploadFile.size < 1024" color="white" class="ml-2">
+            {{ formatterNumber(uploadFile.size) }} B
+          </UBadge>
+          <UBadge
+            v-else-if="uploadFile.size < 1024 * 1024"
+            color="white"
+            class="ml-2"
+          >
+            {{ formatterNumber(uploadFile.size / 1024) }} KB
+          </UBadge>
+          <UBadge v-else color="white" class="ml-2">
+            {{ formatterNumber(uploadFile.size / (1024 * 1024)) }} MB
           </UBadge>
         </UCard>
       </p>
@@ -49,15 +58,19 @@ const uploadFiles = defineModel<File[]>('uploadFiles', {
   required: true,
 })
 
-const { acceptTypes, fileSizeLimit } = withDefaults(
+const { acceptTypes, fileSizeLimit, useHeader } = withDefaults(
   defineProps<{
     acceptTypes: FileTypes[]
     fileSizeLimit: number
+    useHeader: boolean
   }>(),
   {
     fileSizeLimit: 100 * 1024 * 1024, // 100MB
+    useHeader: true,
   }
 )
+
+const lineLengths = ref<number[]>([])
 
 function onDrop(
   acceptFiles: File[],
@@ -68,15 +81,12 @@ function onDrop(
     return
   }
 
-  const isAccept = acceptTypes
+  const isAcceptMimeType = acceptTypes
     .map((v) => FileTypes.getAcceptMimeTypes(v))
     .every((v) => {
-      return (
-        acceptFiles.every((f) => v.includes(f.type)) &&
-        acceptFiles.every((f) => f.size <= fileSizeLimit)
-      )
+      return acceptFiles.every((f) => v.includes(f.type))
     })
-  if (!isAccept) {
+  if (!isAcceptMimeType) {
     useNuxtApp().$toast.error(
       acceptFiles.values.length > 1
         ? 'アップロードできないファイル形式が選択されました。'
@@ -84,7 +94,20 @@ function onDrop(
     )
     return
   }
+
+  const isAcceptFileSize = acceptFiles.every((f) => f.size <= fileSizeLimit)
+  if (!isAcceptFileSize) {
+    useNuxtApp().$toast.error(
+      formatterNumber(fileSizeLimit / (1024 * 1024)) +
+        'MB以下のファイルを選択してください。'
+    )
+    return
+  }
+
   uploadFiles.value = acceptFiles
+  acceptFiles.forEach((file, index) => {
+    getLineLength(file, index)
+  })
 }
 
 const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -93,6 +116,39 @@ const { getRootProps, getInputProps, isDragActive } = useDropzone({
 
 function removeFile(index: number) {
   uploadFiles.value.splice(index, 1)
+  lineLengths.value.splice(index, 1)
+}
+
+/**
+ * ファイルサイズの計算
+ * @param file File オブジェクト
+ * @param index ファイルの要素数
+ */
+function getLineLength(file: File, index: number) {
+  // 行数管理の配列を拡張
+  while (lineLengths.value.length <= index) {
+    lineLengths.value.push(useHeader ? -1 : 0)
+  }
+
+  let reminder = ''
+  const stream = file.stream()
+  const reader = stream.getReader()
+  reader.read().then(function processResult(
+    result: ReadableStreamReadResult<Uint8Array<ArrayBufferLike>>
+  ): Promise<ReadableStreamReadResult<Uint8Array<ArrayBufferLike>> | void> {
+    // 読み取り完了
+    if (result.done) {
+      return Promise.resolve()
+    }
+
+    // 取得できた文字列分だけ行数をカウント
+    const textDecoder = new TextDecoder('utf-8')
+    const chunk = textDecoder.decode(result.value, { stream: true })
+    const parts = (reminder + chunk).split('\n')
+    reminder = parts.pop() || ''
+    lineLengths.value[index] += parts.filter((v) => v).length
+    return reader.read().then(processResult)
+  })
 }
 </script>
 
