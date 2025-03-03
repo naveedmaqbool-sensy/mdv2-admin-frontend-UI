@@ -4,7 +4,6 @@ import OrderConditionsUpsertUnitTypes from '~/types/enums/OrderConditionsUpsertU
 import OrderingMethodTypes from '~/types/enums/OrderingMethodTypes'
 import RoundUpDownTypes from '~/types/enums/RoundUpTypes'
 import type OrderConditionsMaster from '~/types/interfaces/database/OrderConditionsMaster'
-import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
 
 interface OrderConditionsUpsertTarget
   extends Pick<
@@ -28,7 +27,6 @@ interface OrderConditionsUpsertTarget
     | 'displayStockQty'
     | 'displayLimitQty'
   > {
-  targetStores: StoreMaster[]
   targetStoreCsvFiles: {
     file: File
     lineLength: number
@@ -40,7 +38,6 @@ export class OrderConditionsUpsertTargetFactory
 {
   // eslint-disable-next-line no-useless-constructor
   public constructor(
-    public targetStores: StoreMaster[] = [],
     public targetStoreCsvFiles: {
       file: File
       lineLength: number
@@ -98,5 +95,33 @@ export class OrderConditionsUpsertRequestFactory
 export function apiOrderConditionsUpsert(
   request: OrderConditionsUpsertRequest
 ): Promise<OrderConditionsMaster | null> {
-  return apiGet('/order-conditions/upsert', request)
+  // 大きな情報は削除して送信
+  // 特にファイルに関してはレスポンスでアップロード用のＵＲＬを取得し、それを使用してアップロードする
+  return apiPost('/order-conditions/upsert', {
+    skuUnitType: request.skuUnitType,
+    storeUnitType: request.storeUnitType,
+    targetSkuIds: request.targetSkus.map((v) => v.skuId),
+    targets: request.targets.map((v) => {
+      return {
+        orderConditionStartDate: v.orderConditionStartDate,
+        orderConditionEndDate: v.orderConditionEndDate,
+        orderConditionPriority: v.orderConditionPriority,
+        orderingMethod: v.orderingMethod,
+        leadTimeOnMonday: v.leadTimeOnMonday,
+        leadTimeOnTuesday: v.leadTimeOnTuesday,
+        leadTimeOnWednesday: v.leadTimeOnWednesday,
+        leadTimeOnThursday: v.leadTimeOnThursday,
+        leadTimeOnFriday: v.leadTimeOnFriday,
+        leadTimeOnSaturday: v.leadTimeOnSaturday,
+        leadTimeOnSunday: v.leadTimeOnSunday,
+        orderLot: v.orderLot,
+        roundUpDownDefinition: v.roundUpDownDefinition,
+        minimumOrderQty: v.minimumOrderQty,
+        cutDate: v.cutDate,
+        deliveryType: v.deliveryType,
+        displayStockQty: v.displayStockQty,
+        displayLimitQty: v.displayLimitQty,
+      }
+    }),
+  })
 }

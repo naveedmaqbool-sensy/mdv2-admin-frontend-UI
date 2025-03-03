@@ -29,6 +29,9 @@
             選択
           </UButton>
         </div>
+        <CommonErrorMessages
+          :messages="apiValidationError.get('targetSkuIds')"
+        />
       </div>
       <div
         v-if="formData.skuUnitType === OrderConditionsUpsertUnitTypes.Multiple"
@@ -87,7 +90,21 @@
           :key="index"
           class="basis-2/12 p-1"
         >
-          <CommonDatepicker v-model="target.orderConditionStartDate" />
+          <CommonDatepicker
+            v-model="target.orderConditionStartDate"
+            :has-error="
+              apiValidationError.exists(
+                'targets.' + index + '.orderConditionStartDate'
+              )
+            "
+          />
+          <CommonErrorMessages
+            :messages="
+              apiValidationError.get(
+                'targets.' + index + '.orderConditionStartDate'
+              )
+            "
+          />
         </div>
         <div
           v-if="
@@ -107,7 +124,21 @@
           :key="index"
           class="basis-2/12 p-1"
         >
-          <CommonDatepicker v-model="target.orderConditionEndDate" />
+          <CommonDatepicker
+            v-model="target.orderConditionEndDate"
+            :has-error="
+              apiValidationError.exists(
+                'targets.' + index + '.orderConditionEndDate'
+              )
+            "
+          />
+          <CommonErrorMessages
+            :messages="
+              apiValidationError.get(
+                'targets.' + index + '.orderConditionEndDate'
+              )
+            "
+          />
         </div>
       </div>
 
@@ -118,7 +149,22 @@
           :key="index"
           class="basis-2/12 p-1"
         >
-          <CommonInput v-model="target.orderConditionPriority!" type="number" />
+          <CommonInput
+            v-model="target.orderConditionPriority!"
+            type="number"
+            :has-error="
+              apiValidationError.exists(
+                'targets.' + index + '.orderConditionPriority'
+              )
+            "
+          />
+          <CommonErrorMessages
+            :messages="
+              apiValidationError.get(
+                'targets.' + index + '.orderConditionPriority'
+              )
+            "
+          />
         </div>
       </div>
 
@@ -132,6 +178,11 @@
           <CommonSelect
             v-model="target.orderingMethod"
             :options="OrderingMethodTypes.getNameValues()"
+          />
+          <CommonErrorMessages
+            :messages="
+              apiValidationError.get('targets.' + index + '.orderingMethod')
+            "
           />
         </div>
       </div>
@@ -149,7 +200,20 @@
           :key="index"
           class="basis-2/12 p-1"
         >
-          <CommonInput v-model="target.leadTimeOnMonday" type="number" />
+          <CommonInput
+            v-model="target.leadTimeOnMonday"
+            type="number"
+            :has-error="
+              apiValidationError.exists(
+                'targets.' + index + '.leadTimeOnMonday'
+              )
+            "
+          />
+          <CommonErrorMessages
+            :messages="
+              apiValidationError.get('targets.' + index + '.leadTimeOnMonday')
+            "
+          />
         </div>
       </div>
 
@@ -162,7 +226,20 @@
           :key="index"
           class="basis-2/12 p-1"
         >
-          <CommonInput v-model="target.leadTimeOnTuesday" type="number" />
+          <CommonInput
+            v-model="target.leadTimeOnTuesday"
+            type="number"
+            :has-error="
+              apiValidationError.exists(
+                'targets.' + index + '.leadTimeOnTuesday'
+              )
+            "
+          />
+          <CommonErrorMessages
+            :messages="
+              apiValidationError.get('targets.' + index + '.leadTimeOnTuesday')
+            "
+          />
         </div>
       </div>
 
@@ -175,7 +252,22 @@
           :key="index"
           class="basis-2/12 p-1"
         >
-          <CommonInput v-model="target.leadTimeOnWednesday" type="number" />
+          <CommonInput
+            v-model="target.leadTimeOnWednesday"
+            type="number"
+            :has-error="
+              apiValidationError.exists(
+                'targets.' + index + '.leadTimeOnWednesday'
+              )
+            "
+          />
+          <CommonErrorMessages
+            :messages="
+              apiValidationError.get(
+                'targets.' + index + '.leadTimeOnWednesday'
+              )
+            "
+          />
         </div>
       </div>
 
@@ -188,7 +280,20 @@
           :key="index"
           class="basis-2/12 p-1"
         >
-          <CommonInput v-model="target.leadTimeOnThursday" type="number" />
+          <CommonInput
+            v-model="target.leadTimeOnThursday"
+            type="number"
+            :has-error="
+              apiValidationError.exists(
+                'targets.' + index + '.leadTimeOnThursday'
+              )
+            "
+          />
+          <CommonErrorMessages
+            :messages="
+              apiValidationError.get('targets.' + index + '.leadTimeOnThursday')
+            "
+          />
         </div>
       </div>
 
@@ -201,7 +306,20 @@
           :key="index"
           class="basis-2/12 p-1"
         >
-          <CommonInput v-model="target.leadTimeOnFriday" type="number" />
+          <CommonInput
+            v-model="target.leadTimeOnFriday"
+            type="number"
+            :has-error="
+              apiValidationError.exists(
+                'targets.' + index + '.leadTimeOnFriday'
+              )
+            "
+          />
+          <CommonErrorMessages
+            :messages="
+              apiValidationError.get('targets.' + index + '.leadTimeOnFriday')
+            "
+          />
         </div>
       </div>
 
@@ -214,7 +332,20 @@
           :key="index"
           class="basis-2/12 p-1"
         >
-          <CommonInput v-model="target.leadTimeOnSaturday" type="number" />
+          <CommonInput
+            v-model="target.leadTimeOnSaturday"
+            type="number"
+            :has-error="
+              apiValidationError.exists(
+                'targets.' + index + '.leadTimeOnSaturday'
+              )
+            "
+          />
+          <CommonErrorMessages
+            :messages="
+              apiValidationError.get('targets.' + index + '.leadTimeOnSaturday')
+            "
+          />
         </div>
       </div>
 
@@ -227,7 +358,20 @@
           :key="index"
           class="basis-2/12 p-1"
         >
-          <CommonInput v-model="target.leadTimeOnSunday" type="number" />
+          <CommonInput
+            v-model="target.leadTimeOnSunday"
+            type="number"
+            :has-error="
+              apiValidationError.exists(
+                'targets.' + index + '.leadTimeOnSunday'
+              )
+            "
+          />
+          <CommonErrorMessages
+            :messages="
+              apiValidationError.get('targets.' + index + '.leadTimeOnSunday')
+            "
+          />
         </div>
       </div>
 
@@ -238,7 +382,16 @@
           :key="index"
           class="basis-2/12 p-1"
         >
-          <CommonInput v-model="target.orderLot" type="number" />
+          <CommonInput
+            v-model="target.orderLot"
+            type="number"
+            :has-error="
+              apiValidationError.exists('targets.' + index + '.orderLot')
+            "
+          />
+          <CommonErrorMessages
+            :messages="apiValidationError.get('targets.' + index + '.orderLot')"
+          />
         </div>
       </div>
 
@@ -254,6 +407,13 @@
             :options="RoundUpDownTypes.getNameValues()"
             :disabled="target.orderLot === 1"
           />
+          <CommonErrorMessages
+            :messages="
+              apiValidationError.get(
+                'targets.' + index + '.roundUpDownDefinition'
+              )
+            "
+          />
         </div>
       </div>
 
@@ -264,7 +424,18 @@
           :key="index"
           class="basis-2/12 p-1"
         >
-          <CommonInput v-model="target.minimumOrderQty" type="number" />
+          <CommonInput
+            v-model="target.minimumOrderQty"
+            type="number"
+            :has-error="
+              apiValidationError.exists('targets.' + index + '.minimumOrderQty')
+            "
+          />
+          <CommonErrorMessages
+            :messages="
+              apiValidationError.get('targets.' + index + '.minimumOrderQty')
+            "
+          />
         </div>
       </div>
 
@@ -275,7 +446,18 @@
           :key="index"
           class="basis-2/12 p-1"
         >
-          <CommonInput v-model="target.displayStockQty" type="number" />
+          <CommonInput
+            v-model="target.displayStockQty"
+            type="number"
+            :has-error="
+              apiValidationError.exists('targets.' + index + '.displayStockQty')
+            "
+          />
+          <CommonErrorMessages
+            :messages="
+              apiValidationError.get('targets.' + index + '.displayStockQty')
+            "
+          />
         </div>
       </div>
 
@@ -286,7 +468,18 @@
           :key="index"
           class="basis-2/12 p-1"
         >
-          <CommonInput v-model="target.displayLimitQty" type="number" />
+          <CommonInput
+            v-model="target.displayLimitQty"
+            type="number"
+            :has-error="
+              apiValidationError.exists('targets.' + index + '.displayLimitQty')
+            "
+          />
+          <CommonErrorMessages
+            :messages="
+              apiValidationError.get('targets.' + index + '.displayLimitQty')
+            "
+          />
         </div>
       </div>
 
@@ -297,7 +490,15 @@
           :key="index"
           class="basis-2/12 p-1"
         >
-          <CommonDatepicker v-model="target.cutDate" />
+          <CommonDatepicker
+            v-model="target.cutDate"
+            :has-error="
+              apiValidationError.exists('targets.' + index + '.cutDate')
+            "
+          />
+          <CommonErrorMessages
+            :messages="apiValidationError.get('targets.' + index + '.cutDate')"
+          />
         </div>
       </div>
 
@@ -311,6 +512,11 @@
           <CommonSelect
             v-model="target.deliveryType"
             :options="DeliveryDateTypes.getNameValues()"
+          />
+          <CommonErrorMessages
+            :messages="
+              apiValidationError.get('targets.' + index + '.deliveryType')
+            "
           />
         </div>
       </div>
@@ -342,6 +548,7 @@
 
 <script setup lang="ts">
 import { OrderConditionsUpsertRequestFactory } from '~/composables/api/order-conditions/Upsert'
+import type ApiValidationError from '~/types/classes/ApiValidationError'
 import DeliveryDateTypes from '~/types/enums/DeliveryDateTypes'
 import FileTypes from '~/types/enums/FileTypes'
 import OrderConditionsUpsertStoreUnitTypes from '~/types/enums/OrderConditionsUpsertStoreUnitTypes'
@@ -353,6 +560,9 @@ const isOpenSkuModal = ref(false)
 const skus = ref<any[]>([])
 const skuTotal = ref(0)
 const formData = ref(new OrderConditionsUpsertRequestFactory())
+const apiValidationError = ref<ApiValidationError>(
+  serviceValidationErrorsInstance()
+)
 
 function showSkuModal() {
   isOpenSkuModal.value = true
@@ -395,10 +605,18 @@ function reset() {
   formData.value = new OrderConditionsUpsertRequestFactory()
 }
 
-function submit() {
+async function submit() {
   serviceLoadingStart()
-  apiOrderConditionsUpsert(formData.value)
+  const response = await apiOrderConditionsUpsert(formData.value)
   serviceLoadingFinish()
+
+  apiValidationError.value.refresh()
+
+  if (!response) {
+    return
+  }
+
+  useNuxtApp().$toast.success('更新・登録内容を受け付けました。')
 }
 </script>
 

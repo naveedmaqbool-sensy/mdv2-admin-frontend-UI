@@ -23,7 +23,7 @@ namespace OrderConditionsUpsertStoreUnitTypes {
   export function getNameValues() {
     return all().map((v) => {
       return {
-        name: getName(v),
+        name: `${v}:` + getName(v),
         value: v,
       }
     })

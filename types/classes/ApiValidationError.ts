@@ -45,7 +45,7 @@ export default class ApiValidationError implements ApiValidationErrorInterface {
         .map((v) => v[0])
     }
 
-    return this.validationErrors[key][0]
+    return this.validationErrors[key]
   }
 
   public refresh() {

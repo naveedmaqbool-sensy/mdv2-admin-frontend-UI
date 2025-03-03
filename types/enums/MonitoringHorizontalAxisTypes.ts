@@ -24,7 +24,7 @@ namespace MonitoringHorizontalAxisTypes {
       MonitoringHorizontalAxisTypes.Monthly,
     ].map((v) => {
       return {
-        name: getName(v),
+        name: `${v}:` + getName(v),
         value: v,
       }
     })
