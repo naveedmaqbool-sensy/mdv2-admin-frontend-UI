@@ -6,7 +6,7 @@
       <div class="basis-1/12 text-sm font-bold">SKU設定単位</div>
       <div class="basis-2/12">
         <CommonSelect
-          v-model="skuUnitType"
+          v-model="formData.skuUnitType"
           class="w-full"
           :options="OrderConditionsUpsertUnitTypes.getNameValues()"
           @change="onChangedSkuUnitType"
@@ -17,7 +17,7 @@
     <div class="flex pt-2">
       <div class="basis-1/12 text-sm font-bold">対象SKU</div>
       <div
-        v-if="skuUnitType === OrderConditionsUpsertUnitTypes.Single"
+        v-if="formData.skuUnitType === OrderConditionsUpsertUnitTypes.Single"
         class="basis-11/12"
       >
         <div class="flex">
@@ -31,11 +31,11 @@
         </div>
       </div>
       <div
-        v-if="skuUnitType === OrderConditionsUpsertUnitTypes.Multiple"
+        v-if="formData.skuUnitType === OrderConditionsUpsertUnitTypes.Multiple"
         class="basis-2/12"
       >
         <CommonFileUploader
-          v-model:upload-files="skuCsvFiles"
+          v-model:upload-files="formData.targetSkuCsvFiles"
           :accept-types="[FileTypes.CSV]"
           :file-size-limit="1024 * 1024 * 400"
         />
@@ -46,7 +46,7 @@
       <div class="basis-1/12 text-sm font-bold">設定単位</div>
       <div class="basis-2/12">
         <CommonSelect
-          v-model="storeUnitType"
+          v-model="formData.storeUnitType"
           class="w-full"
           :options="OrderConditionsUpsertStoreUnitTypes.getNameValues()"
           @change="onChangedStoreUnitType"
@@ -55,22 +55,24 @@
     </div>
 
     <div
-      v-if="storeUnitType === OrderConditionsUpsertStoreUnitTypes.Group"
+      v-if="
+        formData.storeUnitType === OrderConditionsUpsertStoreUnitTypes.Group
+      "
       class="flex pt-2"
     >
       <div class="basis-1/12 text-sm font-bold">店舗グループ</div>
       <div
-        v-for="(storeCsvFile, index) in storeCsvFiles"
+        v-for="(target, index) in formData.targets"
         :key="index"
         class="basis-2/12 p-1"
       >
         <CommonFileUploader
-          v-model:upload-files="storeCsvFiles[index]"
+          v-model:upload-files="target.targetStoreCsvFiles"
           :accept-types="[FileTypes.CSV]"
           :file-size-limit="1024 * 1024 * 10"
         />
       </div>
-      <div v-if="storeCsvFiles.length < 5" class="basis-1/12 p-2">
+      <div v-if="formData.targets.length < 5" class="basis-1/12 p-2">
         <UButton color="indigo" @click="addStoreGroup">
           グループを追加
         </UButton>
@@ -90,7 +92,7 @@
         <div
           v-if="
             formData.targets.length < 5 &&
-            storeUnitType === OrderConditionsUpsertStoreUnitTypes.All
+            formData.storeUnitType === OrderConditionsUpsertStoreUnitTypes.All
           "
           class="basis-1/12 p-2"
         >
@@ -312,6 +314,9 @@
           />
         </div>
       </div>
+
+      <UButton color="white" @click="reset">リセット</UButton>
+      <UButton class="ml-2" color="indigo" @click="submit">更新</UButton>
     </template>
 
     <MonitoringSelectObjectModal
@@ -344,18 +349,10 @@ import OrderConditionsUpsertUnitTypes from '~/types/enums/OrderConditionsUpsertU
 import OrderingMethodTypes from '~/types/enums/OrderingMethodTypes'
 import RoundUpDownTypes from '~/types/enums/RoundUpTypes'
 
-const skuUnitType = ref<OrderConditionsUpsertUnitTypes>(
-  OrderConditionsUpsertUnitTypes.Single
-)
-const storeUnitType = ref<OrderConditionsUpsertStoreUnitTypes>(
-  OrderConditionsUpsertStoreUnitTypes.All
-)
 const isOpenSkuModal = ref(false)
 const skus = ref<any[]>([])
 const skuTotal = ref(0)
 const formData = ref(new OrderConditionsUpsertRequestFactory())
-const storeCsvFiles = ref<File[][]>([])
-const skuCsvFiles = ref<File[]>([])
 
 function showSkuModal() {
   isOpenSkuModal.value = true
@@ -375,30 +372,33 @@ async function fetchSkus(searchRequest: {
 
 function onChangedSkuUnitType() {
   formData.value.targetSkus = []
-  skuCsvFiles.value = []
+  formData.value.targetSkuCsvFiles = []
 }
 
 function onChangedStoreUnitType() {
   // 設定対象の配列を必ず１つにする
   formData.value.targets = []
   formData.value.targets.push(new OrderConditionsUpsertTargetFactory())
-  storeCsvFiles.value = []
-
-  // グループの場合はCSVファイルの配列も追加する
-  if (storeUnitType.value === OrderConditionsUpsertStoreUnitTypes.Group) {
-    storeCsvFiles.value.push([])
-  }
 }
 
 function onChangedTargetSkus() {}
 
 function addStoreGroup() {
   formData.value.targets.push(new OrderConditionsUpsertTargetFactory())
-  storeCsvFiles.value.push([])
 }
 
 function addTarget() {
   formData.value.targets.push(new OrderConditionsUpsertTargetFactory())
+}
+
+function reset() {
+  formData.value = new OrderConditionsUpsertRequestFactory()
+}
+
+function submit() {
+  serviceLoadingStart()
+  apiOrderConditionsUpsert(formData.value)
+  serviceLoadingFinish()
 }
 </script>
 

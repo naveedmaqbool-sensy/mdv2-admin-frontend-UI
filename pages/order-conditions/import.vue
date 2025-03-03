@@ -35,7 +35,7 @@
 import type ApiValidationError from '~/types/classes/ApiValidationError'
 import FileTypes from '~/types/enums/FileTypes'
 
-const uploadFiles = ref<File[]>([])
+const uploadFiles = ref<{ file: File; lineLength: number }[]>([])
 const apiValidationError = ref<ApiValidationError>(
   serviceValidationErrorsInstance()
 )
@@ -46,7 +46,9 @@ function reset() {
 
 async function submit() {
   serviceLoadingStart()
-  const response = await apiOrderConditionsCsvImport(uploadFiles.value)
+  const response = await apiOrderConditionsCsvImport(
+    uploadFiles.value.map((f) => f.file)
+  )
   serviceLoadingFinish()
 
   apiValidationError.value.refresh()

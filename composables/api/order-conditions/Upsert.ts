@@ -1,4 +1,6 @@
 import DeliveryDateTypes from '~/types/enums/DeliveryDateTypes'
+import OrderConditionsUpsertStoreUnitTypes from '~/types/enums/OrderConditionsUpsertStoreUnitTypes'
+import OrderConditionsUpsertUnitTypes from '~/types/enums/OrderConditionsUpsertUnitTypes'
 import OrderingMethodTypes from '~/types/enums/OrderingMethodTypes'
 import RoundUpDownTypes from '~/types/enums/RoundUpTypes'
 import type OrderConditionsMaster from '~/types/interfaces/database/OrderConditionsMaster'
@@ -27,6 +29,10 @@ interface OrderConditionsUpsertTarget
     | 'displayLimitQty'
   > {
   targetStores: StoreMaster[]
+  targetStoreCsvFiles: {
+    file: File
+    lineLength: number
+  }[]
 }
 
 export class OrderConditionsUpsertTargetFactory
@@ -35,6 +41,10 @@ export class OrderConditionsUpsertTargetFactory
   // eslint-disable-next-line no-useless-constructor
   public constructor(
     public targetStores: StoreMaster[] = [],
+    public targetStoreCsvFiles: {
+      file: File
+      lineLength: number
+    }[] = [],
     public orderConditionStartDate: Date | string = new Date(),
     public orderConditionEndDate: Date | string = new Date(),
     public orderConditionPriority: number = 1,
@@ -57,7 +67,13 @@ export class OrderConditionsUpsertTargetFactory
 }
 
 interface OrderConditionsUpsertRequest {
+  skuUnitType: OrderConditionsUpsertUnitTypes
+  storeUnitType: OrderConditionsUpsertStoreUnitTypes
   targetSkus: any[]
+  targetSkuCsvFiles: {
+    file: File
+    lineLength: number
+  }[]
   targets: OrderConditionsUpsertTarget[]
 }
 
@@ -66,7 +82,13 @@ export class OrderConditionsUpsertRequestFactory
 {
   // eslint-disable-next-line no-useless-constructor
   public constructor(
+    public skuUnitType: OrderConditionsUpsertUnitTypes = OrderConditionsUpsertUnitTypes.Single,
+    public storeUnitType: OrderConditionsUpsertStoreUnitTypes = OrderConditionsUpsertStoreUnitTypes.All,
     public targetSkus: any[] = [],
+    public targetSkuCsvFiles: {
+      file: File
+      lineLength: number
+    }[] = [],
     public targets: OrderConditionsUpsertTarget[] = [
       new OrderConditionsUpsertTargetFactory(),
     ]

@@ -21,27 +21,27 @@
         >
           <div class="flex items-center">
             <UIcon class="text-2xl" name="i-heroicons-document-text-16-solid" />
-            <span class="ml-2 text-xs">{{ uploadFile.name }}</span>
+            <span class="ml-2 text-xs">{{ uploadFile.file.name }}</span>
             <UButton variant="link" color="red" @click="removeFile(index)">
               <UIcon class="text-xl" name="i-heroicons-x-mark-16-solid" />
             </UButton>
           </div>
-          <UBadge color="white">{{ uploadFile.type }}</UBadge>
-          <UBadge v-if="lineLengths[index] ?? false" color="white" class="ml-2">
-            {{ formatterNumber(lineLengths[index]) }} 行
+          <UBadge color="white">{{ uploadFile.file.type }}</UBadge>
+          <UBadge color="white" class="ml-2">
+            {{ formatterNumber(uploadFile.lineLength) }} 行
           </UBadge>
-          <UBadge v-if="uploadFile.size < 1024" color="white" class="ml-2">
-            {{ formatterNumber(uploadFile.size) }} B
+          <UBadge v-if="uploadFile.file.size < 1024" color="white" class="ml-2">
+            {{ formatterNumber(uploadFile.file.size) }} Byte
           </UBadge>
           <UBadge
-            v-else-if="uploadFile.size < 1024 * 1024"
+            v-else-if="uploadFile.file.size < 1024 * 1024"
             color="white"
             class="ml-2"
           >
-            {{ formatterNumber(uploadFile.size / 1024) }} KB
+            {{ formatterNumber(uploadFile.file.size / 1024) }} KB
           </UBadge>
           <UBadge v-else color="white" class="ml-2">
-            {{ formatterNumber(uploadFile.size / (1024 * 1024)) }} MB
+            {{ formatterNumber(uploadFile.file.size / (1024 * 1024)) }} MB
           </UBadge>
         </UCard>
       </p>
@@ -53,10 +53,13 @@
 import { useDropzone, type FileRejectReason } from 'vue3-dropzone'
 import FileTypes from '~/types/enums/FileTypes'
 
-const uploadFiles = defineModel<File[]>('uploadFiles', {
-  type: Array,
-  required: true,
-})
+const uploadFiles = defineModel<{ file: File; lineLength: number }[]>(
+  'uploadFiles',
+  {
+    type: Array,
+    required: true,
+  }
+)
 
 const { acceptTypes, fileSizeLimit, useHeader } = withDefaults(
   defineProps<{
@@ -69,8 +72,6 @@ const { acceptTypes, fileSizeLimit, useHeader } = withDefaults(
     useHeader: true,
   }
 )
-
-const lineLengths = ref<number[]>([])
 
 function onDrop(
   acceptFiles: File[],
@@ -104,7 +105,10 @@ function onDrop(
     return
   }
 
-  uploadFiles.value = acceptFiles
+  uploadFiles.value = acceptFiles.map((file) => ({
+    file,
+    lineLength: useHeader ? -1 : 0,
+  }))
   acceptFiles.forEach((file, index) => {
     getLineLength(file, index)
   })
@@ -116,7 +120,6 @@ const { getRootProps, getInputProps, isDragActive } = useDropzone({
 
 function removeFile(index: number) {
   uploadFiles.value.splice(index, 1)
-  lineLengths.value.splice(index, 1)
 }
 
 /**
@@ -125,11 +128,6 @@ function removeFile(index: number) {
  * @param index ファイルの要素数
  */
 function getLineLength(file: File, index: number) {
-  // 行数管理の配列を拡張
-  while (lineLengths.value.length <= index) {
-    lineLengths.value.push(useHeader ? -1 : 0)
-  }
-
   let reminder = ''
   const stream = file.stream()
   const reader = stream.getReader()
@@ -146,7 +144,7 @@ function getLineLength(file: File, index: number) {
     const chunk = textDecoder.decode(result.value, { stream: true })
     const parts = (reminder + chunk).split('\n')
     reminder = parts.pop() || ''
-    lineLengths.value[index] += parts.filter((v) => v).length
+    uploadFiles.value[index].lineLength += parts.filter((v) => v).length
     return reader.read().then(processResult)
   })
 }
