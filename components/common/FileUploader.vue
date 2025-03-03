@@ -1,14 +1,22 @@
 <template>
   <div
-    class="my-2 flex cursor-pointer flex-col items-center rounded border-2 border-dashed border-gray-300 p-4"
+    class="my-2 flex cursor-pointer flex-col items-center rounded border-2 border-dashed p-4"
     :class="{
       'bg-gray-100': isDragActive,
+      'border-gray-300': !hasError,
+      'border-red-300': hasError,
     }"
     v-bind="getRootProps()"
   >
     <input v-bind="getInputProps()" />
     <section class="text-center text-gray-500">
-      <p v-if="uploadFiles.length === 0" class="my-10 text-lg font-bold">
+      <p
+        v-if="uploadFiles.length === 0"
+        class="my-10 text-lg font-bold"
+        :class="{
+          'text-red-400': hasError,
+        }"
+      >
         <UIcon name="i-heroicons-arrow-up-tray-solid" class="mr-2 mt-2" />
         ファイルアップロード
       </p>
@@ -66,10 +74,12 @@ const { acceptTypes, fileSizeLimit, useHeader } = withDefaults(
     acceptTypes: FileTypes[]
     fileSizeLimit: number
     useHeader: boolean
+    hasError: boolean
   }>(),
   {
     fileSizeLimit: 100 * 1024 * 1024, // 100MB
     useHeader: true,
+    hasError: false,
   }
 )
 

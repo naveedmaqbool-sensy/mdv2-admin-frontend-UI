@@ -94,7 +94,10 @@ export class OrderConditionsUpsertRequestFactory
 
 export function apiOrderConditionsUpsert(
   request: OrderConditionsUpsertRequest
-): Promise<OrderConditionsMaster | null> {
+): Promise<{
+  skuUploadUrl: string | null
+  storeUploadUrls: string[]
+} | null> {
   // 大きな情報は削除して送信
   // 特にファイルに関してはレスポンスでアップロード用のＵＲＬを取得し、それを使用してアップロードする
   return apiPost('/order-conditions/upsert', {

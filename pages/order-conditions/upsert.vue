@@ -41,6 +41,10 @@
           v-model:upload-files="formData.targetSkuCsvFiles"
           :accept-types="[FileTypes.CSV]"
           :file-size-limit="1024 * 1024 * 400"
+          :has-error="apiValidationError.exists('targetSkuCsvFiles')"
+        />
+        <CommonErrorMessages
+          :messages="apiValidationError.get('targetSkuCsvFiles')"
         />
       </div>
     </div>
@@ -73,6 +77,14 @@
           v-model:upload-files="target.targetStoreCsvFiles"
           :accept-types="[FileTypes.CSV]"
           :file-size-limit="1024 * 1024 * 10"
+          :has-error="
+            apiValidationError.exists(`targets.${index}.targetStoreCsvFiles`)
+          "
+        />
+        <CommonErrorMessages
+          :messages="
+            apiValidationError.get(`targets.${index}.targetStoreCsvFiles`)
+          "
         />
       </div>
       <div v-if="formData.targets.length < 5" class="basis-1/12 p-2">
@@ -606,6 +618,35 @@ function reset() {
 }
 
 async function submit() {
+  let hasError = false
+  if (
+    formData.value.skuUnitType === OrderConditionsUpsertUnitTypes.Multiple &&
+    formData.value.targetSkuCsvFiles.length === 0
+  ) {
+    apiValidationError.value.set(
+      'targetSkuCsvFiles',
+      '対象SKUを指定してください。'
+    )
+    hasError = true
+  }
+
+  if (
+    formData.value.storeUnitType === OrderConditionsUpsertStoreUnitTypes.Group
+  ) {
+    formData.value.targets.forEach((target, index) => {
+      if (target.targetStoreCsvFiles.length === 0) {
+        apiValidationError.value.set(
+          'targets.' + index + '.targetStoreCsvFiles',
+          '対象店舗を指定してください。'
+        )
+        hasError = true
+      }
+    })
+  }
+  if (hasError) {
+    return
+  }
+
   serviceLoadingStart()
   const response = await apiOrderConditionsUpsert(formData.value)
   serviceLoadingFinish()
@@ -614,6 +655,37 @@ async function submit() {
 
   if (!response) {
     return
+  }
+
+  const { skuUploadUrl, storeUploadUrls } = response
+
+  // 商品CSVのファイルアップロード処理
+  if (skuUploadUrl) {
+    try {
+      await $fetch(skuUploadUrl, {
+        method: 'PUT',
+        body: formData.value.targetSkuCsvFiles[0].file.stream(),
+        headers: {
+          'Content-Type': formData.value.targetSkuCsvFiles[0].file.type,
+        },
+      })
+    } catch {}
+  }
+
+  // 店舗CSVのファイルアップロード処理
+  if (storeUploadUrls.length > 0) {
+    storeUploadUrls.forEach(async (storeUploadUrl, index) => {
+      const file = formData.value.targets[index].targetStoreCsvFiles[0].file
+      try {
+        await $fetch(storeUploadUrl, {
+          method: 'PUT',
+          body: file.stream(),
+          headers: {
+            'Content-Type': file.type,
+          },
+        })
+      } catch {}
+    })
   }
 
   useNuxtApp().$toast.success('更新・登録内容を受け付けました。')
