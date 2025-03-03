@@ -647,45 +647,48 @@ async function submit() {
     return
   }
 
+  // レコードの作成とファイルアップロード用ＵＲＬの発行
   serviceLoadingStart()
   const response = await apiOrderConditionsUpsert(formData.value)
   serviceLoadingFinish()
 
   apiValidationError.value.refresh()
-
   if (!response) {
     return
   }
 
   const { skuUploadUrl, storeUploadUrls } = response
 
-  // 商品CSVのファイルアップロード処理
+  // 商品ＣＳＶがある場合はアップロードする
+  const uploadApi: Promise<any>[] = []
   if (skuUploadUrl) {
-    try {
-      await $fetch(skuUploadUrl, {
-        method: 'PUT',
-        body: formData.value.targetSkuCsvFiles[0].file.stream(),
-        headers: {
-          'Content-Type': formData.value.targetSkuCsvFiles[0].file.type,
-        },
-      })
-    } catch {}
+    uploadApi.push(
+      apiUploadStorageBySignedUrl(
+        skuUploadUrl,
+        formData.value.targetSkuCsvFiles[0].file
+      )
+    )
   }
 
-  // 店舗CSVのファイルアップロード処理
+  // 店舗ＣＳＶがある場合はアップロードする
   if (storeUploadUrls.length > 0) {
-    storeUploadUrls.forEach(async (storeUploadUrl, index) => {
-      const file = formData.value.targets[index].targetStoreCsvFiles[0].file
-      try {
-        await $fetch(storeUploadUrl, {
-          method: 'PUT',
-          body: file.stream(),
-          headers: {
-            'Content-Type': file.type,
-          },
-        })
-      } catch {}
+    storeUploadUrls.forEach((storeUploadUrl, index) => {
+      uploadApi.push(
+        apiUploadStorageBySignedUrl(
+          storeUploadUrl,
+          formData.value.targets[index].targetStoreCsvFiles[0].file
+        )
+      )
     })
+  }
+
+  // ファイルアップロードが終わるまで待機
+  if (uploadApi.length > 0) {
+    try {
+      await Promise.all(uploadApi)
+    } catch {
+      // TODO: rfukuma エラー処理
+    }
   }
 
   useNuxtApp().$toast.success('更新・登録内容を受け付けました。')
