@@ -97,6 +97,7 @@ export function apiOrderConditionsUpsert(
 ): Promise<{
   skuUploadUrl: string | null
   storeUploadUrls: string[]
+  importId: number
 } | null> {
   // 大きな情報は削除して送信
   // 特にファイルに関してはレスポンスでアップロード用のＵＲＬを取得し、それを使用してアップロードする

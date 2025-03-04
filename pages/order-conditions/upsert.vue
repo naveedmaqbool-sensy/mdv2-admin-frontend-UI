@@ -650,14 +650,14 @@ async function submit() {
   // レコードの作成とファイルアップロード用ＵＲＬの発行
   serviceLoadingStart()
   const response = await apiOrderConditionsUpsert(formData.value)
-  serviceLoadingFinish()
 
   apiValidationError.value.refresh()
   if (!response) {
+    serviceLoadingFinish()
     return
   }
 
-  const { skuUploadUrl, storeUploadUrls } = response
+  const { skuUploadUrl, storeUploadUrls, importId } = response
 
   // 商品ＣＳＶがある場合はアップロードする
   const uploadApi: Promise<any>[] = []
@@ -690,6 +690,12 @@ async function submit() {
       // TODO: rfukuma エラー処理
     }
   }
+  serviceLoadingFinish()
+
+  // 取り込みの実行命令をサーバに送信
+  apiOrderConditionsUpsertExecute({
+    id: importId,
+  })
 
   useNuxtApp().$toast.success('更新・登録内容を受け付けました。')
 }
