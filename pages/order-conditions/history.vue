@@ -177,16 +177,56 @@ const columns = [
   },
 ]
 
-function downloadSkuFile(_history: OrderConditionsMasterImport) {
-  alert('FIXME: rfukuma 対象ＳＫＵのＣＳＶダウンロード')
+async function downloadSkuFile(history: OrderConditionsMasterImport) {
+  serviceLoadingStart()
+  const response = await apiOrderConditionsHistoryTargetSkuDownload({
+    id: history.id,
+  })
+
+  if (!response) {
+    serviceLoadingFinish()
+    return
+  }
+
+  const downloadUrl = response.downloadUrl
+  await apiDownloadStorageBySignedUrl(downloadUrl, '対象SKU.csv')
+  serviceLoadingFinish()
 }
 
-function downloadStoreFile(_history: OrderConditionsMasterImport) {
-  alert('FIXME: rfukuma 対象店舗のＣＳＶダウンロード')
+async function downloadStoreFile(history: OrderConditionsMasterImport) {
+  serviceLoadingStart()
+  const response = await apiOrderConditionsHistoryTargetStoreDownload({
+    id: history.id,
+  })
+
+  if (!response) {
+    serviceLoadingFinish()
+    return
+  }
+
+  const downloadUrls = response.downloadUrls
+  await Promise.all(
+    downloadUrls.map((downloadUrl, index) =>
+      apiDownloadStorageBySignedUrl(downloadUrl, `対象店舗${index + 1}.csv`)
+    )
+  )
+  serviceLoadingFinish()
 }
 
-function downloadErrorFile(_history: OrderConditionsMasterImport) {
-  alert('FIXME: rfukuma エラーファイルのＣＳＶダウンロード')
+async function downloadErrorFile(history: OrderConditionsMasterImport) {
+  serviceLoadingStart()
+  const response = await apiOrderConditionsHistoryErrorDownload({
+    id: history.id,
+  })
+
+  if (!response) {
+    serviceLoadingFinish()
+    return
+  }
+
+  const downloadUrl = response.downloadUrl
+  await apiDownloadStorageBySignedUrl(downloadUrl, 'エラー内容.csv')
+  serviceLoadingFinish()
 }
 
 function showValues(_history: OrderConditionsMasterImport) {
