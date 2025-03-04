@@ -15,7 +15,7 @@ namespace OrderConditionsStatusTypes {
       case OrderConditionsStatusTypes.Failed:
         return '失敗'
       case OrderConditionsStatusTypes.Success:
-        return '成功'
+        return '処理済み'
     }
   }
 }
