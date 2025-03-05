@@ -107,7 +107,10 @@ const paginationPage = computed({
     fetch(value)
   },
 })
-const emit = defineEmits<{ fetchItems: [searchRequest: SearchRequest] }>()
+const emit = defineEmits<{
+  fetchItems: [searchRequest: SearchRequest]
+  change: []
+}>()
 
 watch(isOpenModal, async (value) => {
   if (value) {
@@ -131,6 +134,8 @@ watch(page, (value) => {
 function save() {
   selected.value = [...internalSelected.value]
   isOpenModal.value = false
+
+  emit('change')
 }
 
 function fetch(page: number) {

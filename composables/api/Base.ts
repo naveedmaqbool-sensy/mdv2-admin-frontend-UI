@@ -17,10 +17,11 @@ export async function apiBase<RequestT, ResponseT>(
   request: RequestT,
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',
   responseType: ResponseType = undefined,
-  errorMessages: ErrorMessages | null = null
+  errorMessages: ErrorMessages | null = null,
+  fileRequest: { [name: string]: File } | null = null
 ): Promise<ResponseT | null> {
   let params: any = null
-  let body: any = null
+  let body: any | null = null
   if (request) {
     if (method === 'GET' || method === 'DELETE') {
       // Date オブジェクトを渡した際にクォートされるのを避けるため
@@ -36,6 +37,20 @@ export async function apiBase<RequestT, ResponseT>(
     }
   }
 
+  // ファイルの指定がある場合は FormData を使う
+  if (fileRequest) {
+    const formData = new FormData()
+    Object.keys(fileRequest).forEach((key) => {
+      formData.append(key, fileRequest[key])
+    })
+    if (body) {
+      Object.keys(body).forEach((key) => {
+        formData.append(key, body[key])
+      })
+    }
+    body = formData
+  }
+
   const config = {
     method,
     baseURL: useRuntimeConfig().public.apiUrl,
@@ -43,7 +58,7 @@ export async function apiBase<RequestT, ResponseT>(
       // 認証情報（Bearer token）
       Authorization: useAuthState().token.value!,
       // Laravel を api と認識するために必須
-      'Content-Type': 'application/json',
+      Accept: 'application/json',
       // Laravel のバリデーションを 422 で受けるのに必須
       'X-Requested-With': 'XMLHttpRequest',
     },

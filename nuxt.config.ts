@@ -39,6 +39,7 @@ export default defineNuxtConfig({
     public: {
       apiUrl,
       environment: process.env.ENVIRONMENT,
+      displayStockName: process.env.DISPLAY_STOCK_NAME,
     },
   },
   $production: {},

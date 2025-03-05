@@ -1,6 +1,6 @@
-import type MonitoingFormData from '~/types/interfaces/page/monitoring/FormData'
+import type MonitoringFormData from '~/types/interfaces/page/monitoring/FormData'
 
-interface ApiMonitoringCsvExportRequest extends MonitoingFormData {}
+interface ApiMonitoringCsvExportRequest extends MonitoringFormData {}
 
 export function apiMonitoringCsvExport(
   request: ApiMonitoringCsvExportRequest

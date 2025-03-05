@@ -293,16 +293,21 @@
         </div>
       </section>
 
-      <section class="pt-2 text-left">
-        <UButton color="indigo" @click="fetch(1)">画面表示</UButton>
-        <UButton
-          color="primary"
-          class="ml-2"
-          :disabled="kpiRows.length === 0 || kpiHeaders.length === 0"
-          @click="csvExport"
-        >
-          CSV出力
-        </UButton>
+      <section class="flex pt-2">
+        <div class="basis-1/2 text-left">
+          <UButton class="mr-2" color="white" @click="reset">リセット</UButton>
+          <UButton color="indigo" @click="fetch(1)">画面表示</UButton>
+        </div>
+        <div class="basis-1/2 text-right">
+          <UButton
+            color="primary"
+            class="ml-2"
+            :disabled="kpiRows.length === 0 || kpiHeaders.length === 0"
+            @click="csvExport"
+          >
+            CSV出力
+          </UButton>
+        </div>
       </section>
     </UForm>
 
@@ -439,19 +444,19 @@ import MonitoringHorizontalAxisTypes from '~/types/enums/MonitoringHorizontalAxi
 import MonitoringTypes from '~/types/enums/MonitoringTypes'
 import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
 import StoreMonitoringUnitTypes from '~/types/enums/StoreMonitoringUnitTypes'
-import PaginationReqeustFactory from '~/types/interfaces/common/PaginationRequestFactory'
+import PaginationRequestFactory from '~/types/interfaces/common/PaginationRequestFactory'
 import type ClassMaster from '~/types/interfaces/database/SensyCloud/ClassMaster'
 import type DepartmentMaster from '~/types/interfaces/database/SensyCloud/DepartmentMaster'
 import type GroupMaster from '~/types/interfaces/database/SensyCloud/GroupMaster'
 import type LineMaster from '~/types/interfaces/database/SensyCloud/LineMaster'
 import type StoreGroup from '~/types/interfaces/database/SensyCloud/StoreGroup'
 import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
-import type MonitoingFormData from '~/types/interfaces/page/monitoring/FormData'
+import type MonitoringFormData from '~/types/interfaces/page/monitoring/FormData'
 import FormDataFactory from '~/types/interfaces/page/monitoring/FormDataFactory'
 
 // 初期表示の検索条件は最後に検索した設定を参照する
 const cacheFormData = frontCacheGet('monitoringFormData', true)
-const formData = ref<MonitoingFormData>(new FormDataFactory())
+const formData = ref<MonitoringFormData>(new FormDataFactory())
 if (cacheFormData !== null) {
   formData.value = {
     ...cacheFormData,
@@ -539,6 +544,10 @@ const isOpenModal = ref(false)
 const monitoringDetailRequest = ref<ApiMonitoringDetailRequest>()
 const monitoringDetails = ref<any[]>([])
 const monitoringDetailTotal = ref(0)
+
+function reset() {
+  formData.value = new FormDataFactory()
+}
 
 async function fetch(page: number) {
   // FIXME: rfukuma バリデーションがあればここで
@@ -737,7 +746,7 @@ async function onSelectRow(row: { [key: string]: string }) {
     targetId: row.targetId,
     searchText: '',
     ...fetchRequest,
-    ...new PaginationReqeustFactory(),
+    ...new PaginationRequestFactory(),
   }
 
   // 発注修正数と発注修正率以外の場合は処理しない
@@ -773,7 +782,7 @@ async function fetchMonitoringDetail() {
 
 async function csvExportMonitoringDetail() {
   serviceLoadingStart()
-  await apiMonitoringDetailCsvEport(monitoringDetailRequest.value!)
+  await apiMonitoringDetailCsvExport(monitoringDetailRequest.value!)
   serviceLoadingFinish()
 }
 </script>

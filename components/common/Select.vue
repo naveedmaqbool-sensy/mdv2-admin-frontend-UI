@@ -36,9 +36,11 @@ const props = withDefaults(
 const disabled = toRef(props, 'disabled')
 
 const emit = defineEmits<{ change: [] }>()
+let old = selected.value
 
 function onChange(value: number | null) {
-  if (selected.value !== value) {
+  if (old !== value) {
+    old = value
     emit('change')
   }
 }
