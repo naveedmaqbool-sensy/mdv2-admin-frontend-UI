@@ -231,7 +231,7 @@
         <UButton
           color="indigo"
           variant="link"
-          @click="`/order-conditions/${row.id}`"
+          :to="`/order-conditions/${row.id}`"
         >
           編集
         </UButton>
