@@ -231,7 +231,7 @@
         <UButton
           color="indigo"
           variant="link"
-          :to="`/order-conditions/${row.id}`"
+          @click="`/order-conditions/${row.id}`"
         >
           編集
         </UButton>
@@ -459,9 +459,29 @@ import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster
 import type OrderConditionsFormData from '~/types/interfaces/page/order-conditions/FormData'
 import OrderConditionsFormDataFactory from '~/types/interfaces/page/order-conditions/FormDataFactory'
 
+const frontCacheKey = 'orderConditionsFormData'
+
+try {
+  const history = window.history
+  const state = history.state
+  if (state && state.back) {
+    const prevUrl = useNuxtApp().$router.resolve(state.back).href
+
+    // 編集ページから戻ってきた場合はキャッシュから検索条件を取得する
+    if (prevUrl.includes('order-conditions')) {
+      if (
+        prevUrl.split('/').length !== 3 ||
+        !Number(prevUrl.split('/')[2].toString())
+      ) {
+        frontCacheRemove(frontCacheKey)
+      }
+    }
+  }
+} catch {}
+
 const apiValidationError = ref<ApiValidationError | null>(null)
 const formData = ref<OrderConditionsFormData>(
-  new OrderConditionsFormDataFactory()
+  frontCacheGet(frontCacheKey, true) || new OrderConditionsFormDataFactory()
 )
 
 const isOpenSkuModal = ref(false)
@@ -537,6 +557,9 @@ async function fetch(page: number) {
   if (!response) {
     return
   }
+
+  // 検索に成功したら条件をキャッシュする
+  frontCacheSet(frontCacheKey, formData.value, true)
 
   orderConditionsMasters.value = response.data
   orderConditionsTotal.value = response.total
