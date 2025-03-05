@@ -16,7 +16,7 @@ namespace UserPermissionTypes {
   export function getNameValues() {
     return [UserPermissionTypes.Admin, UserPermissionTypes.General].map((v) => {
       return {
-        name: getName(v),
+        name: `${v}:` + getName(v),
         value: v,
       }
     })

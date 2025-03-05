@@ -1,6 +1,6 @@
-import type MonitoingFormData from '~/types/interfaces/page/monitoring/FormData'
+import type MonitoringFormData from '~/types/interfaces/page/monitoring/FormData'
 
-interface ApiMonitoringFetchRequest extends MonitoingFormData {}
+interface ApiMonitoringFetchRequest extends MonitoringFormData {}
 interface ApiMonitoringFetchResponse {
   headers: string[]
   rows: { [key: string]: string }[]

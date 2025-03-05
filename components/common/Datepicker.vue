@@ -13,6 +13,10 @@ const props = defineProps({
     >,
     default: null,
   },
+  hasError: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emit = defineEmits(['update:model-value', 'close'])
@@ -39,9 +43,11 @@ const attrs = {
     <UButton
       icon="i-heroicons-calendar-days-20-solid"
       :label="formatterDate(date)"
-      color="gray"
       block
-    />
+      :color="!hasError ? 'gray' : 'red'"
+      :variant="!hasError ? undefined : 'outline'"
+    >
+    </UButton>
     <template #panel="{ close }">
       <VCalendarDatePicker
         v-model="date"
