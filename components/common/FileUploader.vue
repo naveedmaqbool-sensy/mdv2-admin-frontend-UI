@@ -12,9 +12,10 @@
     <section class="text-center text-gray-500">
       <p
         v-if="uploadFiles.length === 0"
-        class="my-10 text-lg font-bold"
+        class="mt-10 text-lg font-bold"
         :class="{
           'text-red-400': hasError,
+          'mb-10': !hasDownloadFormat,
         }"
       >
         <UIcon name="i-heroicons-arrow-up-tray-solid" class="mr-2 mt-2" />
@@ -25,12 +26,15 @@
           v-for="(uploadFile, index) in uploadFiles"
           :key="index"
           class="cursor-default"
-          @click.prevent.stop=""
         >
           <div class="flex items-center">
             <UIcon class="text-2xl" name="i-heroicons-document-text-16-solid" />
             <span class="ml-2 text-xs">{{ uploadFile.file.name }}</span>
-            <UButton variant="link" color="red" @click="removeFile(index)">
+            <UButton
+              variant="link"
+              color="red"
+              @click.prevent.stop="removeFile(index)"
+            >
               <UIcon class="text-xl" name="i-heroicons-x-mark-16-solid" />
             </UButton>
           </div>
@@ -53,6 +57,17 @@
           </UBadge>
         </UCard>
       </p>
+      <p v-else-if="hasDownloadFormat" class="mb-10 text-sm font-bold">
+        ファイルフォーマットは
+        <UButton
+          variant="link"
+          color="indigo"
+          class="ml-[-0.3rem]"
+          @click.prevent.stop="emit('downloadFormat')"
+        >
+          こちら
+        </UButton>
+      </p>
     </section>
   </div>
 </template>
@@ -60,6 +75,8 @@
 <script setup lang="ts">
 import { useDropzone, type FileRejectReason } from 'vue3-dropzone'
 import FileTypes from '~/types/enums/FileTypes'
+
+const emit = defineEmits<{ downloadFormat: [] }>()
 
 const uploadFiles = defineModel<{ file: File; lineLength: number }[]>(
   'uploadFiles',
@@ -75,11 +92,13 @@ const { acceptTypes, fileSizeLimit, useHeader } = withDefaults(
     fileSizeLimit: number
     useHeader: boolean
     hasError: boolean
+    hasDownloadFormat: boolean
   }>(),
   {
     fileSizeLimit: 100 * 1024 * 1024, // 100MB
     useHeader: true,
     hasError: false,
+    hasDownloadFormat: false,
   }
 )
 

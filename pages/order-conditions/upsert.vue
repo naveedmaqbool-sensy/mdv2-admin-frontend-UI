@@ -42,6 +42,8 @@
           :accept-types="[FileTypes.CSV]"
           :file-size-limit="1024 * 1024 * 400"
           :has-error="apiValidationError.exists('targetSkuCsvFiles')"
+          has-download-format
+          @download-format="downloadSkuFormat"
         />
         <CommonErrorMessages
           :messages="apiValidationError.get('targetSkuCsvFiles')"
@@ -80,6 +82,8 @@
           :has-error="
             apiValidationError.exists(`targets.${index}.targetStoreCsvFiles`)
           "
+          has-download-format
+          @download-format="downloadStoreFormat"
         />
         <CommonErrorMessages
           :messages="
@@ -698,6 +702,18 @@ async function submit() {
   })
 
   useNuxtApp().$toast.success('更新・登録内容を受け付けました。')
+}
+
+async function downloadSkuFormat() {
+  serviceLoadingStart()
+  await apiOrderConditionsDownloadSkuFormat()
+  serviceLoadingFinish()
+}
+
+async function downloadStoreFormat() {
+  serviceLoadingStart()
+  await apiOrderConditionsDownloadStoreFormat()
+  serviceLoadingFinish()
 }
 </script>
 

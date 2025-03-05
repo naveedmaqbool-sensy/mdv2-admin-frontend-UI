@@ -6,6 +6,8 @@
         v-model:upload-files="uploadFiles"
         class="w-1/2"
         :accept-types="[FileTypes.CSV]"
+        has-download-format
+        @download-format="downloadFormat"
       />
 
       <div v-if="apiValidationError.exists('file')" class="text-red-500">
@@ -19,14 +21,6 @@
 
       <UButton color="white" @click="reset">リセット</UButton>
       <UButton class="ml-2" color="indigo" @click="submit">更新</UButton>
-      <UButton
-        variant="link"
-        class="ml-12"
-        color="indigo"
-        @click="downloadFormat"
-      >
-        フォーマットダウンロード
-      </UButton>
     </UForm>
   </div>
 </template>
