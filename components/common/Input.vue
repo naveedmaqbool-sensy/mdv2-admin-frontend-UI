@@ -1,6 +1,6 @@
 <template>
   <UInput
-    v-model="text!"
+    v-model="data!"
     :type="type"
     :color="hasError ? 'red' : 'gray'"
     :ui="{
@@ -12,11 +12,12 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
-  modelValue: {
-    type: [String, Number, null] as PropType<string | number | null>,
-    default: null,
-  },
+const data = defineModel<string | number | null>({
+  type: String,
+  required: true,
+})
+
+defineProps({
   hasError: {
     type: Boolean,
     default: false,
@@ -24,16 +25,6 @@ const props = defineProps({
   type: {
     type: String,
     default: 'text',
-  },
-})
-
-const emit = defineEmits(['update:model-value', 'close'])
-
-const text = computed({
-  get: () => props.modelValue,
-  set: (value) => {
-    emit('update:model-value', value)
-    emit('close')
   },
 })
 </script>
