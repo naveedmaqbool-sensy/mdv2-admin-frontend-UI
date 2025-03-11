@@ -69,6 +69,28 @@
       "
       class="flex pt-2"
     >
+      <div class="basis-1/12 text-sm font-bold"></div>
+      <div
+        v-for="(target, index) in formData.targets"
+        :key="index"
+        class="basis-2/12 p-1 text-center"
+      >
+        <UButton
+          v-if="formData.targets.length > 1"
+          color="red"
+          @click="removeTarget(index)"
+        >
+          グループを削除
+        </UButton>
+      </div>
+    </div>
+
+    <div
+      v-if="
+        formData.storeUnitType === OrderConditionsUpsertStoreUnitTypes.Group
+      "
+      class="flex pt-2"
+    >
       <div class="basis-1/12 text-sm font-bold">店舗グループ</div>
       <div
         v-for="(target, index) in formData.targets"
@@ -99,6 +121,28 @@
     </div>
 
     <template v-if="formData.targets.length > 0">
+      <div
+        v-if="
+          formData.storeUnitType === OrderConditionsUpsertStoreUnitTypes.All
+        "
+        class="flex pt-2"
+      >
+        <div class="basis-1/12 text-sm font-bold"></div>
+        <div
+          v-for="(target, index) in formData.targets"
+          :key="index"
+          class="basis-2/12 p-1 text-center"
+        >
+          <UButton
+            v-if="formData.targets.length > 1"
+            color="red"
+            @click="removeTarget(index)"
+          >
+            設定を削除
+          </UButton>
+        </div>
+      </div>
+
       <div class="flex pt-2">
         <div class="basis-1/12 text-sm font-bold">対象期間(from)</div>
         <div
@@ -714,6 +758,10 @@ async function downloadStoreFormat() {
   serviceLoadingStart()
   await apiOrderConditionsDownloadStoreFormat()
   serviceLoadingFinish()
+}
+
+function removeTarget(index: number) {
+  formData.value.targets.splice(index, 1)
 }
 </script>
 
