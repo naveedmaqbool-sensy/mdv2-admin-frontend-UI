@@ -540,6 +540,7 @@ const orderConditionsColumns = [
 ]
 
 async function fetch(page: number) {
+  formData.value.page = page
   const response = await apiOrderConditionsFetch({
     storeIds: formData.value.stores.map((v) => v.storeId),
     skuIds: formData.value.skus.map((v) => v.skuId),
