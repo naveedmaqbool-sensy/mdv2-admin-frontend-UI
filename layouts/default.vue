@@ -50,6 +50,8 @@
       v-model:is-open-modal="isActiveExportModal"
       :target-date-from="evidenceTargetDateFrom"
       :target-date-to="evidenceTargetDateTo"
+      :selected-skus="[]"
+      :selected-stores="[]"
       @submit="exportOrderEvidence"
     />
   </section>
