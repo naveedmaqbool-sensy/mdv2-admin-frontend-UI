@@ -230,7 +230,8 @@ async function downloadErrorFile(history: OrderConditionsMasterImport) {
 }
 
 function showValues(_history: OrderConditionsMasterImport) {
-  alert('FIXME: rfukuma 更新内容の表示処理実装中')
+  // FIXME: rfukuma 更新内容の表示処理
+  alert('更新内容の表示')
 }
 </script>
 

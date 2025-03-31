@@ -734,9 +734,7 @@ async function submit() {
   if (uploadApi.length > 0) {
     try {
       await Promise.all(uploadApi)
-    } catch {
-      // TODO: rfukuma エラー処理
-    }
+    } catch {}
   }
   serviceLoadingFinish()
 

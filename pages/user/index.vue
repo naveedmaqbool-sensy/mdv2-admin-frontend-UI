@@ -4,7 +4,6 @@
 
     <UForm :state="{}">
       <section class="rounded border border-gray-300 p-4">
-        <!-- FIXME: rfukuma 暗号化するので -->
         <div class="flex flex-row">
           <div class="my-auto basis-1/12 text-right">
             <label class="whitespace-nowrap pr-2 text-right font-bold">
