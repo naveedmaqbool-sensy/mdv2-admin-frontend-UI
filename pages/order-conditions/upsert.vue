@@ -448,6 +448,7 @@
             :has-error="
               apiValidationError.exists('targets.' + index + '.orderLot')
             "
+            @change="onChangedOrderLog(target)"
           />
           <CommonErrorMessages
             :messages="apiValidationError.get('targets.' + index + '.orderLot')"
@@ -607,7 +608,10 @@
 </template>
 
 <script setup lang="ts">
-import { OrderConditionsUpsertRequestFactory } from '~/composables/api/order-conditions/Upsert'
+import {
+  OrderConditionsUpsertRequestFactory,
+  type OrderConditionsUpsertTarget,
+} from '~/composables/api/order-conditions/Upsert'
 import type ApiValidationError from '~/types/classes/ApiValidationError'
 import DeliveryDateTypes from '~/types/enums/DeliveryDateTypes'
 import FileTypes from '~/types/enums/FileTypes'
@@ -760,6 +764,13 @@ async function downloadStoreFormat() {
 
 function removeTarget(index: number) {
   formData.value.targets.splice(index, 1)
+}
+
+function onChangedOrderLog(target: OrderConditionsUpsertTarget) {
+  // 発注ロットが1ではない場合は切上切下区分をUpにする
+  if (target.orderLot === 1) {
+    target.roundUpDownDefinition = RoundUpDownTypes.Up
+  }
 }
 </script>
 
