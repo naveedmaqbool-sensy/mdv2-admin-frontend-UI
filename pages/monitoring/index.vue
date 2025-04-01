@@ -171,7 +171,6 @@
             <UFormGroup class="pb-3">
               <div class="flex items-center gap-1">
                 <label class="basis-10 whitespace-nowrap font-bold">店舗</label>
-                <!-- FIXME: rfukuma 範囲選択 -->
                 <CommonSelect
                   v-model:selected="formData.storeMonitoringUnitType"
                   class="basis-2/12"
@@ -550,10 +549,7 @@ function reset() {
 }
 
 async function fetch(page: number) {
-  // FIXME: rfukuma バリデーションがあればここで
   formData.value.page = page
-
-  // 検索できない分類をはじく
 
   serviceLoadingStart()
 
@@ -661,7 +657,7 @@ async function fetchStoreGroups(searchRequest: {
   perPage: number
 }) {
   serviceLoadingStart()
-  // FIXME: rfukuma 店舗グループの扱いが変わる可能性があるため StoreMaster 参照とする
+  // HACK: rfukuma 店舗グループの扱いが変わる可能性があるため StoreMaster 参照とする
   const response = await apiStoreGroupFetch(searchRequest)
   storeGroups.value = response ? response.data : []
   itemsTotal.value = response ? response.total : 0

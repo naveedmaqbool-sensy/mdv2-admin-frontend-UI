@@ -5,7 +5,7 @@ import OrderingMethodTypes from '~/types/enums/OrderingMethodTypes'
 import RoundUpDownTypes from '~/types/enums/RoundUpTypes'
 import type OrderConditionsMaster from '~/types/interfaces/database/OrderConditionsMaster'
 
-interface OrderConditionsUpsertTarget
+export interface OrderConditionsUpsertTarget
   extends Pick<
     OrderConditionsMaster,
     | 'orderConditionStartDate'

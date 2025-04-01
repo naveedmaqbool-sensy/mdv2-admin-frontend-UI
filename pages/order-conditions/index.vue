@@ -310,6 +310,22 @@
         </UTooltip>
       </template>
 
+      <template #orderConditionPriority-header="{ column }">
+        <UTooltip
+          :ui="{
+            base: 'h-auto',
+          }"
+        >
+          <template #text> 数字が大きい方が優先される </template>
+          <template #default>
+            <span>
+              {{ column.label }}
+              <UIcon name="i-heroicons-question-mark-circle" class="h-4 w-4" />
+            </span>
+          </template>
+        </UTooltip>
+      </template>
+
       <template #deliveryType-header="{ column }">
         <UTooltip
           :ui="{
