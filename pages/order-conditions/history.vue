@@ -229,9 +229,14 @@ async function downloadErrorFile(history: OrderConditionsMasterImport) {
   serviceLoadingFinish()
 }
 
-function showValues(_history: OrderConditionsMasterImport) {
-  // FIXME: rfukuma 更新内容の表示処理
-  alert('更新内容の表示')
+async function showValues(history: OrderConditionsMasterImport) {
+  // レコードとして保存しているのでＡＰＩから１ファイルずつ直接ダウロードする
+  serviceLoadingStart()
+  await apiOrderConditionsHistoryValueDownload({
+    id: history.id,
+    fileName: '変更内容.csv',
+  })
+  serviceLoadingFinish()
 }
 </script>
 
