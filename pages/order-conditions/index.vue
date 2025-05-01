@@ -557,6 +557,7 @@ const orderConditionsColumns = [
 
 async function fetch(page: number) {
   formData.value.page = page
+  serviceLoadingStart()
   const response = await apiOrderConditionsFetch({
     storeIds: formData.value.stores.map((v) => v.storeId),
     skuIds: formData.value.skus.map((v) => v.skuId),
@@ -572,6 +573,7 @@ async function fetch(page: number) {
     isDescending: false,
   })
   if (!response) {
+    serviceLoadingFinish()
     return
   }
 
@@ -580,6 +582,8 @@ async function fetch(page: number) {
 
   orderConditionsMasters.value = response.data
   orderConditionsTotal.value = response.total
+
+  serviceLoadingFinish()
 }
 await fetch(1)
 
