@@ -133,6 +133,7 @@
       ]"
       id-column-name="skuId"
       is-radio
+      initial-state-is-empty
       @fetch-items="fetchSkus"
     />
 

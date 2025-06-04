@@ -19,7 +19,17 @@
         </UForm>
       </template>
 
-      <UTable :rows="items" :columns="headers" @select="onSelected">
+      <UTable
+        :rows="items"
+        :columns="headers"
+        :empty-state="{
+          icon: 'i-heroicons-circle-stack-20-solid',
+          label: isAlreadyLoaded
+            ? 'データが見つかりません'
+            : '検索してください',
+        }"
+        @select="onSelected"
+      >
         <template #selected-data="{ row }">
           <UCheckbox
             v-if="!isRadio"
@@ -69,14 +79,16 @@ const isOpenModal = defineModel('isOpenModal', {
   type: Boolean,
   required: true,
 })
-const { columns, idColumnName, isRadio } = withDefaults(
+const { columns, idColumnName, isRadio, initialStateIsEmpty } = withDefaults(
   defineProps<{
     columns: { key: string; label: string }[]
     idColumnName: string
     isRadio?: boolean
+    initialStateIsEmpty?: boolean
   }>(),
   {
     isRadio: false,
+    initialStateIsEmpty: false,
   }
 )
 const items = defineModel<any[]>('items', {
@@ -93,6 +105,7 @@ const selected = defineModel<any[]>('selected', {
 })
 
 const internalSelected = ref<any[]>([])
+const isAlreadyLoaded = ref(false)
 
 interface SearchRequest extends PaginationRequest {
   text: string | null
@@ -122,7 +135,10 @@ watch(isOpenModal, async (value) => {
       perPage: searchRequest.value.perPage,
     }
     internalSelected.value = [...selected.value]
-    await emit('fetchItems', searchRequest.value)
+    isAlreadyLoaded.value = false
+    if (!initialStateIsEmpty) {
+      await fetch(1)
+    }
   }
 })
 
@@ -138,9 +154,10 @@ function save() {
   emit('change')
 }
 
-function fetch(page: number) {
+async function fetch(page: number) {
   searchRequest.value.page = page
-  emit('fetchItems', searchRequest.value)
+  await emit('fetchItems', searchRequest.value)
+  isAlreadyLoaded.value = true
 }
 
 function onSelected(row: any) {
