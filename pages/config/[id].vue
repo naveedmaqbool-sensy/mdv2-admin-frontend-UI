@@ -263,6 +263,7 @@
         { key: 'skuName', label: '商品名' },
       ]"
       id-column-name="skuId"
+      initial-state-is-empty
       @fetch-items="fetchSkus"
     />
     <MonitoringSelectObjectModal
