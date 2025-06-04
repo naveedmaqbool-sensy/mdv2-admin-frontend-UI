@@ -24,9 +24,7 @@
         :columns="headers"
         :empty-state="{
           icon: 'i-heroicons-circle-stack-20-solid',
-          label: isAlreadyLoaded
-            ? 'データが見つかりません'
-            : '検索してください',
+          label: emptyErrorMessage,
         }"
         @select="onSelected"
       >
@@ -106,6 +104,7 @@ const selected = defineModel<any[]>('selected', {
 
 const internalSelected = ref<any[]>([])
 const isAlreadyLoaded = ref(false)
+const emptyErrorMessage = ref('')
 
 interface SearchRequest extends PaginationRequest {
   text: string | null
@@ -136,6 +135,7 @@ watch(isOpenModal, async (value) => {
     }
     internalSelected.value = [...selected.value]
     isAlreadyLoaded.value = false
+    emptyErrorMessage.value = '検索してください'
     if (!initialStateIsEmpty) {
       await fetch(1)
     }
@@ -225,6 +225,16 @@ const modalWidth = computed(() => {
     return 'w-full sm:max-w-3xl'
   }
   return 'w-full sm:max-w-4xl'
+})
+
+watch(items, () => {
+  // HACK: rfukuma フラグ追加以外で何かいい案があれば・・・
+  // 検索処理を emit で外にだした影響でうまく処理できない
+  if (!isAlreadyLoaded.value) {
+    isAlreadyLoaded.value = true
+  } else {
+    emptyErrorMessage.value = 'データが見つかりません'
+  }
 })
 </script>
 
