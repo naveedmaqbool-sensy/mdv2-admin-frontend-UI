@@ -180,6 +180,7 @@ function mountedLineChart(chart: any) {
         'rect'
       )
 
+      // 左辺固定用の矩形を追加する
       rect.setAttribute('width', '20px')
       rect.setAttribute('height', '100%')
       rect.setAttribute('transform', `translate(-20, 0)`)
@@ -187,6 +188,8 @@ function mountedLineChart(chart: any) {
       rect.style.zIndex = '-1'
       axisY.insertBefore(rect, axisY.firstChild)
 
+      // スクロールイベントを追加して、横軸が移動した際に左辺の座標を固定
+      // HACK: rfukuma svg タグ内で position sticky が使えないので js で固定
       const svg = element.getElementsByTagName('svg')[0]
       document.getElementById('line-chart')?.addEventListener('scroll', (e) => {
         const target = e.target as HTMLElement
@@ -194,7 +197,6 @@ function mountedLineChart(chart: any) {
         pt.x = target.scrollLeft
         pt.y = 0
         pt = pt.matrixTransform(svg.getCTM()!.inverse())
-
         axisY.setAttribute('transform', `translate(${pt.x + 20}, ${pt.y})`)
       })
     }
