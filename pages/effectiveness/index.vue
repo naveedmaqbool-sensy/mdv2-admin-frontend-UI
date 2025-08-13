@@ -1,6 +1,8 @@
 <template>
   <div>
     <CommonHeader title="効果測定" />
+
+    <!-- グラフ本体 -->
     <EffectivenessLineChart :categories="categories" :height="500" />
   </div>
 </template>

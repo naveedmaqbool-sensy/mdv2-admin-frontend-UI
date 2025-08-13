@@ -9,6 +9,12 @@
         height: height,
       }"
       :data="charts"
+      :margin="{
+        top: 1,
+        right: 1,
+        bottom: 1,
+        left: 1,
+      }"
       direction="horizontal"
       :axis="{
         primary: {
@@ -115,7 +121,7 @@ const tooltipConfigs = computed(() => {
   return result
 })
 
-// 最大桁数が 10,000 の場合は 10,000 をグラフの最大値として加算する（見切れ対策）
+// 最大桁数が 10,000 の場合は 11,000 をグラフの最大値として加算する（見切れ対策）
 const addDataMaxAmount = computed(() => {
   // 最大値計算
   const maxAmount = categories
@@ -125,7 +131,7 @@ const addDataMaxAmount = computed(() => {
   if (maxAmount === 0) return 10
 
   const maxAmountLength = maxAmount.toString().length
-  return Math.pow(10, maxAmountLength - 1)
+  return Math.pow(10, maxAmountLength - 2)
 })
 
 function mountedLineChart(chart: any) {

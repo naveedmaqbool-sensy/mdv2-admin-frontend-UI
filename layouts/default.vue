@@ -74,9 +74,14 @@ const links = [
       to: '/',
     },
     {
-      icon: 'i-heroicons-chart-bar-square',
+      icon: 'i-heroicons-table-cells',
       label: 'モニタリング',
       to: '/monitoring',
+    },
+    {
+      icon: 'i-heroicons-chart-bar-square',
+      label: '効果測定',
+      to: '/effectiveness',
     },
     {
       icon: 'i-heroicons-arrow-up-tray-16-solid',
