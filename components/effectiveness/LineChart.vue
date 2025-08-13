@@ -1,58 +1,56 @@
 <template>
-  <Chart
-    :size="{
-      width: width,
-      height: height,
-    }"
-    :data="charts"
-    direction="horizontal"
-    :margin="{
-      top: 1,
-      right: 1,
-      bottom: 1,
-      left: 1,
-    }"
-    :axis="{
-      primary: {
-        type: 'band',
-        ticks: 100,
-        domain: ['dataMin', 'dataMax'],
-      },
-      secondary: {
-        type: 'linear',
-        ticks: 100,
-        domain: ['dataMin', 'dataMax + ' + addDataMaxAmount],
-      },
-    }"
-    @vue:mounted="mountedLineChart"
+  <section
+    id="line-chart"
+    class="w-full overflow-y-hidden overflow-x-scroll pb-5"
   >
-    <template #layers>
-      <Grid stroke-dasharray="1,1" />
-      <Line
-        v-for="(category, categoryIndex) in categories"
-        :data-keys="['row', category.name]"
-        :line-style="{
-          stroke: colors[categoryIndex],
+    <Chart
+      :size="{
+        width: graphWidth,
+        height: height,
+      }"
+      :data="charts"
+      direction="horizontal"
+      :axis="{
+        primary: {
+          type: 'band',
+          ticks: 100,
+          domain: ['dataMin', 'dataMax'],
+        },
+        secondary: {
+          type: 'linear',
+          ticks: 100,
+          domain: ['dataMin', 'dataMax + ' + addDataMaxAmount],
+        },
+      }"
+      @vue:mounted="mountedLineChart"
+    >
+      <template #layers>
+        <Grid stroke-dasharray="1,1" />
+        <Line
+          v-for="(category, categoryIndex) in categories"
+          :data-keys="['row', category.name]"
+          :line-style="{
+            stroke: colors[categoryIndex],
+          }"
+        />
+      </template>
+
+      <template #widgets>
+        <Tooltip :config="tooltipConfigs" color="black"> </Tooltip>
+      </template>
+    </Chart>
+  </section>
+  <div class="m-auto mt-5 text-center">
+    <template v-for="(category, categoryIndex) in categories">
+      <span
+        class="inline-block min-w-12 py-1"
+        :style="{
+          'background-color': colors[categoryIndex],
         }"
       />
+      <span class="pr-5">{{ category.name }}</span>
     </template>
-
-    <template #widgets>
-      <Tooltip :config="tooltipConfigs" color="black" />
-
-      <div class="m-auto text-center">
-        <template v-for="(category, categoryIndex) in categories">
-          <span
-            class="inline-block min-w-12 bg-[] py-1"
-            :style="{
-              'background-color': colors[categoryIndex],
-            }"
-          />
-          <span class="pr-5">{{ category.name }}</span>
-        </template>
-      </div>
-    </template>
-  </Chart>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -72,12 +70,11 @@ const colors = ref([
   '#607D8B',
 ])
 
-const { categories, width, height } = defineProps<{
+const { categories, height } = defineProps<{
   categories: {
     name: string
     values: { row: string; amount: number }[]
   }[]
-  width: number
   height: number
 }>()
 
@@ -104,7 +101,7 @@ const charts = computed(() => {
 // ツールチップが認識できる形に修正する
 const tooltipConfigs = computed(() => {
   const result: { [name: string]: { color?: string; hide?: boolean } } = {
-    row: { hide: true },
+    row: { hide: false },
   }
 
   if (charts.value.length === 0) {
@@ -172,8 +169,41 @@ function mountedLineChart(chart: any) {
         yGrid.style.strokeDasharray = 'none'
       }
     })
+
+    // スクロール固定
+    const axisY = element
+      .getElementsByClassName('axis')[0]
+      ?.getElementsByClassName('layer-axis-y')[0] as HTMLElement
+    if (axisY) {
+      const rect = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'rect'
+      )
+
+      rect.setAttribute('width', '20px')
+      rect.setAttribute('height', '100%')
+      rect.setAttribute('transform', `translate(-20, 0)`)
+      rect.setAttribute('fill', 'white')
+      rect.style.zIndex = '-1'
+      axisY.insertBefore(rect, axisY.firstChild)
+
+      const svg = element.getElementsByTagName('svg')[0]
+      document.getElementById('line-chart')?.addEventListener('scroll', (e) => {
+        const target = e.target as HTMLElement
+        let pt = svg.createSVGPoint()
+        pt.x = target.scrollLeft
+        pt.y = 0
+        pt = pt.matrixTransform(svg.getCTM()!.inverse())
+
+        axisY.setAttribute('transform', `translate(${pt.x + 20}, ${pt.y})`)
+      })
+    }
   })
 }
+
+const graphWidth = computed(() => {
+  return 15 * categories[0]?.values.length
+})
 </script>
 
 <style scoped>
