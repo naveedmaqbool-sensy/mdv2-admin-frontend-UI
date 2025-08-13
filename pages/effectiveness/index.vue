@@ -6,42 +6,23 @@
 </template>
 
 <script setup lang="ts">
-import { endOfMonth, startOfMonth } from 'date-fns'
+const categories = ref<any[]>([])
 
-const categories = ref([
-  {
-    name: '在庫数',
-    values: createAmount(),
-  },
-  {
-    name: '販売数',
-    values: createAmount(),
-  },
-  {
-    name: '入荷数',
-    values: createAmount(),
-  },
-])
+async function fetch() {
+  serviceLoadingStart()
+  const response = await apiEffectivenessFetch({})
+  if (!response) {
+    serviceLoadingFinish()
+    return
+  }
 
-function createAmount() {
-  const start = startOfMonth(new Date())
-  const end = endOfMonth(new Date().setMonth(start.getMonth() + 6))
+  categories.value = response
 
-  // end と start の差分日数を取得
-  const diffDays = Math.ceil(
-    (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
-  )
-
-  // 日数分のランダムんな数値を配列で生成
-  return Array.from({ length: diffDays }, (_, i) => {
-    return {
-      row: formatterDate(new Date(start.getTime() + i * 24 * 60 * 60 * 1000)),
-      amount: [3, 6, 14, 15].includes(i)
-        ? 0
-        : Math.floor(Math.random() * 10 + 10),
-    }
-  })
+  serviceLoadingFinish()
 }
+
+// 初期表示データ取得（検索するまで初期表示はいらないのでモックの時だけ）
+await fetch()
 </script>
 
 <style scoped></style>

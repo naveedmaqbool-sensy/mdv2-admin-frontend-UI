@@ -60,8 +60,8 @@ import { Chart, Line, Grid, Tooltip } from 'vue3-charts'
 const colors = ref([
   '#48CAE4',
   '#FFC107',
-  '#E74C3C',
   '#8E24AA',
+  '#E74C3C',
   '#2196F3',
   '#4CAF50',
   '#FF9800',
