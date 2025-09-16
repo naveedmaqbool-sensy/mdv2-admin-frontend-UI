@@ -4,7 +4,6 @@ stages:
   - notification
 
 variables:
-  # 開発環境 -------------------------------------------
   DEVELOP_NODE_IMAGE: $CI_REGISTRY_IMAGE
 
 # ＣＩの共通処理を読み込み（案件グループ内の private レポジトリを参照）
