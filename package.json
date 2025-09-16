@@ -5,7 +5,8 @@
   "scripts": {
     "build": "nuxt build",
     "build:develop": "node -e \"require('fs').copyFileSync('./.env.develop', './.env')\" && nuxt build",
-    "build:staging": "node -e \"require('fs').copyFileSync('./.env.staging', './.env')\" && nuxt build",
+    "build:staging-jh": "node -e \"require('fs').copyFileSync('./.env.staging-jh', './.env')\" && nuxt build",
+    "build:staging-mitsubishi": "node -e \"require('fs').copyFileSync('./.env.staging-mitsubishi', './.env')\" && nuxt build",
     "build:production-jh": "node -e \"require('fs').copyFileSync('./.env.production-jh', './.env')\" && nuxt build",
     "build:production-izumi": "node -e \"require('fs').copyFileSync('./.env.production-izumi', './.env')\" && nuxt build",
     "start": "nuxt start",
