@@ -39,25 +39,26 @@ staging-docker-build-notification:
     - staging-docker-build
   dependencies:
     - staging-docker-build
-# # cloud run service デプロイ
-# staging-cloud-run-service-deploy:
-#   extends: .gcp-cloud-run-service-deploy
-#   tags: [$BUILD_RUNNER]
-#   variables:
-#     GCLOUD_AUTH_CODE: ${STAGING_GCLOUD_AUTH_CODE}
-#     GCLOUD_PROJECT: ${STAGING_GCLOUD_PROJECT}
-#     REGION: ${STAGING_ARTIFACT_REGISTRY_REGION}
-#     IMAGE_NAME: ${STAGING_ARTIFACT_REGISTRY_REPOSITORY}
-#     CLOUD_RUN_SERVICE_NAME: ${STAGING_CLOUD_RUN_SERVICE_NAME}
 
-# # デプロイ通知
-# staging-cloud-run-service-deploy-notification:
-#   extends: .notification-send
-#   tags: [$BUILD_RUNNER]
-#   when: on_failure
-#   variables:
-#     BODY: '##### [${CI_PROJECT_NAME}] デプロイに失敗しました'
-#   needs:
-#     - staging-cloud-run-service-deploy
-#   dependencies:
-#     - staging-cloud-run-service-deploy
+# cloud run service デプロイ
+staging-cloud-run-service-deploy:
+  extends: .gcp-cloud-run-service-deploy
+  tags: [$BUILD_RUNNER]
+  variables:
+    GCLOUD_AUTH_CODE: ${STAGING_GCLOUD_AUTH_CODE}
+    GCLOUD_PROJECT: ${STAGING_GCLOUD_PROJECT}
+    REGION: ${STAGING_ARTIFACT_REGISTRY_REGION}
+    IMAGE_NAME: ${STAGING_ARTIFACT_REGISTRY_REPOSITORY}
+    CLOUD_RUN_SERVICE_NAME: ${STAGING_CLOUD_RUN_SERVICE_NAME}
+
+# デプロイ通知
+staging-cloud-run-service-deploy-notification:
+  extends: .notification-send
+  tags: [$BUILD_RUNNER]
+  when: on_failure
+  variables:
+    BODY: '##### [${CI_PROJECT_NAME}] デプロイに失敗しました'
+  needs:
+    - staging-cloud-run-service-deploy
+  dependencies:
+    - staging-cloud-run-service-deploy
