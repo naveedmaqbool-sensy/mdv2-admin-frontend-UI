@@ -22,7 +22,7 @@ staging-docker-build:
   extends: .gcp-artifact-registry-build-and-push
   tags: [$BUILD_RUNNER]
   variables:
-    ENVIRONMENT: staging-jh
+    ENVIRONMENT: staging-mitsubishi
     GCLOUD_AUTH_CODE: ${STAGING_GCLOUD_AUTH_CODE}
     GCLOUD_PROJECT: ${STAGING_GCLOUD_PROJECT}
     REGION: ${STAGING_ARTIFACT_REGISTRY_REGION}
