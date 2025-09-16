@@ -1,0 +1,64 @@
+stages:
+  - build
+  - deploy
+  - notification
+
+variables:
+  # 開発環境 -------------------------------------------
+  DEVELOP_NODE_IMAGE: $CI_REGISTRY_IMAGE
+
+# ビルド
+develop-build:
+  extends: .clsl-develop-server-build
+  tags: [$BUILD_RUNNER]
+  <<: *develop_deploy_rules
+  variables:
+    ENVIRONMENT: develop
+    IMAGE_NAME: ${DEVELOP_NODE_IMAGE}
+
+# ビルド失敗通知
+develop-build-notification:
+  extends: .notification-send
+  tags: [$BUILD_RUNNER]
+  when: on_failure
+  <<: *develop_deploy_rules
+  variables:
+    MENTION: $CI_COMMIT_AUTHOR
+    BODY: '##### [${CI_PROJECT_NAME}](${CI_PROJECT_URL}) ビルドに失敗しました'
+  needs:
+    - develop-build
+  dependencies:
+    - develop-build
+
+# デプロイ
+develop-deploy:
+  extends: .clsl-develop-server-deploy-nuxt
+  tags: [aws-dev01]
+  <<: *develop_deploy_rules
+  variables:
+    IMAGE_NAME: ${DEVELOP_NODE_IMAGE}
+
+# デプロイ失敗通知
+develop-deploy-notification:
+  extends: .notification-send
+  tags: [$BUILD_RUNNER]
+  when: on_failure
+  <<: *develop_deploy_rules
+  variables:
+    MENTION: $CI_COMMIT_AUTHOR
+    BODY: '##### [${CI_PROJECT_NAME}](${CI_PROJECT_URL}) デプロイに失敗しました'
+  needs:
+    - develop-deploy
+  dependencies:
+    - develop-deploy
+
+yarn-install-notification:
+  extends: .notification-send
+  tags: [$BUILD_RUNNER]
+  variables:
+    BODY: "##### 【管理サイト】パッケージに更新がはいりました。\n##### ${CI_COMMIT_BRANCH} ブランチを取り込んだら、各自 `yarn install` の実行をお願いします。"
+    FAILED_BODY: ''
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - package.json
