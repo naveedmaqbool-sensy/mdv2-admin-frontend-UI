@@ -12,5 +12,15 @@
     ".nuxt": true,
     "node_modules": true
   },
-  "cSpell.words": ["clazz", "heroicons", "Nuxt", "rfukuma", "Sensy", "skus"]
+  "cSpell.words": [
+    "clazz",
+    "clsl",
+    "heroicons",
+    "izumi",
+    "joyfullhonda",
+    "Nuxt",
+    "rfukuma",
+    "Sensy",
+    "skus"
+  ]
 }

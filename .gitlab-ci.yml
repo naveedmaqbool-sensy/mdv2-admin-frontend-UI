@@ -78,15 +78,13 @@ staging_mitsubishi_plan:
     include: .gitlab-ci/staging-mitsubishi.yml
     strategy: depend
 
-# ＪＨ様本番環境（ＧＣＰ） ------------------------------------------------------
+# 本番環境 -------------------------------------------------------
 production_joyfullhonda_plan:
   only: [main]
   stage: plan
   trigger:
     include: .gitlab-ci/production-jh.yml
     strategy: depend
-# イズミ様本番環境（ＧＣＰ） ------------------------------------------------------
-
 production_izumi_plan:
   only: [feature/izumi-ci]
   stage: plan
