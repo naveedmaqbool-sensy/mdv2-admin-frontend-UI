@@ -91,3 +91,9 @@ production_izumi_plan:
   trigger:
     include: .gitlab-ci/production-izumi.yml
     strategy: depend
+production_mitsubishi_plan:
+  only: [feature/mitsubishi-ci]
+  stage: plan
+  trigger:
+    include: .gitlab-ci/production-mitsubishi.yml
+    strategy: depend

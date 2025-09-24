@@ -9,6 +9,7 @@
     "build:staging-mitsubishi": "node -e \"require('fs').copyFileSync('./.env.staging-mitsubishi', './.env')\" && nuxt build",
     "build:production-jh": "node -e \"require('fs').copyFileSync('./.env.production-jh', './.env')\" && nuxt build",
     "build:production-izumi": "node -e \"require('fs').copyFileSync('./.env.production-izumi', './.env')\" && nuxt build",
+    "build:production-mitsubishi": "node -e \"require('fs').copyFileSync('./.env.production-mitsubishi', './.env')\" && nuxt build",
     "start": "nuxt start",
     "dev": "yarn install && node -e \"require('fs').copyFileSync('./.env.local', './.env')\" && nuxt dev --port 3001",
     "generate": "nuxt generate",
