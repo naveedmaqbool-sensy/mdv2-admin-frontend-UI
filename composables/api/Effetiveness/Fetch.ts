@@ -1,5 +1,19 @@
-interface Request {}
-type Response = any[]
+interface Request {
+  from: Date
+  to: Date
+  skuId: string
+  storeId: string
+}
+type Response = {
+  errorMessage: string
+  records: {
+    name: string
+    values: {
+      row: string
+      amount: number
+    }[]
+  }[]
+}
 
 export function apiEffectivenessFetch(
   request: Request
