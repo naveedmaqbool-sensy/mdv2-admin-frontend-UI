@@ -4,37 +4,6 @@
 
     <UForm :state="{}">
       <section class="rounded border border-gray-300 py-2">
-        <div class="flex flex-row">
-          <div class="my-auto basis-1/12 text-right">
-            <label class="whitespace-nowrap pr-2 text-right font-bold">
-              対象期間
-            </label>
-          </div>
-          <div class="basis-3/12">
-            <CommonDatepicker v-model="from" />
-          </div>
-          <div class="my-auto px-2">～</div>
-          <div class="basis-3/12">
-            <CommonDatepicker v-model="to" />
-          </div>
-        </div>
-        <div
-          v-if="
-            apiValidationError.exists('from') || apiValidationError.exists('to')
-          "
-          class="flex flex-row"
-        >
-          <div class="my-auto basis-1/12 text-right"></div>
-          <div class="basis-auto text-red-400">
-            <p v-if="apiValidationError.exists('from')">
-              {{ apiValidationError.first('from') }}
-            </p>
-            <p v-if="apiValidationError.exists('to')">
-              {{ apiValidationError.first('to') }}
-            </p>
-          </div>
-        </div>
-
         <!-- 対象商品 -->
         <div class="flex flex-row pt-2">
           <div class="flex basis-1/12 flex-col justify-center text-right">
@@ -102,6 +71,48 @@
             </template>
           </div>
         </div>
+
+        <div class="flex flex-row">
+          <div class="my-auto basis-1/12 text-right">
+            <label class="whitespace-nowrap pr-2 text-right font-bold">
+              対象期間
+            </label>
+          </div>
+          <CommonSelect
+            v-model:selected="targetDateRangeType"
+            class="basis-1/12 pl-2"
+            :options="TargetDateRangeTypes.getNameValues()"
+          />
+          <div class="basis-2/12 pl-2">
+            <CommonAppDatepicker
+              v-model:date="from"
+              v-model:type="targetDateRangeType"
+            />
+          </div>
+          <div class="my-auto">～</div>
+          <div class="basis-2/12">
+            <CommonAppDatepicker
+              v-model:date="to"
+              :type="targetDateRangeType"
+            />
+          </div>
+        </div>
+        <div
+          v-if="
+            apiValidationError.exists('from') || apiValidationError.exists('to')
+          "
+          class="flex flex-row"
+        >
+          <div class="my-auto basis-1/12 text-right"></div>
+          <div class="basis-auto text-red-400">
+            <p v-if="apiValidationError.exists('from')">
+              {{ apiValidationError.first('from') }}
+            </p>
+            <p v-if="apiValidationError.exists('to')">
+              {{ apiValidationError.first('to') }}
+            </p>
+          </div>
+        </div>
       </section>
 
       <section class="flex pt-2">
@@ -115,7 +126,7 @@
 
     <template v-for="category in categories">
       <section class="flex justify-between pt-5">
-        <h1 class="flex text-lg font-bold">
+        <h1 class="flex text-base font-bold">
           <span>
             {{ category.skuId }}
             <svg
@@ -172,26 +183,43 @@
             :rows="category.orderingMethodData"
           >
             <template #orderingMethod-data="{ row }">
-              {{ OrderingMethodTypes.getName(row.orderingMethod) }}
+              <p
+                :style="{
+                  color: OrderingMethodTypes.getGraphColor(row.orderingMethod),
+                }"
+              >
+                {{ OrderingMethodTypes.getName(row.orderingMethod) }}
+              </p>
             </template>
             <template #averageStockQty-data="{ row }">
               <p class="text-right">
-                {{ formatterNumber(row.averageStockQty) }}
+                {{
+                  formatterNumber(parseFloat(row.averageStockQty).toFixed(2))
+                }}
               </p>
             </template>
             <template #noStockCount-data="{ row }">
               <p class="text-right">
-                {{ formatterNumber(row.noStockCount) }} 回
+                {{ formatterNumber(row.noStockCount) }}
+                回
               </p>
             </template>
             <template #inventoryTurnoverRate-data="{ row }">
               <p class="text-right">
-                {{ formatterNumber(row.inventoryTurnoverRate) }}
+                {{
+                  formatterNumber(
+                    parseFloat(row.inventoryTurnoverRate).toFixed(2)
+                  )
+                }}
               </p>
             </template>
             <template #inventoryTurnoverDays-data="{ row }">
               <p class="text-right">
-                {{ formatterNumber(row.inventoryTurnoverDays) }}
+                {{
+                  formatterNumber(
+                    parseFloat(row.inventoryTurnoverDays).toFixed(2)
+                  )
+                }}
               </p>
             </template>
           </UTable>
@@ -287,6 +315,7 @@
 import copy from 'copy-text-to-clipboard'
 import type ApiValidationError from '~/types/classes/ApiValidationError'
 import OrderingMethodTypes from '~/types/enums/OrderingMethodTypes'
+import TargetDateRangeTypes from '~/types/enums/TargetDateRangeTypes'
 import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
 
 const categories = ref<
@@ -308,7 +337,6 @@ const categories = ref<
       noStockCount: number
       inventoryTurnoverRate: number
       inventoryTurnoverDays: number
-      totalSalesQty: number
     }[]
   }[]
 >([])
@@ -352,6 +380,7 @@ function fetch() {
       to: new Date(to.value!),
       skuId: sku.skuId,
       storeId,
+      targetDateRangeType: targetDateRangeType.value,
     })
     if (!response) {
       return
@@ -385,43 +414,23 @@ function fetch() {
         }
       }),
     })
-    categories.value[index].errorMessage = response.errorMessage
-
-    // 発注方式別にサマる
-    if (!response.errorMessage) {
-      const orderingMethods = Array.from(
-        new Set(
-          response.records
-            .filter((v) => v.orderingMethod)
-            .map((v) => v.orderingMethod)
-        )
-      )
-      categories.value[index].orderingMethodData = orderingMethods.map(
-        (orderingMethod) => {
-          const records = response.records.filter(
-            (v) => v.orderingMethod === orderingMethod
-          )
-          const totalDays = records.length
-          const totalSalesQty = records.reduce((acc, v) => acc + v.salesQty, 0)
-          const totalStockQty = records.reduce((acc, v) => acc + v.stockQty, 0)
-          const averageStockQty = totalStockQty / totalDays
-          const inventoryTurnoverRate = totalSalesQty / averageStockQty
-          return {
-            orderingMethod,
-            averageStockQty,
-            noStockCount: records.filter((v) => v.stockQty === 0).length,
-            inventoryTurnoverRate,
-            inventoryTurnoverDays: totalDays / inventoryTurnoverRate,
-            totalSalesQty: 0,
-          }
+    categories.value[index].data.push({
+      name: '発注方式',
+      values: response.records.map((v) => {
+        return {
+          row: v.objectiveDate,
+          amount: v.orderingMethod,
         }
-      )
-    }
+      }),
+    })
+    categories.value[index].errorMessage = response.errorMessage
+    categories.value[index].orderingMethodData = response.orderingMethodRecords
   })
 
   serviceLoadingToggleIgnore()
 }
 
+const targetDateRangeType = ref(TargetDateRangeTypes.Daily)
 const from = ref<Date | null>(null)
 const to = ref<Date | null>(null)
 const skus = ref<any[]>([])

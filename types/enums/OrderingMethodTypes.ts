@@ -31,6 +31,17 @@ namespace OrderingMethodTypes {
       }
     })
   }
+
+  export function getGraphColor(orderingMethodType: OrderingMethodTypes) {
+    switch (orderingMethodType) {
+      case OrderingMethodTypes.PredictionDemand:
+        return 'black'
+      case OrderingMethodTypes.SellOneBuyOne:
+        return 'blue'
+      case OrderingMethodTypes.OrderingPoint:
+        return 'green'
+    }
+  }
 }
 
 export default OrderingMethodTypes

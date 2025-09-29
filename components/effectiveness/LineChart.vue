@@ -34,7 +34,7 @@
         <Grid stroke-dasharray="1,1" />
         <Line
           v-for="(category, categoryIndex) in categories"
-          :data-keys="['row', category.name]"
+          :data-keys="['日付', category.name]"
           :line-style="{
             stroke: colors[categoryIndex],
           }"
@@ -42,12 +42,16 @@
       </template>
 
       <template #widgets>
-        <Tooltip :config="tooltipConfigs" color="black"> </Tooltip>
+        <Tooltip :config="tooltipConfigs" color="black" />
       </template>
     </Chart>
   </section>
   <div class="m-auto mt-5 text-center">
-    <template v-for="(category, categoryIndex) in categories">
+    <template
+      v-for="(category, categoryIndex) in categories.filter(
+        (v) => v.name !== '発注方式'
+      )"
+    >
       <span
         class="inline-block min-w-12 py-1"
         :style="{
@@ -61,18 +65,19 @@
 
 <script setup lang="ts">
 import { Chart, Line, Grid, Tooltip } from 'vue3-charts'
+import OrderingMethodTypes from '~/types/enums/OrderingMethodTypes'
 
 const graphWidth = ref(0)
 
 // 棒の色の定義
 const colors = ref([
+  '#2196F3',
+  '#4CAF50',
+  '#FF9800',
   '#48CAE4',
   '#FFC107',
   '#8E24AA',
   '#E74C3C',
-  '#2196F3',
-  '#4CAF50',
-  '#FF9800',
   '#9C27B0',
   '#64B5F6',
   '#607D8B',
@@ -92,25 +97,25 @@ const charts = computed(() => {
   const results: { [name: string]: string | number }[] =
     categories[0].values.map((v) => {
       return {
-        row: v.row,
+        日付: v.row,
       }
     })
 
-  categories.forEach((category) => {
-    results.forEach((result) => {
-      const value = category.values.find((v) => v.row === result.row)
-      result[category.name] = value ? value.amount : 0
+  categories
+    .filter((v) => v.name !== '発注方式')
+    .forEach((category) => {
+      results.forEach((result) => {
+        const value = category.values.find((v) => v.row === result.日付)
+        result[category.name] = value ? value.amount : 0
+      })
     })
-  })
 
   return results
 })
 
 // ツールチップが認識できる形に修正する
 const tooltipConfigs = computed(() => {
-  const result: { [name: string]: { color?: string; hide?: boolean } } = {
-    row: { hide: false },
-  }
+  const result: { [name: string]: { color?: string; hide?: boolean } } = {}
 
   if (charts.value.length === 0) {
     return result
@@ -218,6 +223,32 @@ function mountedLineChart(chart: any) {
           `translate(${pt.x + Number(width)}, ${pt.y})`
         )
       })
+    }
+
+    // 発注方式の表示
+    const axisX = element
+      .getElementsByClassName('axis')[0]
+      ?.getElementsByClassName('layer-axis-x')[0] as HTMLElement
+
+    if (axisX) {
+      const orderingMethodValues =
+        categories.find((v) => v.name === '発注方式')?.values ?? []
+
+      let index = 0
+      for (const element of axisX.children) {
+        if (element.tagName !== 'g') continue
+        for (const textElement of element.getElementsByTagName('text')) {
+          textElement.setAttribute(
+            'fill',
+            orderingMethodValues[index].amount
+              ? OrderingMethodTypes.getGraphColor(
+                  orderingMethodValues[index].amount
+                )
+              : 'currentColor'
+          )
+        }
+        ++index
+      }
     }
   })
 }

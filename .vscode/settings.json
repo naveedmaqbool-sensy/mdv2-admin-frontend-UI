@@ -9,8 +9,8 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode", // ファイル保存時のフォーマット指定
   "extensions.ignoreRecommendations": false, // 拡張機能のおすすめを表示
   "files.exclude": {
-    ".nuxt": true,
-    "node_modules": true
+    ".nuxt": true
+    // "node_modules": true
   },
   "cSpell.words": [
     "clazz",

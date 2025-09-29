@@ -1,10 +1,12 @@
 import type OrderingMethodTypes from '~/types/enums/OrderingMethodTypes'
+import type TargetDateRangeTypes from '~/types/enums/TargetDateRangeTypes'
 
 interface Request {
   from: Date
   to: Date
   skuId: string
   storeId: string
+  targetDateRangeType: TargetDateRangeTypes
 }
 export type EffectivenessFetchResponse = {
   errorMessage: string
@@ -14,6 +16,13 @@ export type EffectivenessFetchResponse = {
     stockQty: number
     salesQty: number
     arrivalQty: number
+  }[]
+  orderingMethodRecords: {
+    orderingMethod: OrderingMethodTypes
+    averageStockQty: number
+    noStockCount: number
+    inventoryTurnoverRate: number
+    inventoryTurnoverDays: number
   }[]
 }
 
