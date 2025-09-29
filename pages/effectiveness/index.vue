@@ -83,14 +83,14 @@
             class="basis-1/12 pl-2"
             :options="TargetDateRangeTypes.getNameValues()"
           /> -->
-          <div class="basis-2/12 pl-2">
+          <div class="basis-1/12 pl-2">
             <CommonAppDatepicker
               v-model:date="from"
               v-model:type="targetDateRangeType"
             />
           </div>
           <div class="my-auto">～</div>
-          <div class="basis-2/12">
+          <div class="basis-1/12">
             <CommonAppDatepicker
               v-model:date="to"
               :type="targetDateRangeType"
