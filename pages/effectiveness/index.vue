@@ -114,7 +114,7 @@
     </UForm>
 
     <template v-for="category in categories">
-      <section class="pt-5">
+      <section class="flex justify-between pt-5">
         <h1 class="flex text-lg font-bold">
           <span>
             {{ category.skuId }}
@@ -155,61 +155,101 @@
             </svg>
           </span>
         </h1>
-
-        <EffectivenessLineChart
-          v-if="category.data.length > 0"
-          :categories="category.data"
-          :height="500"
-        />
+        <!-- 発注種別の表示 -->
         <div
-          v-else
-          class="flex bg-gray-200"
-          :class="{
-            'min-h-[560px] items-center justify-center': !category.errorMessage,
-            // 'min-h-[50px]': category.errorMessage,
-          }"
+          v-if="category.orderingMethodData.length > 0"
+          class="flex justify-end"
         >
+          <UTable
+            class="fixed-name"
+            :columns="[
+              { key: 'orderingMethod', label: '発注方式' },
+              { key: 'averageStockQty', label: '平均在庫数' },
+              { key: 'noStockCount', label: '欠品回数' },
+              { key: 'inventoryTurnoverRate', label: '在庫回転率' },
+              { key: 'inventoryTurnoverDays', label: '在庫回転日数' },
+            ]"
+            :rows="category.orderingMethodData"
+          >
+            <template #orderingMethod-data="{ row }">
+              {{ OrderingMethodTypes.getName(row.orderingMethod) }}
+            </template>
+            <template #averageStockQty-data="{ row }">
+              <p class="text-right">
+                {{ formatterNumber(row.averageStockQty) }}
+              </p>
+            </template>
+            <template #noStockCount-data="{ row }">
+              <p class="text-right">
+                {{ formatterNumber(row.noStockCount) }} 回
+              </p>
+            </template>
+            <template #inventoryTurnoverRate-data="{ row }">
+              <p class="text-right">
+                {{ formatterNumber(row.inventoryTurnoverRate) }}
+              </p>
+            </template>
+            <template #inventoryTurnoverDays-data="{ row }">
+              <p class="text-right">
+                {{ formatterNumber(row.inventoryTurnoverDays) }}
+              </p>
+            </template>
+          </UTable>
+        </div>
+      </section>
+
+      <EffectivenessLineChart
+        v-if="category.data.length > 0"
+        :categories="category.data"
+        :height="500"
+      />
+      <div
+        v-else
+        class="flex bg-gray-200"
+        :class="{
+          'min-h-[560px] items-center justify-center': !category.errorMessage,
+        }"
+      >
+        <svg
+          v-if="!category.errorMessage"
+          class="mb-1 mr-2 h-16 w-16 animate-spin"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+        <p v-else class="text-base font-bold text-red-400">
           <svg
-            v-if="!category.errorMessage"
-            class="mb-1 mr-2 h-16 w-16 animate-spin"
+            class="inline-block h-7 w-7"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
+            strokeWidth="{1.5}"
+            stroke="currentColor"
+            className="size-6"
           >
-            <circle
-              class="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="4"
-            ></circle>
             <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
+            />
           </svg>
-          <p v-else class="text-base font-bold text-red-400">
-            <svg
-              class="inline-block h-7 w-7"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="{1.5}"
-              stroke="currentColor"
-              className="size-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
-              />
-            </svg>
-            {{ category.errorMessage }}
-          </p>
-        </div>
-      </section>
+          {{ category.errorMessage }}
+        </p>
+      </div>
     </template>
 
     <!-- 検索用モーダル -->
@@ -246,6 +286,7 @@
 <script setup lang="ts">
 import copy from 'copy-text-to-clipboard'
 import type ApiValidationError from '~/types/classes/ApiValidationError'
+import OrderingMethodTypes from '~/types/enums/OrderingMethodTypes'
 import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
 
 const categories = ref<
@@ -261,6 +302,14 @@ const categories = ref<
       }[]
     }[]
     errorMessage: string | null
+    orderingMethodData: {
+      orderingMethod: OrderingMethodTypes
+      averageStockQty: number
+      noStockCount: number
+      inventoryTurnoverRate: number
+      inventoryTurnoverDays: number
+      totalSalesQty: number
+    }[]
   }[]
 >([])
 
@@ -293,6 +342,7 @@ function fetch() {
       storeId,
       data: [],
       errorMessage: null,
+      orderingMethodData: [],
     }
   })
 
@@ -307,8 +357,66 @@ function fetch() {
       return
     }
 
-    categories.value[index].data = response.records
+    // 各取得情報の格納
+    categories.value[index].data.push({
+      name: '在庫数',
+      values: response.records.map((v) => {
+        return {
+          row: v.objectiveDate,
+          amount: v.stockQty,
+        }
+      }),
+    })
+    categories.value[index].data.push({
+      name: '販売数',
+      values: response.records.map((v) => {
+        return {
+          row: v.objectiveDate,
+          amount: v.salesQty,
+        }
+      }),
+    })
+    categories.value[index].data.push({
+      name: '入荷数',
+      values: response.records.map((v) => {
+        return {
+          row: v.objectiveDate,
+          amount: v.arrivalQty,
+        }
+      }),
+    })
     categories.value[index].errorMessage = response.errorMessage
+
+    // 発注方式別にサマる
+    if (!response.errorMessage) {
+      const orderingMethods = Array.from(
+        new Set(
+          response.records
+            .filter((v) => v.orderingMethod)
+            .map((v) => v.orderingMethod)
+        )
+      )
+      categories.value[index].orderingMethodData = orderingMethods.map(
+        (orderingMethod) => {
+          const records = response.records.filter(
+            (v) => v.orderingMethod === orderingMethod
+          )
+          const totalDays = records.length
+          const totalSalesQty = records.reduce((acc, v) => acc + v.salesQty, 0)
+          const totalStockQty = records.reduce((acc, v) => acc + v.stockQty, 0)
+          const averageStockQty = totalStockQty / totalDays
+          const inventoryTurnoverRate = totalSalesQty / averageStockQty
+          return {
+            orderingMethod,
+            averageStockQty,
+            noStockCount: records.filter((v) => v.stockQty === 0).length,
+            inventoryTurnoverRate,
+            inventoryTurnoverDays: totalDays / inventoryTurnoverRate,
+            totalSalesQty: 0,
+          }
+        }
+      )
+    }
   })
 
   serviceLoadingToggleIgnore()

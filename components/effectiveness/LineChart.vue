@@ -62,6 +62,8 @@
 <script setup lang="ts">
 import { Chart, Line, Grid, Tooltip } from 'vue3-charts'
 
+const graphWidth = ref(0)
+
 // 棒の色の定義
 const colors = ref([
   '#48CAE4',
@@ -140,6 +142,12 @@ function mountedLineChart(chart: any) {
     if (!element) {
       return
     }
+    const parentWidth = document
+      .getElementById('line-chart')
+      ?.getBoundingClientRect().width
+    const width = 15 * categories[0]?.values.length
+    graphWidth.value =
+      parentWidth && Number(parentWidth) > width ? parentWidth : width
 
     // 特定のカテゴリの数値を取得する
     const stockValues =
@@ -186,10 +194,12 @@ function mountedLineChart(chart: any) {
         'rect'
       )
 
+      const width = axisY.getBoundingClientRect().width
+
       // 左辺固定用の矩形を追加する
-      rect.setAttribute('width', '20px')
+      rect.setAttribute('width', width + 'px')
       rect.setAttribute('height', '100%')
-      rect.setAttribute('transform', `translate(-20, 0)`)
+      rect.setAttribute('transform', `translate(-${width}, 0)`)
       rect.setAttribute('fill', 'white')
       rect.style.zIndex = '-1'
       axisY.insertBefore(rect, axisY.firstChild)
@@ -203,15 +213,14 @@ function mountedLineChart(chart: any) {
         pt.x = target.scrollLeft
         pt.y = 0
         pt = pt.matrixTransform(svg.getCTM()!.inverse())
-        axisY.setAttribute('transform', `translate(${pt.x + 20}, ${pt.y})`)
+        axisY.setAttribute(
+          'transform',
+          `translate(${pt.x + Number(width)}, ${pt.y})`
+        )
       })
     }
   })
 }
-
-const graphWidth = computed(() => {
-  return 15 * categories[0]?.values.length
-})
 </script>
 
 <style scoped>
