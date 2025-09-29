@@ -78,11 +78,11 @@
               対象期間
             </label>
           </div>
-          <CommonSelect
+          <!-- <CommonSelect
             v-model:selected="targetDateRangeType"
             class="basis-1/12 pl-2"
             :options="TargetDateRangeTypes.getNameValues()"
-          />
+          /> -->
           <div class="basis-2/12 pl-2">
             <CommonAppDatepicker
               v-model:date="from"
