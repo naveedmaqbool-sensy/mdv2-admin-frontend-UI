@@ -69,13 +69,13 @@ const colors = ref([
   '#2196F3',
   '#4CAF50',
   '#FF9800',
+  '#607D8B',
   '#48CAE4',
   '#FFC107',
   '#8E24AA',
   '#E74C3C',
   '#9C27B0',
   '#64B5F6',
-  '#607D8B',
 ])
 
 const { categories, height } = defineProps<{
@@ -137,7 +137,7 @@ const addDataMaxAmount = computed(() => {
   if (maxAmount === 0) return 10
 
   const maxAmountLength = maxAmount.toString().length
-  if (maxAmountLength <= 2) return 20
+  if (maxAmountLength <= 2) return 10
 
   return Math.pow(15, maxAmountLength - 2)
 })

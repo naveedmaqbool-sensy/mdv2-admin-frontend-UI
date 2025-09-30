@@ -5,7 +5,7 @@
     <UForm :state="{}">
       <section class="rounded border border-gray-300 py-2">
         <!-- 対象商品 -->
-        <div class="flex flex-row pt-2">
+        <div class="flex flex-row">
           <div class="flex basis-1/12 flex-col justify-center text-right">
             <label class="whitespace-nowrap pr-2 font-bold">対象商品</label>
           </div>
@@ -45,20 +45,12 @@
           <div class="flex flex-col justify-center whitespace-nowrap pl-2">
             <UButton color="indigo" @click="openStoreModal">選択</UButton>
           </div>
-        </div>
-        <div v-if="apiValidationError?.exists('storeId')" class="flex flex-row">
-          <div class="flex basis-1/12 flex-col justify-center text-right" />
-          <div class="text-red-400">
-            {{ apiValidationError?.first('storeId') }}
-          </div>
-        </div>
-        <div class="flex flex-row pt-2">
-          <div v-if="selectedStores.length > 0" class="pb-3">
+          <div v-if="selectedStores.length > 0">
             <template
               v-for="(store, index) in selectedStores"
               :key="store.storeId"
             >
-              <UBadge class="ml-1" color="gray">
+              <UBadge class="ml-2 py-2" color="gray">
                 {{ store.storeName }}
                 <UButton
                   :padded="false"
@@ -71,8 +63,15 @@
             </template>
           </div>
         </div>
+        <div v-if="apiValidationError?.exists('storeId')" class="flex flex-row">
+          <div class="flex basis-1/12 flex-col justify-center text-right" />
+          <div class="text-red-400">
+            {{ apiValidationError?.first('storeId') }}
+          </div>
+        </div>
 
-        <div class="flex flex-row">
+        <!-- 対象期間 -->
+        <div class="flex flex-row pt-2">
           <div class="my-auto basis-1/12 text-right">
             <label class="whitespace-nowrap pr-2 text-right font-bold">
               対象期間
@@ -403,15 +402,6 @@ function fetch() {
       }),
     })
     categories.value[index].data.push({
-      name: '在庫数',
-      values: response.records.map((v) => {
-        return {
-          row: v.objectiveDate,
-          amount: v.stockQty,
-        }
-      }),
-    })
-    categories.value[index].data.push({
       name: '販売数',
       values: response.records.map((v) => {
         return {
@@ -421,11 +411,29 @@ function fetch() {
       }),
     })
     categories.value[index].data.push({
+      name: '在庫数',
+      values: response.records.map((v) => {
+        return {
+          row: v.objectiveDate,
+          amount: v.stockQty,
+        }
+      }),
+    })
+    categories.value[index].data.push({
       name: '入荷数',
       values: response.records.map((v) => {
         return {
           row: v.objectiveDate,
           amount: v.arrivalQty,
+        }
+      }),
+    })
+    categories.value[index].data.push({
+      name: '推奨発注数',
+      values: response.records.map((v) => {
+        return {
+          row: v.objectiveDate,
+          amount: v.orderQty,
         }
       }),
     })
