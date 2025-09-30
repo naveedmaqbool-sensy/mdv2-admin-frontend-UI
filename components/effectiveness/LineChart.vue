@@ -1,5 +1,5 @@
 <template>
-  <section class="line-chart w-full overflow-y-hidden overflow-x-scroll pb-5">
+  <section class="w-full overflow-y-hidden overflow-x-scroll pb-5">
     <Chart
       :size="{
         width: graphWidth,
@@ -148,9 +148,9 @@ function mountedLineChart(chart: any) {
     if (!element) {
       return
     }
-    const parentWidth = element
-      .getElementsByClassName('line-chart')[0]
-      ?.getBoundingClientRect().width
+
+    const lineChartElement = element.parentElement
+    const parentWidth = lineChartElement?.getBoundingClientRect().width
     const width = 15 * categories[0]?.values.length
     graphWidth.value =
       parentWidth && Number(parentWidth) > width ? parentWidth : width
@@ -239,19 +239,17 @@ function mountedLineChart(chart: any) {
         // スクロールイベントを追加して、横軸が移動した際に左辺の座標を固定
         // HACK: rfukuma svg タグ内で position sticky が使えないので js で固定
         const svg = element.getElementsByTagName('svg')[0]
-        element
-          .getElementsByClassName('line-chart')[0]
-          ?.addEventListener('scroll', (e) => {
-            const target = e.target as HTMLElement
-            let pt = svg.createSVGPoint()
-            pt.x = target.scrollLeft
-            pt.y = 0
-            pt = pt.matrixTransform(svg.getCTM()!.inverse())
-            axisY.setAttribute(
-              'transform',
-              `translate(${pt.x + Number(width)}, ${pt.y})`
-            )
-          })
+        element.parentElement?.addEventListener('scroll', (e) => {
+          const target = e.target as HTMLElement
+          let pt = svg.createSVGPoint()
+          pt.x = target.scrollLeft
+          pt.y = 0
+          pt = pt.matrixTransform(svg.getCTM()!.inverse())
+          axisY.setAttribute(
+            'transform',
+            `translate(${pt.x + Number(width)}, ${pt.y})`
+          )
+        })
       }
     })
   })
