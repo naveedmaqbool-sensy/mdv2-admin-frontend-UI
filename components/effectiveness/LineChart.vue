@@ -33,7 +33,7 @@
       <template #layers>
         <Grid stroke-dasharray="1,1" />
         <Line
-          v-for="(category, categoryIndex) in categories"
+          v-for="(category, categoryIndex) in ignoreOrderingMethodCategories"
           :data-keys="['日付', category.name]"
           :line-style="{
             stroke: colors[categoryIndex],
@@ -48,9 +48,7 @@
   </section>
   <div class="m-auto mt-5 text-center">
     <template
-      v-for="(category, categoryIndex) in categories.filter(
-        (v) => v.name !== '発注方式'
-      )"
+      v-for="(category, categoryIndex) in ignoreOrderingMethodCategories"
     >
       <span
         class="inline-block min-w-12 py-1"
@@ -101,14 +99,18 @@ const charts = computed(() => {
       }
     })
 
-  categories
-    .filter((v) => v.name !== '発注方式')
-    .forEach((category) => {
-      results.forEach((result) => {
-        const value = category.values.find((v) => v.row === result.日付)
+  categories.forEach((category) => {
+    results.forEach((result) => {
+      const value = category.values.find((v) => v.row === result.日付)
+      if (category.name === '発注方式') {
+        result[category.name] = value
+          ? OrderingMethodTypes.getName(value.amount)
+          : ''
+      } else {
         result[category.name] = value ? value.amount : 0
-      })
+      }
     })
+  })
 
   return results
 })
@@ -121,8 +123,8 @@ const tooltipConfigs = computed(() => {
     return result
   }
 
-  categories.forEach((_, i) => {
-    result[categories[i].name] = { color: colors.value[i] }
+  ignoreOrderingMethodCategories.value.forEach((category, i) => {
+    result[category.name] = { color: colors.value[i] }
   })
 
   return result
@@ -154,77 +156,6 @@ function mountedLineChart(chart: any) {
     graphWidth.value =
       parentWidth && Number(parentWidth) > width ? parentWidth : width
 
-    // 特定のカテゴリの数値を取得する
-    const stockValues =
-      categories.find((v) => v.name === '在庫数')?.values ?? []
-    if (stockValues.length === 0) {
-      return
-    }
-
-    // 縦軸を構成する DOM の取得
-    const yGrids = element
-      .getElementsByClassName('layers')[0]
-      ?.getElementsByClassName('layer-grid')[0]
-      ?.getElementsByClassName('grid-y')[0]?.children
-    if (stockValues.length !== yGrids.length) {
-      return
-    }
-
-    // grid のセルの幅を取得する
-    const xGridWidth =
-      yGrids.length > 1
-        ? yGrids[1].getBoundingClientRect().x -
-          yGrids[0].getBoundingClientRect().x +
-          1
-        : 1
-
-    // 0になっている箇所の grid を調整して背景色をつけているように見せる
-    stockValues.forEach((v, index) => {
-      if (v.amount === 0) {
-        const yGrid = yGrids[index] as HTMLElement
-        yGrid.style.stroke = '#ff2222'
-        yGrid.style.strokeWidth = xGridWidth.toString()
-        yGrid.style.strokeOpacity = '0.1'
-        yGrid.style.strokeDasharray = 'none'
-      }
-    })
-
-    // スクロール固定
-    const axisY = element
-      .getElementsByClassName('axis')[0]
-      ?.getElementsByClassName('layer-axis-y')[0] as HTMLElement
-    if (axisY) {
-      const rect = document.createElementNS(
-        'http://www.w3.org/2000/svg',
-        'rect'
-      )
-
-      const width = axisY.getBoundingClientRect().width
-
-      // 左辺固定用の矩形を追加する
-      rect.setAttribute('width', width + 'px')
-      rect.setAttribute('height', '100%')
-      rect.setAttribute('transform', `translate(-${width}, 0)`)
-      rect.setAttribute('fill', 'white')
-      rect.style.zIndex = '-1'
-      axisY.insertBefore(rect, axisY.firstChild)
-
-      // スクロールイベントを追加して、横軸が移動した際に左辺の座標を固定
-      // HACK: rfukuma svg タグ内で position sticky が使えないので js で固定
-      const svg = element.getElementsByTagName('svg')[0]
-      document.getElementById('line-chart')?.addEventListener('scroll', (e) => {
-        const target = e.target as HTMLElement
-        let pt = svg.createSVGPoint()
-        pt.x = target.scrollLeft
-        pt.y = 0
-        pt = pt.matrixTransform(svg.getCTM()!.inverse())
-        axisY.setAttribute(
-          'transform',
-          `translate(${pt.x + Number(width)}, ${pt.y})`
-        )
-      })
-    }
-
     // 発注方式の表示
     const axisX = element
       .getElementsByClassName('axis')[0]
@@ -250,8 +181,86 @@ function mountedLineChart(chart: any) {
         ++index
       }
     }
+
+    nextTick(() => {
+      // 特定のカテゴリの数値を取得する
+      const stockValues =
+        categories.find((v) => v.name === '在庫数')?.values ?? []
+      if (stockValues.length === 0) {
+        return
+      }
+
+      // 縦軸を構成する DOM の取得
+      const yGrids = element
+        .getElementsByClassName('layers')[0]
+        ?.getElementsByClassName('layer-grid')[0]
+        ?.getElementsByClassName('grid-y')[0]?.children
+      if (stockValues.length !== yGrids.length) {
+        return
+      }
+
+      // grid のセルの幅を取得する
+      const xGridWidth =
+        yGrids.length > 2
+          ? yGrids[1].getBoundingClientRect().x -
+            yGrids[0].getBoundingClientRect().x
+          : 1
+
+      // 0になっている箇所の grid を調整して背景色をつけているように見せる
+      stockValues.forEach((v, index) => {
+        if (v.amount === 0) {
+          const yGrid = yGrids[index] as HTMLElement
+          yGrid.style.stroke = '#ff2222'
+          yGrid.style.strokeWidth = xGridWidth.toString()
+          yGrid.style.strokeOpacity = '0.2'
+          yGrid.style.strokeDasharray = 'none'
+        }
+      })
+
+      // スクロール固定
+      const axisY = element
+        .getElementsByClassName('axis')[0]
+        ?.getElementsByClassName('layer-axis-y')[0] as HTMLElement
+      if (axisY) {
+        const rect = document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'rect'
+        )
+
+        const width = axisY.getBoundingClientRect().width
+
+        // 左辺固定用の矩形を追加する
+        rect.setAttribute('width', width + 'px')
+        rect.setAttribute('height', '100%')
+        rect.setAttribute('transform', `translate(-${width}, 0)`)
+        rect.setAttribute('fill', 'white')
+        rect.style.zIndex = '-1'
+        axisY.insertBefore(rect, axisY.firstChild)
+
+        // スクロールイベントを追加して、横軸が移動した際に左辺の座標を固定
+        // HACK: rfukuma svg タグ内で position sticky が使えないので js で固定
+        const svg = element.getElementsByTagName('svg')[0]
+        document
+          .getElementById('line-chart')
+          ?.addEventListener('scroll', (e) => {
+            const target = e.target as HTMLElement
+            let pt = svg.createSVGPoint()
+            pt.x = target.scrollLeft
+            pt.y = 0
+            pt = pt.matrixTransform(svg.getCTM()!.inverse())
+            axisY.setAttribute(
+              'transform',
+              `translate(${pt.x + Number(width)}, ${pt.y})`
+            )
+          })
+      }
+    })
   })
 }
+
+const ignoreOrderingMethodCategories = computed(() => {
+  return categories.filter((v) => v.name !== '発注方式')
+})
 </script>
 
 <style scoped>

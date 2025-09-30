@@ -386,7 +386,22 @@ function fetch() {
       return
     }
 
+    // エラーがある場合はそのほか取得できた情報の処理をしない
+    if (response.errorMessage) {
+      categories.value[index].errorMessage = response.errorMessage
+      return
+    }
+
     // 各取得情報の格納
+    categories.value[index].data.push({
+      name: '発注方式',
+      values: response.records.map((v) => {
+        return {
+          row: v.objectiveDate,
+          amount: v.orderingMethod,
+        }
+      }),
+    })
     categories.value[index].data.push({
       name: '在庫数',
       values: response.records.map((v) => {
@@ -414,16 +429,6 @@ function fetch() {
         }
       }),
     })
-    categories.value[index].data.push({
-      name: '発注方式',
-      values: response.records.map((v) => {
-        return {
-          row: v.objectiveDate,
-          amount: v.orderingMethod,
-        }
-      }),
-    })
-    categories.value[index].errorMessage = response.errorMessage
     categories.value[index].orderingMethodData = response.orderingMethodRecords
   })
 
