@@ -1,8 +1,5 @@
 <template>
-  <section
-    id="line-chart"
-    class="w-full overflow-y-hidden overflow-x-scroll pb-5"
-  >
+  <section class="line-chart w-full overflow-y-hidden overflow-x-scroll pb-5">
     <Chart
       :size="{
         width: graphWidth,
@@ -140,7 +137,9 @@ const addDataMaxAmount = computed(() => {
   if (maxAmount === 0) return 10
 
   const maxAmountLength = maxAmount.toString().length
-  return Math.pow(10, maxAmountLength - 2)
+  if (maxAmountLength <= 2) return 20
+
+  return Math.pow(15, maxAmountLength - 2)
 })
 
 function mountedLineChart(chart: any) {
@@ -149,8 +148,8 @@ function mountedLineChart(chart: any) {
     if (!element) {
       return
     }
-    const parentWidth = document
-      .getElementById('line-chart')
+    const parentWidth = element
+      .getElementsByClassName('line-chart')[0]
       ?.getBoundingClientRect().width
     const width = 15 * categories[0]?.values.length
     graphWidth.value =
@@ -240,8 +239,8 @@ function mountedLineChart(chart: any) {
         // スクロールイベントを追加して、横軸が移動した際に左辺の座標を固定
         // HACK: rfukuma svg タグ内で position sticky が使えないので js で固定
         const svg = element.getElementsByTagName('svg')[0]
-        document
-          .getElementById('line-chart')
+        element
+          .getElementsByClassName('line-chart')[0]
           ?.addEventListener('scroll', (e) => {
             const target = e.target as HTMLElement
             let pt = svg.createSVGPoint()
