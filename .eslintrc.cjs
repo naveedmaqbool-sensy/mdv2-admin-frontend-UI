@@ -31,5 +31,7 @@ module.exports = {
   plugins: ['@typescript-eslint', 'vue'],
   rules: {
     'vue/multi-word-component-names': 'off',
+    'vue/valid-v-for': 'off',
+    'vue/require-v-for-key': 'off',
   },
 }

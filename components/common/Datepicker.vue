@@ -3,7 +3,7 @@ import { DatePicker as VCalendarDatePicker } from 'v-calendar'
 import type {
   DatePickerDate,
   DatePickerRangeObject,
-} from 'v-calendar/dist/types/src/use/datePicker'
+} from 'v-calendar/dist/types/src/use/datePicker.js'
 import 'v-calendar/dist/style.css'
 
 const props = defineProps({
@@ -35,6 +35,8 @@ const attrs = {
   color: 'primary',
   'is-dark': { selector: 'html', darkClass: 'dark' },
   'first-day-of-week': 2,
+  type: 'month',
+  mode: 'month',
 }
 </script>
 
@@ -52,6 +54,8 @@ const attrs = {
       <VCalendarDatePicker
         v-model="date"
         v-bind="{ ...attrs, ...$attrs }"
+        type="month"
+        mode="month"
         @close="close"
       />
     </template>

@@ -18,4 +18,5 @@ export default <Partial<Config>>{
       margin: spacing,
     },
   },
+  plugins: [require('@tailwindcss/forms')],
 }

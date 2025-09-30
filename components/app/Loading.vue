@@ -63,6 +63,7 @@ watch(isLoading, (value) => {
 })
 
 const showLoading = computed(() => {
+  if (useState(AppStateTypes.ignoreLoading).value) return false
   return isLoading.value && count.value >= throttle
 })
 
