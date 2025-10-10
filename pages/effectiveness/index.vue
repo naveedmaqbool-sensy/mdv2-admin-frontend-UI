@@ -127,6 +127,25 @@
       <section class="flex justify-between pt-5">
         <h1 class="flex text-base font-bold">
           <span>
+            {{ category.storeName }}
+            <svg
+              class="inline-block h-4 w-4 cursor-pointer"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="{1.5}"
+              stroke="currentColor"
+              className="size-6"
+              @click="copyText(category.storeName)"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M16.5 8.25V6a2.25 2.25 0 0 0-2.25-2.25H6A2.25 2.25 0 0 0 3.75 6v8.25A2.25 2.25 0 0 0 6 16.5h2.25m8.25-8.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-7.5A2.25 2.25 0 0 1 8.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 0 0-2.25 2.25v6"
+              />
+            </svg>
+          </span>
+          <span class="ml-5">
             {{ category.skuId }}
             <svg
               class="inline-block h-4 w-4 cursor-pointer"
@@ -146,7 +165,7 @@
             </svg>
           </span>
           <span class="ml-5">
-            {{ category.title }}
+            {{ category.skuName }}
             <svg
               class="inline-block h-4 w-4 cursor-pointer"
               xmlns="http://www.w3.org/2000/svg"
@@ -155,7 +174,7 @@
               strokeWidth="{1.5}"
               stroke="currentColor"
               className="size-6"
-              @click="copyText(category.title)"
+              @click="copyText(category.skuName)"
             >
               <path
                 strokeLinecap="round"
@@ -304,7 +323,6 @@
       v-model:total="itemsTotal"
       :columns="[{ key: 'storeName', label: '店舗' }]"
       id-column-name="storeId"
-      is-radio
       @fetch-items="fetchStores"
     />
   </div>
@@ -319,9 +337,10 @@ import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster
 
 const categories = ref<
   {
-    title: string
+    skuName: string
     skuId: string
     storeId: string
+    storeName: string
     data: {
       name: string
       values: {
@@ -364,92 +383,94 @@ function fetch() {
   serviceLoadingToggleIgnore()
 
   categories.value = []
-  const storeId = selectedStores.value[0].storeId
-  categories.value = selectedSkus.value.map((sku) => {
-    return {
-      title: sku.skuName,
-      skuId: sku.skuId,
-      storeId,
-      data: [],
-      errorMessage: null,
-      orderingMethodData: [],
-    }
-  })
+  selectedStores.value.forEach((store) => {
+    selectedSkus.value.forEach(async (sku) => {
+      const index = categories.value.length
+      categories.value.push({
+        skuId: sku.skuId,
+        skuName: sku.skuName,
+        storeId: store.storeId,
+        storeName: store.storeName,
+        data: [],
+        errorMessage: null,
+        orderingMethodData: [],
+      })
 
-  selectedSkus.value.forEach(async (sku, index) => {
-    const response = await apiEffectivenessFetch({
-      from: new Date(from.value!),
-      to: new Date(to.value!),
-      skuId: sku.skuId,
-      storeId,
-      targetDateRangeType: targetDateRangeType.value,
-    })
-    if (!response) {
-      return
-    }
+      const response = await apiEffectivenessFetch({
+        from: new Date(from.value!),
+        to: new Date(to.value!),
+        skuId: sku.skuId,
+        storeId: store.storeId,
+        targetDateRangeType: targetDateRangeType.value,
+      })
+      if (!response) {
+        return
+      }
 
-    // エラーがある場合はそのほか取得できた情報の処理をしない
-    if (response.errorMessage) {
-      categories.value[index].errorMessage = response.errorMessage
-      return
-    }
+      // エラーがある場合はそのほか取得できた情報の処理をしない
+      if (response.errorMessage) {
+        categories.value[index].errorMessage = response.errorMessage
+        return
+      }
 
-    // 各取得情報の格納
-    categories.value[index].data.push({
-      name: '発注方式',
-      values: response.records.map((v) => {
-        return {
-          row: v.objectiveDate,
-          amount: v.orderingMethod,
-        }
-      }),
+      // 各取得情報の格納
+      categories.value[index].data.push({
+        name: '発注方式',
+        values: response.records.map((v) => {
+          return {
+            row: v.objectiveDate,
+            amount: v.orderingMethod,
+          }
+        }),
+      })
+      categories.value[index].data.push({
+        name: '販売数',
+        values: response.records.map((v) => {
+          return {
+            row: v.objectiveDate,
+            amount: v.salesQty,
+          }
+        }),
+      })
+      categories.value[index].data.push({
+        name: '在庫数',
+        values: response.records.map((v) => {
+          return {
+            row: v.objectiveDate,
+            amount: v.stockQty,
+          }
+        }),
+      })
+      categories.value[index].data.push({
+        name: '入荷数',
+        values: response.records.map((v) => {
+          return {
+            row: v.objectiveDate,
+            amount: v.arrivalQty,
+          }
+        }),
+      })
+      categories.value[index].data.push({
+        name: useNuxtApp().$config.public.displayStockName,
+        values: response.records.map((v) => {
+          return {
+            row: v.objectiveDate,
+            amount: v.displayStockQty,
+          }
+        }),
+      })
+      categories.value[index].data.push({
+        name: '推奨発注数',
+        values: response.records.map((v) => {
+          return {
+            row: v.objectiveDate,
+            amount: v.orderQty,
+          }
+        }),
+      })
+      categories.value[index].orderingMethodData =
+        response.orderingMethodRecords
     })
-    categories.value[index].data.push({
-      name: '販売数',
-      values: response.records.map((v) => {
-        return {
-          row: v.objectiveDate,
-          amount: v.salesQty,
-        }
-      }),
-    })
-    categories.value[index].data.push({
-      name: '在庫数',
-      values: response.records.map((v) => {
-        return {
-          row: v.objectiveDate,
-          amount: v.stockQty,
-        }
-      }),
-    })
-    categories.value[index].data.push({
-      name: '入荷数',
-      values: response.records.map((v) => {
-        return {
-          row: v.objectiveDate,
-          amount: v.arrivalQty,
-        }
-      }),
-    })
-    categories.value[index].data.push({
-      name: useNuxtApp().$config.public.displayStockName,
-      values: response.records.map((v) => {
-        return {
-          row: v.objectiveDate,
-          amount: v.displayStockQty,
-        }
-      }),
-    })
-    categories.value[index].data.push({
-      name: '推奨発注数',
-      values: response.records.map((v) => {
-        return {
-          row: v.objectiveDate,
-          amount: v.orderQty,
-        }
-      }),
-    })
-    categories.value[index].orderingMethodData = response.orderingMethodRecords
   })
 
   serviceLoadingToggleIgnore()
