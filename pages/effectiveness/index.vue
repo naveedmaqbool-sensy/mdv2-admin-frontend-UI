@@ -341,6 +341,7 @@ const categories = ref<
 >([])
 
 function fetch() {
+  serviceValidationErrorsReset()
   if (!from.value) {
     apiValidationError.value.set('from', '対象期間を指定してください。')
   } else if (!to.value) {
@@ -425,6 +426,15 @@ function fetch() {
         return {
           row: v.objectiveDate,
           amount: v.arrivalQty,
+        }
+      }),
+    })
+    categories.value[index].data.push({
+      name: '見栄え在庫',
+      values: response.records.map((v) => {
+        return {
+          row: v.objectiveDate,
+          amount: v.displayStockQty,
         }
       }),
     })

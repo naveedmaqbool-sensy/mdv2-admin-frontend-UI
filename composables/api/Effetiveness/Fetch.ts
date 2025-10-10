@@ -17,6 +17,7 @@ export type EffectivenessFetchResponse = {
     salesQty: number
     arrivalQty: number
     orderQty: number
+    displayStockQty: number
   }[]
   orderingMethodRecords: {
     orderingMethod: OrderingMethodTypes
