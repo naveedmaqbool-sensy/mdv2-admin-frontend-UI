@@ -500,7 +500,13 @@ function fetch() {
     apiValidationError.value.set('to', '対象期間を指定してください。')
   }
 
-  if (selectedSkus.value.length === 0) {
+  if (
+    selectedSkus.value.length === 0 &&
+    selectedGroups.value.length === 0 &&
+    selectedDepartments.value.length === 0 &&
+    selectedLines.value.length === 0 &&
+    selectedClasses.value.length === 0
+  ) {
     apiValidationError.value.set('skuId', '対象商品を指定してください。')
   }
 
@@ -594,6 +600,7 @@ function fetch() {
       targetDateRangeType: targetDateRangeType.value,
     })
     if (!response) {
+      categories.value[index].errorMessage = '予期せぬエラーが発生しました。'
       return
     }
 
@@ -604,15 +611,17 @@ function fetch() {
     }
 
     // 各取得情報の格納
-    categories.value[index].data.push({
-      name: '発注方式',
-      values: response.records.map((v) => {
-        return {
-          row: v.objectiveDate,
-          amount: v.orderingMethod,
-        }
-      }),
-    })
+    if (selectedSkuMonitoringUnitType.value === SkuMonitoringUnitTypes.Sku) {
+      categories.value[index].data.push({
+        name: '発注方式',
+        values: response.records.map((v) => {
+          return {
+            row: v.objectiveDate,
+            amount: v.orderingMethod,
+          }
+        }),
+      })
+    }
     categories.value[index].data.push({
       name: '販売数',
       values: response.records.map((v) => {
@@ -622,15 +631,17 @@ function fetch() {
         }
       }),
     })
-    categories.value[index].data.push({
-      name: '在庫数',
-      values: response.records.map((v) => {
-        return {
-          row: v.objectiveDate,
-          amount: v.stockQty,
-        }
-      }),
-    })
+    if (selectedSkuMonitoringUnitType.value === SkuMonitoringUnitTypes.Sku) {
+      categories.value[index].data.push({
+        name: '在庫数',
+        values: response.records.map((v) => {
+          return {
+            row: v.objectiveDate,
+            amount: v.stockQty,
+          }
+        }),
+      })
+    }
     categories.value[index].data.push({
       name: '入荷数',
       values: response.records.map((v) => {
@@ -640,15 +651,17 @@ function fetch() {
         }
       }),
     })
-    categories.value[index].data.push({
-      name: useNuxtApp().$config.public.displayStockName,
-      values: response.records.map((v) => {
-        return {
-          row: v.objectiveDate,
-          amount: v.displayStockQty,
-        }
-      }),
-    })
+    if (selectedSkuMonitoringUnitType.value === SkuMonitoringUnitTypes.Sku) {
+      categories.value[index].data.push({
+        name: useNuxtApp().$config.public.displayStockName,
+        values: response.records.map((v) => {
+          return {
+            row: v.objectiveDate,
+            amount: v.displayStockQty,
+          }
+        }),
+      })
+    }
     categories.value[index].data.push({
       name: '推奨発注数',
       values: response.records.map((v) => {

@@ -136,7 +136,7 @@ const addDataMaxAmount = computed(() => {
     .sort((a, b) => b - a)[0]
   if (maxAmount === 0) return 10
 
-  const maxAmountLength = maxAmount.toString().length
+  const maxAmountLength = parseInt(maxAmount.toString()).toString().length
   if (maxAmountLength <= 2) return 10
 
   return Math.pow(15, maxAmountLength - 2)
