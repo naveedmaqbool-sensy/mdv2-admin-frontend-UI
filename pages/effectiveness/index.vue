@@ -342,6 +342,8 @@ const categories = ref<
 
 function fetch() {
   serviceValidationErrorsReset()
+  apiValidationError.value.refresh()
+  apiValidationError.value = serviceValidationErrorsInstance()
   if (!from.value) {
     apiValidationError.value.set('from', '対象期間を指定してください。')
   } else if (!to.value) {
@@ -430,7 +432,7 @@ function fetch() {
       }),
     })
     categories.value[index].data.push({
-      name: '見栄え在庫',
+      name: useNuxtApp().$config.public.displayStockName,
       values: response.records.map((v) => {
         return {
           row: v.objectiveDate,
