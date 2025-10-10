@@ -1,10 +1,12 @@
 import type OrderingMethodTypes from '~/types/enums/OrderingMethodTypes'
+import type SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
 import type TargetDateRangeTypes from '~/types/enums/TargetDateRangeTypes'
 
 interface Request {
   from: Date
   to: Date
-  skuId: string
+  unitType: SkuMonitoringUnitTypes
+  targetId: string
   storeId: string
   targetDateRangeType: TargetDateRangeTypes
 }

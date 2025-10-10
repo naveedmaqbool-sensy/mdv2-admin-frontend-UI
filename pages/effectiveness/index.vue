@@ -9,8 +9,26 @@
           <div class="flex basis-1/12 flex-col justify-center text-right">
             <label class="whitespace-nowrap pr-2 font-bold">対象商品</label>
           </div>
+          <div
+            class="flex basis-1/12 flex-col justify-center whitespace-nowrap pl-2"
+          >
+            <CommonSelect
+              v-model:selected="selectedSkuMonitoringUnitType"
+              class="basis-2/12"
+              :options="SkuMonitoringUnitTypes.getNameValues()"
+              @change="
+                () => {
+                  selectedSkus = []
+                  selectedGroups = []
+                  selectedDepartments = []
+                  selectedLines = []
+                  selectedClasses = []
+                }
+              "
+            />
+          </div>
           <div class="flex flex-col justify-center whitespace-nowrap pl-2">
-            <UButton color="indigo" @click="openSkuModal">選択</UButton>
+            <UButton color="indigo" @click="openTargetModal">選択</UButton>
           </div>
         </div>
         <div v-if="apiValidationError.exists('skuId')" class="flex flex-row">
@@ -31,6 +49,71 @@
                   variant="link"
                   icon="i-heroicons-x-mark-20-solid"
                   @click="selectedSkus.splice(index, 1)"
+                />
+              </UBadge>
+            </template>
+          </div>
+          <div v-if="selectedGroups.length > 0">
+            <template
+              v-for="(group, index) in selectedGroups"
+              :key="group.groupId"
+            >
+              <UBadge class="ml-1" color="gray">
+                {{ group.groupName }}
+                <UButton
+                  :padded="false"
+                  color="gray"
+                  variant="link"
+                  icon="i-heroicons-x-mark-20-solid"
+                  @click="selectedGroups.splice(index, 1)"
+                />
+              </UBadge>
+            </template>
+          </div>
+          <div v-if="selectedDepartments.length > 0">
+            <template
+              v-for="(department, index) in selectedDepartments"
+              :key="department.departmentId"
+            >
+              <UBadge class="ml-1" color="gray">
+                {{ department.departmentName }}
+                <UButton
+                  :padded="false"
+                  color="gray"
+                  variant="link"
+                  icon="i-heroicons-x-mark-20-solid"
+                  @click="selectedDepartments.splice(index, 1)"
+                />
+              </UBadge>
+            </template>
+          </div>
+          <div v-if="selectedLines.length > 0">
+            <template v-for="(line, index) in selectedLines" :key="line.lineId">
+              <UBadge class="ml-1" color="gray">
+                {{ line.lineName }}
+                <UButton
+                  :padded="false"
+                  color="gray"
+                  variant="link"
+                  icon="i-heroicons-x-mark-20-solid"
+                  @click="selectedLines.splice(index, 1)"
+                />
+              </UBadge>
+            </template>
+          </div>
+          <div v-if="selectedClasses.length > 0">
+            <template
+              v-for="(clazz, index) in selectedClasses"
+              :key="clazz.classId"
+            >
+              <UBadge class="ml-1" color="gray">
+                {{ clazz.className }}
+                <UButton
+                  :padded="false"
+                  color="gray"
+                  variant="link"
+                  icon="i-heroicons-x-mark-20-solid"
+                  @click="selectedClasses.splice(index, 1)"
                 />
               </UBadge>
             </template>
@@ -77,11 +160,6 @@
               対象期間
             </label>
           </div>
-          <!-- <CommonSelect
-            v-model:selected="targetDateRangeType"
-            class="basis-1/12 pl-2"
-            :options="TargetDateRangeTypes.getNameValues()"
-          /> -->
           <div class="basis-1/12 pl-2">
             <CommonAppDatepicker
               v-model:date="from"
@@ -146,7 +224,7 @@
             </svg>
           </span>
           <span class="ml-5">
-            {{ category.skuId }}
+            {{ category.targetId }}
             <svg
               class="inline-block h-4 w-4 cursor-pointer"
               xmlns="http://www.w3.org/2000/svg"
@@ -155,7 +233,7 @@
               strokeWidth="{1.5}"
               stroke="currentColor"
               className="size-6"
-              @click="copyText(category.skuId)"
+              @click="copyText(category.targetId)"
             >
               <path
                 strokeLinecap="round"
@@ -165,7 +243,7 @@
             </svg>
           </span>
           <span class="ml-5">
-            {{ category.skuName }}
+            {{ category.targetName }}
             <svg
               class="inline-block h-4 w-4 cursor-pointer"
               xmlns="http://www.w3.org/2000/svg"
@@ -174,7 +252,7 @@
               strokeWidth="{1.5}"
               stroke="currentColor"
               className="size-6"
-              @click="copyText(category.skuName)"
+              @click="copyText(category.targetName)"
             >
               <path
                 strokeLinecap="round"
@@ -317,6 +395,54 @@
       @fetch-items="fetchSkus"
     />
     <MonitoringSelectObjectModal
+      v-model:is-open-modal="isOpenGroupsModal"
+      v-model:selected="selectedGroups"
+      v-model:items="groups"
+      v-model:total="itemsTotal"
+      :columns="[{ key: 'groupName', label: '部門' }]"
+      id-column-name="groupId"
+      @fetch-items="fetchGroups"
+    />
+    <MonitoringSelectObjectModal
+      v-model:is-open-modal="isOpenDepartmentsModal"
+      v-model:selected="selectedDepartments"
+      v-model:items="departments"
+      v-model:total="itemsTotal"
+      :columns="[
+        { key: 'groupName', label: '部門' },
+        { key: 'departmentName', label: '中分類' },
+      ]"
+      id-column-name="departmentId"
+      @fetch-items="fetchDepartments"
+    />
+    <MonitoringSelectObjectModal
+      v-model:is-open-modal="isOpenLinesModal"
+      v-model:selected="selectedLines"
+      v-model:items="lines"
+      v-model:total="itemsTotal"
+      :columns="[
+        { key: 'groupName', label: '部門' },
+        { key: 'departmentName', label: '中分類' },
+        { key: 'lineName', label: '小分類' },
+      ]"
+      id-column-name="lineId"
+      @fetch-items="fetchLines"
+    />
+    <MonitoringSelectObjectModal
+      v-model:is-open-modal="isOpenClassesModal"
+      v-model:selected="selectedClasses"
+      v-model:items="classes"
+      v-model:total="itemsTotal"
+      :columns="[
+        { key: 'groupName', label: '部門' },
+        { key: 'departmentName', label: '中分類' },
+        { key: 'lineName', label: '小分類' },
+        { key: 'className', label: '細分類' },
+      ]"
+      id-column-name="classId"
+      @fetch-items="fetchClasses"
+    />
+    <MonitoringSelectObjectModal
       v-model:is-open-modal="isOpenStoreModal"
       v-model:selected="selectedStores"
       v-model:items="stores"
@@ -334,11 +460,16 @@ import type ApiValidationError from '~/types/classes/ApiValidationError'
 import OrderingMethodTypes from '~/types/enums/OrderingMethodTypes'
 import TargetDateRangeTypes from '~/types/enums/TargetDateRangeTypes'
 import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
+import SkuMonitoringUnitTypes from '~/types/enums/SkuMonitoringUnitTypes'
+import type GroupMaster from '~/types/interfaces/database/SensyCloud/GroupMaster'
+import type DepartmentMaster from '~/types/interfaces/database/SensyCloud/DepartmentMaster'
+import type LineMaster from '~/types/interfaces/database/SensyCloud/LineMaster'
+import type ClassMaster from '~/types/interfaces/database/SensyCloud/ClassMaster'
 
 const categories = ref<
   {
-    skuName: string
-    skuId: string
+    targetId: string
+    targetName: string
     storeId: string
     storeName: string
     data: {
@@ -384,103 +515,168 @@ function fetch() {
 
   categories.value = []
   selectedStores.value.forEach((store) => {
-    selectedSkus.value.forEach(async (sku) => {
-      const index = categories.value.length
-      categories.value.push({
-        skuId: sku.skuId,
-        skuName: sku.skuName,
-        storeId: store.storeId,
-        storeName: store.storeName,
-        data: [],
-        errorMessage: null,
-        orderingMethodData: [],
-      })
-
-      const response = await apiEffectivenessFetch({
-        from: new Date(from.value!),
-        to: new Date(to.value!),
-        skuId: sku.skuId,
-        storeId: store.storeId,
-        targetDateRangeType: targetDateRangeType.value,
-      })
-      if (!response) {
-        return
-      }
-
-      // エラーがある場合はそのほか取得できた情報の処理をしない
-      if (response.errorMessage) {
-        categories.value[index].errorMessage = response.errorMessage
-        return
-      }
-
-      // 各取得情報の格納
-      categories.value[index].data.push({
-        name: '発注方式',
-        values: response.records.map((v) => {
-          return {
-            row: v.objectiveDate,
-            amount: v.orderingMethod,
-          }
-        }),
-      })
-      categories.value[index].data.push({
-        name: '販売数',
-        values: response.records.map((v) => {
-          return {
-            row: v.objectiveDate,
-            amount: v.salesQty,
-          }
-        }),
-      })
-      categories.value[index].data.push({
-        name: '在庫数',
-        values: response.records.map((v) => {
-          return {
-            row: v.objectiveDate,
-            amount: v.stockQty,
-          }
-        }),
-      })
-      categories.value[index].data.push({
-        name: '入荷数',
-        values: response.records.map((v) => {
-          return {
-            row: v.objectiveDate,
-            amount: v.arrivalQty,
-          }
-        }),
-      })
-      categories.value[index].data.push({
-        name: useNuxtApp().$config.public.displayStockName,
-        values: response.records.map((v) => {
-          return {
-            row: v.objectiveDate,
-            amount: v.displayStockQty,
-          }
-        }),
-      })
-      categories.value[index].data.push({
-        name: '推奨発注数',
-        values: response.records.map((v) => {
-          return {
-            row: v.objectiveDate,
-            amount: v.orderQty,
-          }
-        }),
-      })
-      categories.value[index].orderingMethodData =
-        response.orderingMethodRecords
-    })
+    switch (selectedSkuMonitoringUnitType.value) {
+      case SkuMonitoringUnitTypes.Sku:
+        selectedSkus.value.forEach((v) => {
+          categories.value.push({
+            targetId: v.skuId,
+            targetName: v.skuName,
+            storeId: store.storeId,
+            storeName: store.storeName,
+            data: [],
+            errorMessage: null,
+            orderingMethodData: [],
+          })
+        })
+        break
+      case SkuMonitoringUnitTypes.Group:
+        selectedGroups.value.forEach((v) => {
+          categories.value.push({
+            targetId: v.groupId,
+            targetName: v.groupName,
+            storeId: store.storeId,
+            storeName: store.storeName,
+            data: [],
+            errorMessage: null,
+            orderingMethodData: [],
+          })
+        })
+        break
+      case SkuMonitoringUnitTypes.Department:
+        selectedDepartments.value.forEach((v) => {
+          categories.value.push({
+            targetId: v.departmentId,
+            targetName: v.departmentName,
+            storeId: store.storeId,
+            storeName: store.storeName,
+            data: [],
+            errorMessage: null,
+            orderingMethodData: [],
+          })
+        })
+        break
+      case SkuMonitoringUnitTypes.Line:
+        selectedLines.value.forEach((v) => {
+          categories.value.push({
+            targetId: v.lineId,
+            targetName: v.lineName,
+            storeId: store.storeId,
+            storeName: store.storeName,
+            data: [],
+            errorMessage: null,
+            orderingMethodData: [],
+          })
+        })
+        break
+      case SkuMonitoringUnitTypes.Class:
+        selectedClasses.value.forEach((v) => {
+          categories.value.push({
+            targetId: v.classId,
+            targetName: v.className,
+            storeId: store.storeId,
+            storeName: store.storeName,
+            data: [],
+            errorMessage: null,
+            orderingMethodData: [],
+          })
+        })
+        break
+    }
   })
 
+  categories.value.forEach(async (category, index) => {
+    const response = await apiEffectivenessFetch({
+      from: new Date(from.value!),
+      to: new Date(to.value!),
+      unitType: selectedSkuMonitoringUnitType.value,
+      targetId: category.targetId,
+      storeId: category.storeId,
+      targetDateRangeType: targetDateRangeType.value,
+    })
+    if (!response) {
+      return
+    }
+
+    // エラーがある場合はそのほか取得できた情報の処理をしない
+    if (response.errorMessage) {
+      categories.value[index].errorMessage = response.errorMessage
+      return
+    }
+
+    // 各取得情報の格納
+    categories.value[index].data.push({
+      name: '発注方式',
+      values: response.records.map((v) => {
+        return {
+          row: v.objectiveDate,
+          amount: v.orderingMethod,
+        }
+      }),
+    })
+    categories.value[index].data.push({
+      name: '販売数',
+      values: response.records.map((v) => {
+        return {
+          row: v.objectiveDate,
+          amount: v.salesQty,
+        }
+      }),
+    })
+    categories.value[index].data.push({
+      name: '在庫数',
+      values: response.records.map((v) => {
+        return {
+          row: v.objectiveDate,
+          amount: v.stockQty,
+        }
+      }),
+    })
+    categories.value[index].data.push({
+      name: '入荷数',
+      values: response.records.map((v) => {
+        return {
+          row: v.objectiveDate,
+          amount: v.arrivalQty,
+        }
+      }),
+    })
+    categories.value[index].data.push({
+      name: useNuxtApp().$config.public.displayStockName,
+      values: response.records.map((v) => {
+        return {
+          row: v.objectiveDate,
+          amount: v.displayStockQty,
+        }
+      }),
+    })
+    categories.value[index].data.push({
+      name: '推奨発注数',
+      values: response.records.map((v) => {
+        return {
+          row: v.objectiveDate,
+          amount: v.orderQty,
+        }
+      }),
+    })
+    categories.value[index].orderingMethodData = response.orderingMethodRecords
+  })
   serviceLoadingToggleIgnore()
 }
 
+const selectedSkuMonitoringUnitType = ref(SkuMonitoringUnitTypes.Sku)
 const targetDateRangeType = ref(TargetDateRangeTypes.Daily)
 const from = ref<Date | null>(null)
 const to = ref<Date | null>(null)
 const skus = ref<any[]>([])
 const selectedSkus = ref<any[]>([])
+const groups = ref<GroupMaster[]>([])
+const selectedGroups = ref<GroupMaster[]>([])
+const departments = ref<DepartmentMaster[]>([])
+const selectedDepartments = ref<DepartmentMaster[]>([])
+const lines = ref<LineMaster[]>([])
+const selectedLines = ref<LineMaster[]>([])
+const classes = ref<ClassMaster[]>([])
+const selectedClasses = ref<ClassMaster[]>([])
 const stores = ref<StoreMaster[]>([])
 const selectedStores = ref<StoreMaster[]>([])
 
@@ -491,9 +687,30 @@ const apiValidationError = ref<ApiValidationError>(
 )
 
 const isOpenSkuModal = ref(false)
-function openSkuModal() {
-  isOpenSkuModal.value = true
+const isOpenGroupsModal = ref(false)
+const isOpenDepartmentsModal = ref(false)
+const isOpenLinesModal = ref(false)
+const isOpenClassesModal = ref(false)
+
+function openTargetModal() {
   apiValidationError.value.refresh()
+  switch (selectedSkuMonitoringUnitType.value) {
+    case SkuMonitoringUnitTypes.Sku:
+      isOpenSkuModal.value = true
+      break
+    case SkuMonitoringUnitTypes.Group:
+      isOpenGroupsModal.value = true
+      break
+    case SkuMonitoringUnitTypes.Department:
+      isOpenDepartmentsModal.value = true
+      break
+    case SkuMonitoringUnitTypes.Line:
+      isOpenLinesModal.value = true
+      break
+    case SkuMonitoringUnitTypes.Class:
+      isOpenClassesModal.value = true
+      break
+  }
 }
 
 const isOpenStoreModal = ref(false)
@@ -514,6 +731,54 @@ async function fetchSkus(searchRequest: {
   serviceLoadingFinish()
 }
 
+async function fetchGroups(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  const response = await apiGroupMasterFetch(searchRequest)
+  groups.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
+  serviceLoadingFinish()
+}
+
+async function fetchDepartments(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  const response = await apiDepartmentMasterFetch(searchRequest)
+  departments.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
+  serviceLoadingFinish()
+}
+
+async function fetchLines(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  const response = await apiLineMasterFetch(searchRequest)
+  lines.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
+  serviceLoadingFinish()
+}
+
+async function fetchClasses(searchRequest: {
+  text: string | null
+  page: number
+  perPage: number
+}) {
+  serviceLoadingStart()
+  const response = await apiClassMasterFetch(searchRequest)
+  classes.value = response ? response.data : []
+  itemsTotal.value = response ? response.total : 0
+  serviceLoadingFinish()
+}
+
 async function fetchStores(searchRequest: {
   text: string | null
   page: number
@@ -530,6 +795,10 @@ function reset() {
   from.value = null
   to.value = null
   selectedSkus.value = []
+  selectedGroups.value = []
+  selectedDepartments.value = []
+  selectedLines.value = []
+  selectedClasses.value = []
   selectedStores.value = []
 }
 
