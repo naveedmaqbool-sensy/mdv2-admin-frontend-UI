@@ -223,7 +223,7 @@
               />
             </svg>
           </span>
-          <span class="ml-5">
+          <span v-if="showUnitType === SkuMonitoringUnitTypes.Sku" class="ml-5">
             {{ category.targetId }}
             <svg
               class="inline-block h-4 w-4 cursor-pointer"
@@ -281,10 +281,16 @@
             <template #orderingMethod-data="{ row }">
               <p
                 :style="{
-                  color: OrderingMethodTypes.getGraphColor(row.orderingMethod),
+                  color: row.orderingMethod
+                    ? OrderingMethodTypes.getGraphColor(row.orderingMethod)
+                    : 'red',
                 }"
               >
-                {{ OrderingMethodTypes.getName(row.orderingMethod) }}
+                {{
+                  row.orderingMethod
+                    ? OrderingMethodTypes.getName(row.orderingMethod)
+                    : '未発注'
+                }}
               </p>
             </template>
             <template #averageStockQty-data="{ row }">
@@ -481,7 +487,7 @@ const categories = ref<
     }[]
     errorMessage: string | null
     orderingMethodData: {
-      orderingMethod: OrderingMethodTypes
+      orderingMethod: OrderingMethodTypes | null
       averageStockQty: number
       noStockCount: number
       inventoryTurnoverRate: number
@@ -611,17 +617,15 @@ function fetch() {
     }
 
     // 各取得情報の格納
-    if (selectedSkuMonitoringUnitType.value === SkuMonitoringUnitTypes.Sku) {
-      categories.value[index].data.push({
-        name: '発注方式',
-        values: response.records.map((v) => {
-          return {
-            row: v.objectiveDate,
-            amount: v.orderingMethod,
-          }
-        }),
-      })
-    }
+    categories.value[index].data.push({
+      name: '発注方式',
+      values: response.records.map((v) => {
+        return {
+          row: v.objectiveDate,
+          amount: v.orderingMethod,
+        }
+      }),
+    })
     categories.value[index].data.push({
       name: '販売数',
       values: response.records.map((v) => {
@@ -631,17 +635,16 @@ function fetch() {
         }
       }),
     })
-    if (selectedSkuMonitoringUnitType.value === SkuMonitoringUnitTypes.Sku) {
-      categories.value[index].data.push({
-        name: '在庫数',
-        values: response.records.map((v) => {
-          return {
-            row: v.objectiveDate,
-            amount: v.stockQty,
-          }
-        }),
-      })
-    }
+    categories.value[index].data.push({
+      name: '在庫数',
+      values: response.records.map((v) => {
+        return {
+          row: v.objectiveDate,
+          amount: v.stockQty,
+        }
+      }),
+    })
+
     categories.value[index].data.push({
       name: '入荷数',
       values: response.records.map((v) => {
@@ -662,6 +665,7 @@ function fetch() {
         }),
       })
     }
+
     categories.value[index].data.push({
       name: '推奨発注数',
       values: response.records.map((v) => {
@@ -673,10 +677,14 @@ function fetch() {
     })
     categories.value[index].orderingMethodData = response.orderingMethodRecords
   })
+
+  // グラフ表示用の区分を保持
+  showUnitType.value = selectedSkuMonitoringUnitType.value
   serviceLoadingToggleIgnore()
 }
 
 const selectedSkuMonitoringUnitType = ref(SkuMonitoringUnitTypes.Sku)
+const showUnitType = ref(selectedSkuMonitoringUnitType.value)
 const targetDateRangeType = ref(TargetDateRangeTypes.Daily)
 const from = ref<Date | null>(null)
 const to = ref<Date | null>(null)

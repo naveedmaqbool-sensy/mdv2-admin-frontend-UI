@@ -100,9 +100,10 @@ const charts = computed(() => {
     results.forEach((result) => {
       const value = category.values.find((v) => v.row === result.日付)
       if (category.name === '発注方式') {
-        result[category.name] = value
-          ? OrderingMethodTypes.getName(value.amount)
-          : ''
+        result[category.name] =
+          value && value.amount
+            ? OrderingMethodTypes.getName(value.amount)
+            : '未発注'
       } else {
         result[category.name] = value ? value.amount : 0
       }
@@ -174,7 +175,7 @@ function mountedLineChart(chart: any) {
               ? OrderingMethodTypes.getGraphColor(
                   orderingMethodValues[index].amount
                 )
-              : 'currentColor'
+              : 'red'
           )
         }
         ++index
