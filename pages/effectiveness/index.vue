@@ -283,13 +283,13 @@
                 :style="{
                   color: row.orderingMethod
                     ? OrderingMethodTypes.getGraphColor(row.orderingMethod)
-                    : 'red',
+                    : '#999999',
                 }"
               >
                 {{
                   row.orderingMethod
                     ? OrderingMethodTypes.getName(row.orderingMethod)
-                    : '未発注'
+                    : '対象外'
                 }}
               </p>
             </template>

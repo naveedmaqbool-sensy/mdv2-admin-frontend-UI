@@ -103,7 +103,7 @@ const charts = computed(() => {
         result[category.name] =
           value && value.amount
             ? OrderingMethodTypes.getName(value.amount)
-            : '未発注'
+            : '対象外'
       } else {
         result[category.name] = value ? value.amount : 0
       }
@@ -175,7 +175,7 @@ function mountedLineChart(chart: any) {
               ? OrderingMethodTypes.getGraphColor(
                   orderingMethodValues[index].amount
                 )
-              : 'red'
+              : '#999999'
           )
         }
         ++index
@@ -186,6 +186,8 @@ function mountedLineChart(chart: any) {
       // 特定のカテゴリの数値を取得する
       const stockValues =
         categories.find((v) => v.name === '在庫数')?.values ?? []
+      const orderingMethodValues =
+        categories.find((v) => v.name === '発注方式')?.values ?? []
       if (stockValues.length === 0) {
         return
       }
@@ -206,11 +208,22 @@ function mountedLineChart(chart: any) {
             yGrids[0].getBoundingClientRect().x
           : 1
 
-      // 0になっている箇所の grid を調整して背景色をつけているように見せる
+      // 在庫が０でかつ発注方式が対象外ではないものは赤の網掛け
       stockValues.forEach((v, index) => {
-        if (v.amount === 0) {
+        if (v.amount === 0 && orderingMethodValues[index].amount !== null) {
           const yGrid = yGrids[index] as HTMLElement
           yGrid.style.stroke = '#ff2222'
+          yGrid.style.strokeWidth = xGridWidth.toString()
+          yGrid.style.strokeOpacity = '0.2'
+          yGrid.style.strokeDasharray = 'none'
+        }
+      })
+
+      // 発注方式が対象外になっている箇所はグレーの網掛け
+      orderingMethodValues.forEach((v, index) => {
+        if (v.amount === null) {
+          const yGrid = yGrids[index] as HTMLElement
+          yGrid.style.stroke = '#999999'
           yGrid.style.strokeWidth = xGridWidth.toString()
           yGrid.style.strokeOpacity = '0.2'
           yGrid.style.strokeDasharray = 'none'

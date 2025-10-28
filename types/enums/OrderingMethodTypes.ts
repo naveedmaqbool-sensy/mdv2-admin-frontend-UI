@@ -47,7 +47,7 @@ namespace OrderingMethodTypes {
       case OrderingMethodTypes.OrderingPoint:
         return 'green'
       case OrderingMethodTypes.Multiple:
-        return 'gray'
+        return '#ee5100'
     }
   }
 }
