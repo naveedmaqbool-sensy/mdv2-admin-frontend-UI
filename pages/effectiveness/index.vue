@@ -472,6 +472,7 @@ import type DepartmentMaster from '~/types/interfaces/database/SensyCloud/Depart
 import type LineMaster from '~/types/interfaces/database/SensyCloud/LineMaster'
 import type ClassMaster from '~/types/interfaces/database/SensyCloud/ClassMaster'
 
+let fetchIndex = -1
 const categories = ref<
   {
     targetId: string
@@ -525,6 +526,7 @@ function fetch() {
 
   serviceLoadingToggleIgnore()
 
+  // 表示に使用する枠を作成する
   categories.value = []
   selectedStores.value.forEach((store) => {
     switch (selectedSkuMonitoringUnitType.value) {
@@ -596,91 +598,109 @@ function fetch() {
     }
   })
 
-  categories.value.forEach(async (category, index) => {
-    const response = await apiEffectivenessFetch({
-      from: new Date(from.value!),
-      to: new Date(to.value!),
-      unitType: selectedSkuMonitoringUnitType.value,
-      targetId: category.targetId,
-      storeId: category.storeId,
-      targetDateRangeType: targetDateRangeType.value,
-    })
-    if (!response) {
-      categories.value[index].errorMessage = '予期せぬエラーが発生しました。'
-      return
-    }
-
-    // エラーがある場合はそのほか取得できた情報の処理をしない
-    if (response.errorMessage) {
-      categories.value[index].errorMessage = response.errorMessage
-      return
-    }
-
-    // 各取得情報の格納
-    categories.value[index].data.push({
-      name: '発注方式',
-      values: response.records.map((v) => {
-        return {
-          row: v.objectiveDate,
-          amount: v.orderingMethod,
-        }
-      }),
-    })
-    categories.value[index].data.push({
-      name: '販売数',
-      values: response.records.map((v) => {
-        return {
-          row: v.objectiveDate,
-          amount: v.salesQty,
-        }
-      }),
-    })
-    categories.value[index].data.push({
-      name: '在庫数',
-      values: response.records.map((v) => {
-        return {
-          row: v.objectiveDate,
-          amount: v.stockQty,
-        }
-      }),
-    })
-
-    categories.value[index].data.push({
-      name: '入荷数',
-      values: response.records.map((v) => {
-        return {
-          row: v.objectiveDate,
-          amount: v.arrivalQty,
-        }
-      }),
-    })
-    if (selectedSkuMonitoringUnitType.value === SkuMonitoringUnitTypes.Sku) {
-      categories.value[index].data.push({
-        name: useNuxtApp().$config.public.displayStockName,
-        values: response.records.map((v) => {
-          return {
-            row: v.objectiveDate,
-            amount: v.displayStockQty,
-          }
-        }),
-      })
-    }
-
-    categories.value[index].data.push({
-      name: '推奨発注数',
-      values: response.records.map((v) => {
-        return {
-          row: v.objectiveDate,
-          amount: v.orderQty,
-        }
-      }),
-    })
-    categories.value[index].orderingMethodData = response.orderingMethodRecords
-  })
+  // 枠に対して表示する情報を取得するAPIを実行する
+  // 3枠先に固定で取得するのについては、食表示で画面内に収まるデータは取得したい意図
+  fetchIndex = -1
+  for (let i = 0; i < 3; i++) {
+    fetchPromise()
+  }
 
   // グラフ表示用の区分を保持
   showUnitType.value = selectedSkuMonitoringUnitType.value
-  serviceLoadingToggleIgnore()
+}
+
+async function fetchPromise() {
+  ++fetchIndex
+  if (fetchIndex >= categories.value.length) {
+    serviceLoadingToggleIgnore()
+    return
+  }
+  const category = categories.value[fetchIndex]
+
+  const response = await apiEffectivenessFetch({
+    from: new Date(from.value!),
+    to: new Date(to.value!),
+    unitType: selectedSkuMonitoringUnitType.value,
+    targetId: category.targetId,
+    storeId: category.storeId,
+    targetDateRangeType: targetDateRangeType.value,
+  })
+
+  if (!response) {
+    category.errorMessage = '予期せぬエラーが発生しました。'
+    fetchPromise()
+    return
+  }
+
+  // エラーがある場合はそのほか取得できた情報の処理をしない
+  if (response.errorMessage) {
+    category.errorMessage = response.errorMessage
+    fetchPromise()
+    return
+  }
+
+  // 各取得情報の格納
+  category.data.push({
+    name: '発注方式',
+    values: response.records.map((v) => {
+      return {
+        row: v.objectiveDate,
+        amount: v.orderingMethod,
+      }
+    }),
+  })
+  category.data.push({
+    name: '販売数',
+    values: response.records.map((v) => {
+      return {
+        row: v.objectiveDate,
+        amount: v.salesQty,
+      }
+    }),
+  })
+  category.data.push({
+    name: '在庫数',
+    values: response.records.map((v) => {
+      return {
+        row: v.objectiveDate,
+        amount: v.stockQty,
+      }
+    }),
+  })
+
+  category.data.push({
+    name: '入荷数',
+    values: response.records.map((v) => {
+      return {
+        row: v.objectiveDate,
+        amount: v.arrivalQty,
+      }
+    }),
+  })
+  if (selectedSkuMonitoringUnitType.value === SkuMonitoringUnitTypes.Sku) {
+    category.data.push({
+      name: useNuxtApp().$config.public.displayStockName,
+      values: response.records.map((v) => {
+        return {
+          row: v.objectiveDate,
+          amount: v.displayStockQty,
+        }
+      }),
+    })
+  }
+
+  category.data.push({
+    name: '推奨発注数',
+    values: response.records.map((v) => {
+      return {
+        row: v.objectiveDate,
+        amount: v.orderQty,
+      }
+    }),
+  })
+  category.orderingMethodData = response.orderingMethodRecords
+
+  fetchPromise()
 }
 
 const selectedSkuMonitoringUnitType = ref(SkuMonitoringUnitTypes.Sku)
