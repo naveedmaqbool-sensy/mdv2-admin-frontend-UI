@@ -598,15 +598,15 @@ function fetch() {
     }
   })
 
+  // グラフ表示用の区分を保持
+  showUnitType.value = selectedSkuMonitoringUnitType.value
+
   // 枠に対して表示する情報を取得するAPIを実行する
   // 3枠先に固定で取得するのについては、食表示で画面内に収まるデータは取得したい意図
   fetchIndex = -1
   for (let i = 0; i < 3; i++) {
     fetchPromise()
   }
-
-  // グラフ表示用の区分を保持
-  showUnitType.value = selectedSkuMonitoringUnitType.value
 }
 
 async function fetchPromise() {
@@ -620,7 +620,7 @@ async function fetchPromise() {
   const response = await apiEffectivenessFetch({
     from: new Date(from.value!),
     to: new Date(to.value!),
-    unitType: selectedSkuMonitoringUnitType.value,
+    unitType: showUnitType.value,
     targetId: category.targetId,
     storeId: category.storeId,
     targetDateRangeType: targetDateRangeType.value,
@@ -677,7 +677,7 @@ async function fetchPromise() {
       }
     }),
   })
-  if (selectedSkuMonitoringUnitType.value === SkuMonitoringUnitTypes.Sku) {
+  if (showUnitType.value === SkuMonitoringUnitTypes.Sku) {
     category.data.push({
       name: useNuxtApp().$config.public.displayStockName,
       values: response.records.map((v) => {
