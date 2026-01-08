@@ -299,6 +299,7 @@
             画面表示
           </UButton>
           <UButton
+            v-if="canShowEffectiveness"
             class="ml-2"
             color="blue"
             :disabled="selectedRows.length === 0"
@@ -323,7 +324,28 @@
     <!-- 集計結果 -->
     <template v-if="kpiRows.length > 0 && kpiHeaders.length > 0">
       <UTable
+        v-if="canShowEffectiveness"
         v-model="selectedRows"
+        class="fixed-name"
+        :columns="[
+          ...kpiHeaders.map((v, index) => ({
+            key: index.toString(),
+            label: v,
+          })),
+        ]"
+        :rows="
+          kpiRows.map((values) => {
+            const result: { [key: string]: string } = {}
+            Object.keys(values).forEach((key) => {
+              result[key] = values[key]
+            })
+            return result
+          })
+        "
+        @select="onSelectRow"
+      />
+      <UTable
+        v-else
         class="fixed-name"
         :columns="[
           ...kpiHeaders.map((v, index) => ({
@@ -558,6 +580,8 @@ const monitoringDetailRequest = ref<ApiMonitoringDetailRequest>()
 const monitoringDetails = ref<any[]>([])
 const monitoringDetailTotal = ref(0)
 
+const canShowEffectiveness = ref(false)
+
 function reset() {
   formData.value = new FormDataFactory()
 }
@@ -586,6 +610,9 @@ async function fetch(page: number) {
 
   // 最後に検索した設定を保持
   frontCacheSet('monitoringFormData', formData.value, true)
+
+  canShowEffectiveness.value =
+    formData.value.storeMonitoringUnitType === StoreMonitoringUnitTypes.Store
 }
 
 async function csvExport() {
