@@ -611,6 +611,8 @@ async function fetch(page: number) {
   // 最後に検索した設定を保持
   frontCacheSet('monitoringFormData', formData.value, true)
 
+  // 効果測定への画面遷移の制御
+  // 店別の場合以外は画面遷移を非表示
   canShowEffectiveness.value =
     formData.value.storeMonitoringUnitType === StoreMonitoringUnitTypes.Store
 }
