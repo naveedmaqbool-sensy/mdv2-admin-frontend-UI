@@ -703,23 +703,29 @@ async function fetchPromise() {
   fetchPromise()
 }
 
-const selectedSkuMonitoringUnitType = ref(SkuMonitoringUnitTypes.Sku)
+const cacheFormData = frontCacheGet('effectivenessFormData', true)
+
+const selectedSkuMonitoringUnitType = ref(
+  cacheFormData?.skuMonitoringUnitType || SkuMonitoringUnitTypes.Sku
+)
 const showUnitType = ref(selectedSkuMonitoringUnitType.value)
-const targetDateRangeType = ref(TargetDateRangeTypes.Daily)
-const from = ref<Date | null>(null)
-const to = ref<Date | null>(null)
+const targetDateRangeType = ref(TargetDateRangeTypes.Daily) // 現状効果測定は日次のみのため、期間指定の種類は固定でOK
+const from = ref<Date | null>(cacheFormData?.from || null)
+const to = ref<Date | null>(cacheFormData?.to || null)
 const skus = ref<any[]>([])
-const selectedSkus = ref<any[]>([])
+const selectedSkus = ref<any[]>(cacheFormData?.skus || [])
 const groups = ref<GroupMaster[]>([])
-const selectedGroups = ref<GroupMaster[]>([])
+const selectedGroups = ref<GroupMaster[]>(cacheFormData?.groups || [])
 const departments = ref<DepartmentMaster[]>([])
-const selectedDepartments = ref<DepartmentMaster[]>([])
+const selectedDepartments = ref<DepartmentMaster[]>(
+  cacheFormData?.departments || []
+)
 const lines = ref<LineMaster[]>([])
-const selectedLines = ref<LineMaster[]>([])
+const selectedLines = ref<LineMaster[]>(cacheFormData?.lines || [])
 const classes = ref<ClassMaster[]>([])
-const selectedClasses = ref<ClassMaster[]>([])
+const selectedClasses = ref<ClassMaster[]>(cacheFormData?.classes || [])
 const stores = ref<StoreMaster[]>([])
-const selectedStores = ref<StoreMaster[]>([])
+const selectedStores = ref<StoreMaster[]>(cacheFormData?.stores || [])
 
 const itemsTotal = ref(0)
 
@@ -846,6 +852,10 @@ function reset() {
 function copyText(copyMessage: string) {
   copy(copyMessage)
   useNuxtApp().$toast.success(`クリップボードに${copyMessage}をコピーしました`)
+}
+
+if (cacheFormData !== null) {
+  fetch()
 }
 </script>
 

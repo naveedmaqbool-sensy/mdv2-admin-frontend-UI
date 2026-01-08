@@ -294,8 +294,18 @@
 
       <section class="flex pt-2">
         <div class="basis-1/2 text-left">
-          <UButton class="mr-2" color="white" @click="reset">リセット</UButton>
-          <UButton color="indigo" @click="fetch(1)">画面表示</UButton>
+          <UButton color="white" @click="reset">リセット</UButton>
+          <UButton class="ml-2" color="indigo" @click="fetch(1)">
+            画面表示
+          </UButton>
+          <UButton
+            class="ml-2"
+            color="blue"
+            :disabled="selectedRows.length === 0"
+            @click="openEffectiveness"
+          >
+            選択行の効果測定を開く
+          </UButton>
         </div>
         <div class="basis-1/2 text-right">
           <UButton
@@ -313,6 +323,7 @@
     <!-- 集計結果 -->
     <template v-if="kpiRows.length > 0 && kpiHeaders.length > 0">
       <UTable
+        v-model="selectedRows"
         class="fixed-name"
         :columns="[
           ...kpiHeaders.map((v, index) => ({
@@ -490,6 +501,8 @@ const kpiHeaders = ref<string[]>([])
 const kpiItemTotal = ref(0)
 const apiValidationError = ref<ApiValidationError | null>(null)
 
+const selectedRows = ref<any[]>([])
+
 const skuRangeTypes = computed(() => {
   switch (formData.value.skuMonitoringUnitType) {
     case SkuMonitoringUnitTypes.Sku:
@@ -551,6 +564,10 @@ function reset() {
 
 async function fetch(page: number) {
   formData.value.page = page
+
+  // 検索したら選択行を削除
+  // これするとページングで引き継げないのでそれでいいかどうか
+  selectedRows.value = []
 
   serviceLoadingStart()
 
@@ -781,6 +798,26 @@ async function csvExportMonitoringDetail() {
   serviceLoadingStart()
   await apiMonitoringDetailCsvExport(monitoringDetailRequest.value!)
   serviceLoadingFinish()
+}
+
+function openEffectiveness() {
+  // 現在の検索情報を効果測定の検索画面用に保持する
+  frontCacheSet(
+    'effectivenessFormData',
+    {
+      skuMonitoringUnitType: formData.value.skuMonitoringUnitType,
+      from: formData.value.targetDateFrom,
+      to: formData.value.targetDateTo,
+      skus: formData.value.skus,
+      groups: formData.value.groups,
+      departments: formData.value.departments,
+      classes: formData.value.classes,
+      lines: formData.value.lines,
+      stores: formData.value.stores,
+    },
+    true
+  )
+  window.open('/effectiveness', '_blank')
 }
 </script>
 
