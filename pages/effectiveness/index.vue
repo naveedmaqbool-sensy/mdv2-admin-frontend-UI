@@ -251,7 +251,6 @@
               viewBox="0 0 24 24"
               strokeWidth="{1.5}"
               stroke="currentColor"
-              className="size-6"
               @click="copyText(category.targetName)"
             >
               <path
@@ -267,6 +266,16 @@
           v-if="category.orderingMethodData.length > 0"
           class="flex justify-end"
         >
+          <template v-if="showUnitType !== SkuMonitoringUnitTypes.Sku">
+            <div class="mr-5">
+              <UButton
+                color="blue"
+                @click="showChild(category.targetId, category.storeId)"
+              >
+                配下の{{ childTargetName }}を表示
+              </UButton>
+            </div>
+          </template>
           <UTable
             class="fixed-name"
             :columns="[
@@ -857,8 +866,93 @@ function copyText(copyMessage: string) {
   useNuxtApp().$toast.success(`クリップボードに${copyMessage}をコピーしました`)
 }
 
+// キャッシュを取得できた場合は即検索を実行
 if (cacheFormData !== null) {
   fetch()
+}
+
+const childTargetName = computed(() => {
+  switch (showUnitType.value) {
+    case SkuMonitoringUnitTypes.Group:
+      return '中分類'
+    case SkuMonitoringUnitTypes.Department:
+      return '小分類'
+    case SkuMonitoringUnitTypes.Line:
+      return '細分類'
+    case SkuMonitoringUnitTypes.Class:
+      return 'ＳＫＵ'
+    default:
+      return null
+  }
+})
+
+async function showChild(targetId: string, storeId: string) {
+  const children = await apiEffectivenessFetchChildTarget({
+    targetUnitType: showUnitType.value,
+    targetId,
+    storeId,
+  })
+  const stores = selectedStores.value.filter(
+    (store) => store.storeId === storeId
+  )
+
+  switch (showUnitType.value) {
+    case SkuMonitoringUnitTypes.Group:
+      frontCacheSet(
+        'effectivenessFormData',
+        {
+          skuMonitoringUnitType: SkuMonitoringUnitTypes.Department,
+          from: from.value,
+          to: to.value,
+          stores,
+          departments: children,
+        },
+        true
+      )
+      break
+    case SkuMonitoringUnitTypes.Department:
+      frontCacheSet(
+        'effectivenessFormData',
+        {
+          skuMonitoringUnitType: SkuMonitoringUnitTypes.Line,
+          from: from.value,
+          to: to.value,
+          stores,
+          lines: children,
+        },
+        true
+      )
+      break
+    case SkuMonitoringUnitTypes.Line:
+      frontCacheSet(
+        'effectivenessFormData',
+        {
+          skuMonitoringUnitType: SkuMonitoringUnitTypes.Class,
+          from: from.value,
+          to: to.value,
+          stores,
+          classes: children,
+        },
+        true
+      )
+      break
+    case SkuMonitoringUnitTypes.Class:
+      frontCacheSet(
+        'effectivenessFormData',
+        {
+          skuMonitoringUnitType: SkuMonitoringUnitTypes.Sku,
+          from: from.value,
+          to: to.value,
+          stores,
+          skus: children,
+        },
+        true
+      )
+      break
+  }
+
+  // 検索した情報を別タブで開く
+  window.open('/effectiveness', '_blank')
 }
 </script>
 
