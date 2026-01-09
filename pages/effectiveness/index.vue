@@ -607,6 +607,9 @@ function fetch() {
   for (let i = 0; i < 3; i++) {
     fetchPromise()
   }
+
+  // 検索の実行を確認出来たら検索条件のキャッシュを削除（モニタリングからの遷移以外や再検索防止）
+  frontCacheRemove('effectivenessFormData')
 }
 
 async function fetchPromise() {
