@@ -830,6 +830,52 @@ async function csvExportMonitoringDetail() {
 }
 
 function openEffectiveness() {
+  const selectedSkus =
+    formData.value.skuMonitoringUnitType === SkuMonitoringUnitTypes.Sku
+      ? selectedRows.value.map((v) => {
+          return {
+            skuId: v.targetId,
+            skuName: v[0].replace(v.targetId + ' ', ''),
+          }
+        })
+      : []
+  const selectedGroups =
+    formData.value.skuMonitoringUnitType === SkuMonitoringUnitTypes.Group
+      ? selectedRows.value.map((v) => {
+          return {
+            groupId: v.targetId,
+            groupName: v[0].replace(v.targetId + ' ', ''),
+          }
+        })
+      : []
+  const selectedDepartments =
+    formData.value.skuMonitoringUnitType === SkuMonitoringUnitTypes.Department
+      ? selectedRows.value.map((v) => {
+          return {
+            departmentId: v.targetId,
+            departmentName: v[0].replace(v.targetId + ' ', ''),
+          }
+        })
+      : []
+  const selectedLines =
+    formData.value.skuMonitoringUnitType === SkuMonitoringUnitTypes.Line
+      ? selectedRows.value.map((v) => {
+          return {
+            lineId: v.targetId,
+            lineName: v[0].replace(v.targetId + ' ', ''),
+          }
+        })
+      : []
+  const selectedClasses =
+    formData.value.skuMonitoringUnitType === SkuMonitoringUnitTypes.Class
+      ? selectedRows.value.map((v) => {
+          return {
+            classId: v.targetId,
+            className: v[0].replace(v.targetId + ' ', ''),
+          }
+        })
+      : []
+
   // 現在の検索情報を効果測定の検索画面用に保持する
   frontCacheSet(
     'effectivenessFormData',
@@ -837,15 +883,16 @@ function openEffectiveness() {
       skuMonitoringUnitType: formData.value.skuMonitoringUnitType,
       from: formData.value.targetDateFrom,
       to: formData.value.targetDateTo,
-      skus: formData.value.skus,
-      groups: formData.value.groups,
-      departments: formData.value.departments,
-      classes: formData.value.classes,
-      lines: formData.value.lines,
+      skus: selectedSkus,
+      groups: selectedGroups,
+      departments: selectedDepartments,
+      classes: selectedClasses,
+      lines: selectedLines,
       stores: formData.value.stores,
     },
     true
   )
+
   window.open('/effectiveness', '_blank')
 }
 </script>
