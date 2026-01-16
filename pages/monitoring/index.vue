@@ -305,7 +305,7 @@
             :disabled="selectedRows.length === 0"
             @click="openEffectiveness"
           >
-            選択行の効果測定を開く
+            効果測定表示
           </UButton>
         </div>
         <div class="basis-1/2 text-right">
