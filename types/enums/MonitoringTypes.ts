@@ -8,6 +8,9 @@ enum MonitoringTypes {
   StockAlertRate, // 在庫異常率
   StockAmount, // 在庫数
   PredictionDemand, // 予測予測
+  DefectCount, // 欠品回数
+  StockRoundRate, // 在庫回転率
+  StockRoundDays, // 在庫回転日数
 }
 
 namespace MonitoringTypes {
@@ -29,6 +32,12 @@ namespace MonitoringTypes {
         return '在庫数'
       case MonitoringTypes.PredictionDemand:
         return '需要予測数'
+      case MonitoringTypes.DefectCount:
+        return '欠品回数'
+      case MonitoringTypes.StockRoundRate:
+        return '在庫回転率'
+      case MonitoringTypes.StockRoundDays:
+        return '在庫回転日数'
     }
   }
 
@@ -58,6 +67,9 @@ namespace MonitoringTypes {
       MonitoringTypes.StockAlertRate,
       MonitoringTypes.StockAmount,
       MonitoringTypes.PredictionDemand,
+      MonitoringTypes.DefectCount,
+      MonitoringTypes.StockRoundRate,
+      MonitoringTypes.StockRoundDays,
     ].map((v) => {
       return {
         name: getName(v),
