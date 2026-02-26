@@ -62,14 +62,14 @@ namespace MonitoringTypes {
       MonitoringTypes.OrderPty,
       MonitoringTypes.OrderChangePty,
       MonitoringTypes.OrderChangeRate,
+      MonitoringTypes.DefectCount,
       MonitoringTypes.DefectRate,
       MonitoringTypes.StockAlertCount,
       MonitoringTypes.StockAlertRate,
-      MonitoringTypes.StockAmount,
       MonitoringTypes.PredictionDemand,
-      MonitoringTypes.DefectCount,
-      MonitoringTypes.StockRoundRate,
       MonitoringTypes.StockRoundDays,
+      MonitoringTypes.StockRoundRate,
+      MonitoringTypes.StockAmount,
     ].map((v) => {
       return {
         name: getName(v),
