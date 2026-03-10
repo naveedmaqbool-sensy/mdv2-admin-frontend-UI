@@ -38,13 +38,13 @@
                 v-model="email"
                 autocomplete="sensy-md-email"
                 required
-                placeholder="USERNAME"
+                placeholder="Username"
                 size="xl"
                 color="white"
                 variant="none"
                 class="rounded bg-white ring-1 ring-slate-200"
                 :ui="{
-                  base: 'w-full text-gray-900 placeholder-gray-400 font-medium tracking-wider text-sm',
+                  base: 'w-full text-gray-900 placeholder-gray-400 text-sm',
                   rounded: 'rounded-none',
                   padding: { xl: 'px-4 py-3' },
                 }"
@@ -54,20 +54,42 @@
               <UInput
                 id="password"
                 v-model="password"
-                type="password"
+                :type="showPassword ? 'text' : 'password'"
                 autocomplete="sensy-md-password"
                 required
-                placeholder="PASSWORD"
+                placeholder="Password"
                 size="xl"
                 color="white"
                 variant="none"
                 class="rounded bg-white ring-1 ring-slate-200"
                 :ui="{
-                  base: 'w-full text-gray-900 placeholder-gray-400 font-medium tracking-wider text-sm',
+                  base: 'w-full text-gray-900 placeholder-gray-400 text-sm',
                   rounded: 'rounded-none',
                   padding: { xl: 'px-4 py-3' },
+                  icon: { trailing: { pointer: '' } },
                 }"
-              />
+              >
+                <template #trailing>
+                  <UButton
+                    color="gray"
+                    variant="link"
+                    :icon="
+                      showPassword ? 'i-heroicons-eye' : 'i-heroicons-eye-slash'
+                    "
+                    :padded="false"
+                    @click="showPassword = !showPassword"
+                  />
+                </template>
+              </UInput>
+              <div class="mt-2 text-left">
+                <a
+                  href="https://sensy.ai/contact_service/"
+                  target="_blank"
+                  class="text-[10px] text-blue-500 transition-colors hover:text-blue-400"
+                >
+                  Forgot your password?
+                </a>
+              </div>
             </UFormGroup>
           </div>
 
@@ -76,17 +98,8 @@
               type="submit"
               class="w-full rounded bg-gradient-to-r from-pink-500 to-indigo-600 px-4 py-3 text-xs font-bold tracking-widest text-white shadow-md transition-all hover:opacity-90"
             >
-              LOGIN
+              Sign In
             </button>
-          </div>
-
-          <div class="mt-6 text-center">
-            <a
-              href="#"
-              class="text-[11px] font-bold uppercase tracking-wider text-slate-400 transition-colors hover:text-white"
-            >
-              Forgotten Your Password?
-            </a>
           </div>
         </UForm>
       </div>
@@ -126,6 +139,7 @@ const isDevelop = ['local', 'develop', 'staging'].includes(environment)
 const email = ref(isDevelop ? 'system-admin' : '')
 
 const password = ref(isDevelop ? 'password' : '')
+const showPassword = ref(false)
 
 const { signIn, status } = useAuth()
 

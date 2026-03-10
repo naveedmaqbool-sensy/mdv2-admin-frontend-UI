@@ -34,4 +34,10 @@ module.exports = {
     'vue/valid-v-for': 'off',
     'vue/require-v-for-key': 'off',
   },
+  settings: {
+    'import/resolver': {
+      typescript: true,
+      node: true
+    }
+  }
 }
