@@ -65,6 +65,9 @@ export default defineNuxtConfig({
   build: {
     transpile: ['jsonwebtoken'],
   },
+  colorMode: {
+    preference: 'light',
+  },
   basicAuth,
   auth: {
     baseURL: `${apiUrl}/auth`,

@@ -1,13 +1,11 @@
 <template>
   <div
     v-show="showLoading"
-    class="fixed left-0 top-0 z-[9999] flex h-screen w-screen items-center justify-center bg-slate-800 bg-opacity-50"
+    class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300"
   >
-    <div
-      class="absolute bottom-0 right-0 flex h-full w-full items-end justify-end pb-5 pr-7"
-    >
+    <div class="flex flex-col items-center justify-center rounded-2xl bg-white p-6 shadow-2xl">
       <svg
-        class="mb-1 mr-2 h-4 w-4 animate-spin text-white"
+        class="mb-4 h-10 w-10 animate-spin text-pink-500"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -26,7 +24,7 @@
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
         ></path>
       </svg>
-      <div class="text-xl text-white">Now Loading</div>
+      <div class="text-lg font-semibold text-gray-700 tracking-wider">Loading...</div>
     </div>
   </div>
 </template>
