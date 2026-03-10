@@ -121,7 +121,6 @@
 import { addDays, endOfDay, startOfDay, subDays } from 'date-fns'
 import type StoreMaster from '~/types/interfaces/database/SensyCloud/StoreMaster'
 
-const { $config } = useNuxtApp()
 const isActiveExportModal = ref(false)
 const evidenceTargetDateFrom = ref(startOfDay(subDays(new Date(), 7)))
 const evidenceTargetDateTo = ref(endOfDay(addDays(new Date(), 7)))
@@ -180,7 +179,7 @@ const links = [
     },
   ],
 ]
-const isActiveMenu = ref($config.public.environment === 'local')
+const isActiveMenu = ref(true)
 
 const orderConditionsMenu = [
   {
