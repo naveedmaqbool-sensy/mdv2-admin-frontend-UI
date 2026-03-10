@@ -111,10 +111,10 @@
             >リセット</UButton
           >
           <UButton
-            color="indigo"
+            color="primary"
             variant="solid"
             icon="i-heroicons-magnifying-glass"
-            class="rounded-lg px-6 font-medium shadow-sm"
+            class="rounded-lg px-6 font-medium shadow-md shadow-indigo-500/20"
             @click="get(1)"
             >検索する</UButton
           >
@@ -128,16 +128,11 @@
       >
         <span class="mr-1 text-xs font-medium text-gray-400">選択中:</span>
         <template v-for="(sku, index) in formData.skus" :key="sku.skuId">
-          <UBadge
-            color="indigo"
-            variant="subtle"
-            size="sm"
-            class="rounded-md bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-200"
-          >
+          <UBadge color="primary" variant="subtle" size="sm" class="rounded-md">
             {{ sku.skuName }}
             <UButton
               :padded="false"
-              color="indigo"
+              color="primary"
               variant="link"
               icon="i-heroicons-x-mark-20-solid"
               class="ml-1 opacity-60 hover:opacity-100"
@@ -149,16 +144,11 @@
           v-for="(group, index) in formData.groups"
           :key="group.groupId"
         >
-          <UBadge
-            color="indigo"
-            variant="subtle"
-            size="sm"
-            class="rounded-md bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-200"
-          >
+          <UBadge color="primary" variant="subtle" size="sm" class="rounded-md">
             {{ group.groupName }}
             <UButton
               :padded="false"
-              color="indigo"
+              color="primary"
               variant="link"
               icon="i-heroicons-x-mark-20-solid"
               class="ml-1 opacity-60 hover:opacity-100"
@@ -170,16 +160,11 @@
           v-for="(department, index) in formData.departments"
           :key="department.departmentId"
         >
-          <UBadge
-            color="indigo"
-            variant="subtle"
-            size="sm"
-            class="rounded-md bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-200"
-          >
+          <UBadge color="primary" variant="subtle" size="sm" class="rounded-md">
             {{ department.departmentName }}
             <UButton
               :padded="false"
-              color="indigo"
+              color="primary"
               variant="link"
               icon="i-heroicons-x-mark-20-solid"
               class="ml-1 opacity-60 hover:opacity-100"
@@ -191,16 +176,11 @@
           v-for="(clazz, index) in formData.classes"
           :key="clazz.classId"
         >
-          <UBadge
-            color="indigo"
-            variant="subtle"
-            size="sm"
-            class="rounded-md bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-200"
-          >
+          <UBadge color="primary" variant="subtle" size="sm" class="rounded-md">
             {{ clazz.className }}
             <UButton
               :padded="false"
-              color="indigo"
+              color="primary"
               variant="link"
               icon="i-heroicons-x-mark-20-solid"
               class="ml-1 opacity-60 hover:opacity-100"
@@ -209,16 +189,11 @@
           </UBadge>
         </template>
         <template v-for="(line, index) in formData.lines" :key="line.lineId">
-          <UBadge
-            color="indigo"
-            variant="subtle"
-            size="sm"
-            class="rounded-md bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-200"
-          >
+          <UBadge color="primary" variant="subtle" size="sm" class="rounded-md">
             {{ line.lineName }}
             <UButton
               :padded="false"
-              color="indigo"
+              color="primary"
               variant="link"
               icon="i-heroicons-x-mark-20-solid"
               class="ml-1 opacity-60 hover:opacity-100"
@@ -230,16 +205,11 @@
           v-for="(store, index) in formData.stores"
           :key="store.storeId"
         >
-          <UBadge
-            color="indigo"
-            variant="subtle"
-            size="sm"
-            class="rounded-md bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-200"
-          >
+          <UBadge color="primary" variant="subtle" size="sm" class="rounded-md">
             {{ store.storeName }}
             <UButton
               :padded="false"
-              color="indigo"
+              color="primary"
               variant="link"
               icon="i-heroicons-x-mark-20-solid"
               class="ml-1 opacity-60 hover:opacity-100"
@@ -251,16 +221,11 @@
           v-for="(storeGroup, index) in formData.storeGroups"
           :key="storeGroup.storeGroupId"
         >
-          <UBadge
-            color="indigo"
-            variant="subtle"
-            size="sm"
-            class="rounded-md bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-200"
-          >
+          <UBadge color="primary" variant="subtle" size="sm" class="rounded-md">
             {{ storeGroup.storeGroupName }}
             <UButton
               :padded="false"
-              color="indigo"
+              color="primary"
               variant="link"
               icon="i-heroicons-x-mark-20-solid"
               class="ml-1 opacity-60 hover:opacity-100"
@@ -442,7 +407,7 @@
           </template>
           <template #predictionOrderQty-data="{ row }">
             <p
-              class="rounded bg-indigo-50/50 px-2 py-1 text-right font-medium text-indigo-600"
+              class="rounded bg-indigo-50 px-2 py-1 text-right font-medium text-indigo-600"
             >
               {{ formatterNumber(row.predictionOrderQty) }}
             </p>

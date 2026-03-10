@@ -1,61 +1,113 @@
 <template>
-  <div
-    class="flex min-h-screen items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8"
-  >
-    <div class="mt-[-10rem] w-full max-w-sm">
-      <UCard
-        :ui="{ ring: 'ring-1 ring-gray-200', shadow: 'shadow-xl rounded-2xl' }"
-      >
-        <template #header>
-          <div class="flex flex-col items-center justify-center space-y-1 py-4">
-            <h1
-              class="bg-gradient-to-r from-pink-500 to-indigo-600 bg-clip-text text-4xl font-black tracking-tighter text-transparent"
-            >
-              SENSY MD
-            </h1>
-            <p class="text-xs font-medium tracking-wider text-gray-400">
-              BUSINESS PORTAL
-            </p>
+  <div class="flex min-h-screen bg-[#0B1727] font-sans">
+    <!-- Left Panel (Brand) -->
+    <div class="relative flex w-1/2 flex-col items-center justify-center">
+      <div class="flex items-center justify-center p-8">
+        <img
+          src="/img/logo.png"
+          alt="SENSY logo"
+          class="w-64 max-w-[80%] object-contain"
+        />
+      </div>
+
+      <!-- Center Divider Line -->
+      <div
+        class="absolute right-0 top-1/2 h-[60%] w-[1px] -translate-y-1/2 bg-slate-700"
+      ></div>
+    </div>
+
+    <!-- Right Panel (Login Form) -->
+    <div
+      class="relative flex w-1/2 flex-col items-center justify-center px-4 sm:px-6 lg:px-8"
+    >
+      <div class="w-full max-w-sm space-y-10">
+        <div class="text-center">
+          <h2 class="text-3xl font-light tracking-wide text-white">Login</h2>
+          <p
+            class="mt-4 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400"
+          >
+            Please login to Admin Dashboard.
+          </p>
+        </div>
+
+        <UForm :state="{}" class="mt-8 space-y-6" @submit="login">
+          <div class="space-y-4">
+            <UFormGroup name="email">
+              <UInput
+                id="email-address"
+                v-model="email"
+                autocomplete="sensy-md-email"
+                required
+                placeholder="USERNAME"
+                size="xl"
+                color="white"
+                variant="none"
+                class="rounded bg-white ring-1 ring-slate-200"
+                :ui="{
+                  base: 'w-full text-gray-900 placeholder-gray-400 font-medium tracking-wider text-sm',
+                  rounded: 'rounded-none',
+                  padding: { xl: 'px-4 py-3' },
+                }"
+              />
+            </UFormGroup>
+            <UFormGroup name="password">
+              <UInput
+                id="password"
+                v-model="password"
+                type="password"
+                autocomplete="sensy-md-password"
+                required
+                placeholder="PASSWORD"
+                size="xl"
+                color="white"
+                variant="none"
+                class="rounded bg-white ring-1 ring-slate-200"
+                :ui="{
+                  base: 'w-full text-gray-900 placeholder-gray-400 font-medium tracking-wider text-sm',
+                  rounded: 'rounded-none',
+                  padding: { xl: 'px-4 py-3' },
+                }"
+              />
+            </UFormGroup>
           </div>
-        </template>
 
-        <UForm :state="{}" class="space-y-5" @submit="login">
-          <UFormGroup label="ログインＩＤ" name="email">
-            <UInput
-              id="email-address"
-              v-model="email"
-              autocomplete="sensy-md-email"
-              required
-              placeholder="System Admin ID"
-              icon="i-heroicons-user"
-              size="md"
-            />
-          </UFormGroup>
-          <UFormGroup label="パスワード" name="password">
-            <UInput
-              id="password"
-              v-model="password"
-              type="password"
-              autocomplete="sensy-md-password"
-              required
-              placeholder="Password"
-              icon="i-heroicons-key"
-              size="md"
-            />
-          </UFormGroup>
+          <div class="pt-2">
+            <button
+              type="submit"
+              class="w-full rounded bg-gradient-to-r from-pink-500 to-indigo-600 px-4 py-3 text-xs font-bold tracking-widest text-white shadow-md transition-all hover:opacity-90"
+            >
+              LOGIN
+            </button>
+          </div>
 
-          <UButton
-            icon="i-heroicons-arrow-right-end-on-rectangle"
-            size="md"
-            color="indigo"
-            variant="solid"
-            label="ログイン"
-            block
-            type="submit"
-            class="mt-6"
-          />
+          <div class="mt-6 text-center">
+            <a
+              href="#"
+              class="text-[11px] font-bold uppercase tracking-wider text-slate-400 transition-colors hover:text-white"
+            >
+              Forgotten Your Password?
+            </a>
+          </div>
         </UForm>
-      </UCard>
+      </div>
+
+      <!-- Bottom Right Links -->
+      <div
+        class="absolute bottom-8 right-8 flex items-center gap-6 text-[10px] font-bold uppercase tracking-wider text-slate-500"
+      >
+        <a
+          href="https://sensy.ai/term_policies/"
+          target="_blank"
+          class="transition-colors hover:text-white"
+          >Term-policies</a
+        >
+        <a
+          href="https://sensy.ai/report/"
+          target="_blank"
+          class="transition-colors hover:text-white"
+          >Report</a
+        >
+      </div>
     </div>
   </div>
 </template>

@@ -16,6 +16,13 @@ export default <Partial<Config>>{
       // 余白系を極力小さく
       padding: spacing,
       margin: spacing,
+      colors: {
+        'dashstack-bg': '#F5F6FA',
+        'dashstack-blue': '#4880FF',
+        'dashstack-success': '#00B69B',
+        'dashstack-danger': '#F93C65',
+        'dashstack-warning': '#FFB74D',
+      },
     },
   },
   plugins: [require('@tailwindcss/forms')],

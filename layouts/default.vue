@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-[100dvh] flex-col bg-[#F9FAFB] text-gray-900">
+  <div class="flex h-[100dvh] flex-col bg-dashstack-bg text-gray-900">
     <AppHeader class="sticky top-0 z-50 w-full" @on-menu-click="onMenuClick" />
     <div class="flex flex-1 overflow-hidden">
       <!-- Sidebar Area -->
@@ -39,8 +39,8 @@
                       size: 'text-sm text-gray-600 font-medium',
                       rounded: 'rounded-md',
                       active:
-                        'text-indigo-600 before:bg-indigo-50 before:rounded-md',
-                      inactive: 'hover:text-gray-900 hover:before:bg-gray-50',
+                        'text-indigo-600 bg-indigo-50 font-semibold relative before:absolute before:inset-y-0 before:-left-4 before:w-[3px] before:bg-indigo-600 before:rounded-r-md',
+                      inactive: 'hover:text-gray-900 hover:bg-gray-50',
                     }"
                   />
                 </div>
@@ -55,10 +55,10 @@
               :ui="{
                 padding: 'py-2.5 px-3',
                 size: 'text-sm font-medium',
-                rounded: 'rounded-lg',
-                active: 'text-indigo-700 before:bg-indigo-50 before:rounded-lg',
-                inactive:
-                  'text-gray-600 hover:text-gray-900 hover:before:bg-gray-50',
+                rounded: 'rounded-lg relative',
+                active:
+                  'text-indigo-600 bg-indigo-50 font-semibold before:absolute before:inset-y-1/4 before:-left-4 before:w-[3px] before:bg-indigo-600 before:rounded-r-md',
+                inactive: 'text-gray-600 hover:text-gray-900 hover:bg-gray-50',
               }"
             />
 
@@ -87,8 +87,8 @@
                       size: 'text-sm text-gray-600 font-medium',
                       rounded: 'rounded-md',
                       active:
-                        'text-indigo-600 before:bg-indigo-50 before:rounded-md',
-                      inactive: 'hover:text-gray-900 hover:before:bg-gray-50',
+                        'text-indigo-600 bg-indigo-50 font-semibold relative before:absolute before:inset-y-0 before:-left-4 before:w-[3px] before:bg-indigo-600 before:rounded-r-md',
+                      inactive: 'hover:text-gray-900 hover:bg-gray-50',
                     }"
                   />
                 </div>
