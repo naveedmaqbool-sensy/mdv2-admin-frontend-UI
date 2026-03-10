@@ -3,7 +3,9 @@
     v-show="showLoading"
     class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300"
   >
-    <div class="flex flex-col items-center justify-center rounded-2xl bg-white p-6 shadow-2xl">
+    <div
+      class="flex flex-col items-center justify-center rounded-2xl bg-white p-6 shadow-2xl"
+    >
       <svg
         class="mb-4 h-10 w-10 animate-spin text-pink-500"
         xmlns="http://www.w3.org/2000/svg"
@@ -24,7 +26,9 @@
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
         ></path>
       </svg>
-      <div class="text-lg font-semibold text-gray-700 tracking-wider">Loading...</div>
+      <div class="text-lg font-semibold tracking-wider text-gray-700">
+        Loading...
+      </div>
     </div>
   </div>
 </template>

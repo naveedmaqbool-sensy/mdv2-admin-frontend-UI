@@ -32,8 +32,8 @@
             <UButton
               color="gray"
               variant="ghost"
-              @click="reset"
               icon="i-heroicons-arrow-path"
+              @click="reset"
             >
               リセット
             </UButton>

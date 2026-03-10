@@ -259,8 +259,8 @@
             <UButton
               color="indigo"
               icon="i-heroicons-plus"
-              @click="addAlert"
               class="w-full px-8 sm:w-auto"
+              @click="addAlert"
             >
               追加
             </UButton>

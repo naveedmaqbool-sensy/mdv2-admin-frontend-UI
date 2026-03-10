@@ -1,32 +1,70 @@
 <template>
-  <div class="flex h-[100dvh] flex-col bg-gray-50 text-gray-900">
+  <div class="flex h-[100dvh] flex-col bg-[#F9FAFB] text-gray-900">
     <AppHeader class="sticky top-0 z-50 w-full" @on-menu-click="onMenuClick" />
     <div class="flex flex-1 overflow-hidden">
       <!-- Sidebar Area -->
       <transition
         enter-active-class="transition-all duration-300 ease-out"
-        enter-from-class="-ml-64 opacity-0"
+        enter-from-class="-ml-60 opacity-0"
         enter-to-class="ml-0 opacity-100"
         leave-active-class="transition-all duration-200 ease-in"
         leave-from-class="ml-0 opacity-100"
-        leave-to-class="-ml-64 opacity-0"
+        leave-to-class="-ml-60 opacity-0"
       >
         <aside
           v-show="isActiveMenu"
-          class="flex w-64 shrink-0 flex-col overflow-y-auto border-r border-gray-200 bg-white shadow-sm"
+          class="flex w-60 shrink-0 flex-col overflow-y-auto border-r border-gray-100 bg-white shadow-[1px_0_2px_0_rgba(0,0,0,0.02)]"
         >
-          <div class="flex-1 p-4">
+          <div class="flex flex-1 flex-col gap-2 p-4">
+            <!-- 1. Dashboard Accordion (Moved to very top) -->
+            <UAccordion
+              color="gray"
+              variant="ghost"
+              :items="[
+                {
+                  label: 'ダッシュボード',
+                  icon: 'i-heroicons-home',
+                  defaultOpen: true,
+                  slot: 'dashboard',
+                },
+              ]"
+              :ui="{ wrapper: 'w-full' }"
+            >
+              <template #dashboard>
+                <div class="ml-5 mt-1 border-l border-gray-100 pb-1 pl-4">
+                  <UVerticalNavigation
+                    :links="dashboardMenu"
+                    :ui="{
+                      padding: 'py-2 px-3',
+                      size: 'text-sm text-gray-600 font-medium',
+                      rounded: 'rounded-md',
+                      active:
+                        'text-indigo-600 before:bg-indigo-50 before:rounded-md',
+                      inactive: 'hover:text-gray-900 hover:before:bg-gray-50',
+                    }"
+                  />
+                </div>
+              </template>
+            </UAccordion>
+
+            <div class="my-1 border-t border-gray-100"></div>
+
+            <!-- 2. Main Navigation Links -->
             <UVerticalNavigation
               :links="links"
               :ui="{
                 padding: 'py-2.5 px-3',
                 size: 'text-sm font-medium',
                 rounded: 'rounded-lg',
+                active: 'text-indigo-700 before:bg-indigo-50 before:rounded-lg',
+                inactive:
+                  'text-gray-600 hover:text-gray-900 hover:before:bg-gray-50',
               }"
             />
 
-            <div class="my-4 border-t border-gray-100"></div>
+            <div class="my-1 border-t border-gray-100"></div>
 
+            <!-- 3. Order Conditions Accordion -->
             <UAccordion
               color="gray"
               variant="ghost"
@@ -34,19 +72,23 @@
                 {
                   label: '発注条件マスタ',
                   icon: 'i-heroicons-rectangle-group',
-                  defaultOpen: true,
+                  defaultOpen: false,
+                  slot: 'order-conditions',
                 },
               ]"
-              :ui="{ wrapper: 'flex flex-col w-full' }"
+              :ui="{ wrapper: 'w-full' }"
             >
-              <template #item>
-                <div class="pl-4">
+              <template #order-conditions>
+                <div class="ml-5 mt-1 border-l border-gray-100 pb-1 pl-4">
                   <UVerticalNavigation
                     :links="orderConditionsMenu"
                     :ui="{
                       padding: 'py-2 px-3',
-                      size: 'text-sm text-gray-600',
+                      size: 'text-sm text-gray-600 font-medium',
                       rounded: 'rounded-md',
+                      active:
+                        'text-indigo-600 before:bg-indigo-50 before:rounded-md',
+                      inactive: 'hover:text-gray-900 hover:before:bg-gray-50',
                     }"
                   />
                 </div>
@@ -58,7 +100,7 @@
 
       <!-- Main Content Area -->
       <main class="w-full flex-1 overflow-y-auto">
-        <div class="mx-auto max-w-7xl p-24 md:p-32">
+        <div class="mx-auto max-w-[1600px] p-6 sm:p-8 lg:p-12">
           <slot />
         </div>
       </main>
@@ -84,23 +126,26 @@ const isActiveExportModal = ref(false)
 const evidenceTargetDateFrom = ref(startOfDay(subDays(new Date(), 7)))
 const evidenceTargetDateTo = ref(endOfDay(addDays(new Date(), 7)))
 
+const dashboardMenu = [
+  {
+    icon: 'i-heroicons-squares-2x2',
+    label: 'ダッシュボードトップ',
+    to: '/',
+  },
+  {
+    icon: 'i-heroicons-shield-check',
+    label: '在庫アラート',
+    to: '/stock-alert',
+  },
+  {
+    icon: 'i-heroicons-bell-alert',
+    label: '閾値アラート',
+    to: '/threshold-alert',
+  },
+]
+
 const links = [
   [
-    {
-      icon: 'i-heroicons-home',
-      label: 'ダッシュボード\n(アラート確認)',
-      to: '/',
-    },
-    {
-      icon: 'i-heroicons-exclamation-triangle',
-      label: '在庫アラートリスト',
-      to: '/stock-alert',
-    },
-    {
-      icon: 'i-heroicons-bell-alert',
-      label: '閾値アラートリスト',
-      to: '/threshold-alert',
-    },
     {
       icon: 'i-heroicons-chart-bar-square',
       label: 'モニタリング',

@@ -74,8 +74,8 @@
                     color="gray"
                     variant="solid"
                     :disabled="formData.skuMonitoringRangeType === null"
-                    @click="openSkuModal"
                     icon="i-heroicons-cursor-arrow-rays"
+                    @click="openSkuModal"
                     >範囲指定</UButton
                   >
                 </div>
@@ -241,8 +241,8 @@
                     color="gray"
                     variant="solid"
                     :disabled="formData.storeMonitoringRangeType === null"
-                    @click="openStoreModal"
                     icon="i-heroicons-cursor-arrow-rays"
+                    @click="openStoreModal"
                     >範囲指定</UButton
                   >
                 </div>
@@ -357,15 +357,15 @@
             <UButton
               color="gray"
               variant="ghost"
-              @click="reset"
               icon="i-heroicons-arrow-path"
+              @click="reset"
               >条件リセット</UButton
             >
             <UButton
               color="indigo"
               size="md"
-              @click="fetch(1)"
               icon="i-heroicons-presentation-chart-bar"
+              @click="fetch(1)"
               >集計を実行</UButton
             >
             <UButton
@@ -374,8 +374,8 @@
               variant="soft"
               size="md"
               :disabled="selectedRows.length === 0"
-              @click="openEffectiveness"
               icon="i-heroicons-presentation-chart-line"
+              @click="openEffectiveness"
               >効果測定へ遷移</UButton
             >
           </div>
@@ -384,8 +384,8 @@
               color="white"
               variant="solid"
               :disabled="kpiRows.length === 0 || kpiHeaders.length === 0"
-              @click="csvExport"
               icon="i-heroicons-arrow-down-tray"
+              @click="csvExport"
               >CSV出力</UButton
             >
           </div>

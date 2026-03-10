@@ -1,337 +1,514 @@
 <template>
-  <div>
-    <CommonHeader title="発注修正" />
+  <div class="space-y-6">
+    <!-- Header Area -->
+    <div
+      class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-gray-900">
+          発注修正
+        </h1>
+        <p class="mt-1 text-sm text-gray-500">
+          指定条件に基づく発注候補を確認・修正できます
+        </p>
+      </div>
+      <div
+        v-if="formData.from && formData.to"
+        class="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-500 shadow-sm"
+      >
+        <UIcon name="i-heroicons-calendar" class="h-4 w-4 text-gray-400" />
+        対象期間: {{ formatterDate(formData.from) }} 〜
+        {{ formatterDate(formData.to) }}
+      </div>
+    </div>
 
+    <!-- Filter Card (Compact Toolbar) -->
     <UCard
       :ui="{
         ring: 'ring-1 ring-gray-200',
         shadow: 'shadow-sm',
-        body: { padding: 'p-6' },
+        body: { padding: 'p-4 sm:p-5' },
+        rounded: 'rounded-xl',
+        background: 'bg-white',
       }"
     >
-      <UForm :state="{}">
-        <div class="flex flex-col gap-8 lg:flex-row">
-          <!-- Left Column: Inputs -->
-          <div class="flex-1 space-y-6">
-            <!-- 対象期間 -->
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <label
-                class="whitespace-nowrap font-bold text-gray-700 sm:w-24 sm:text-right"
-              >
-                対象期間
-              </label>
-              <div class="flex items-center gap-4">
-                <div class="w-40">
-                  <CommonDatepicker v-model="formData.from" />
-                </div>
-                <span class="text-gray-400">～</span>
-                <div class="w-40">
-                  <CommonDatepicker v-model="formData.to" />
-                </div>
-              </div>
-            </div>
-
-            <!-- 対象単位 -->
-            <div class="flex flex-col gap-4 sm:flex-row">
-              <label
-                class="mt-2 whitespace-nowrap font-bold text-gray-700 sm:w-24 sm:text-right"
-              >
-                対象単位
-              </label>
-              <div class="flex-1">
-                <div class="mb-2 flex items-center gap-4">
-                  <div class="w-48">
-                    <CommonSelect
-                      v-model:selected="formData.skuMonitoringUnitType"
-                      class="w-full"
-                      :options="SkuMonitoringUnitTypes.getNameValues()"
-                      @change="onChangedSkuMonitoringUnitType"
-                    />
-                  </div>
-                  <UButton color="indigo" variant="soft" @click="openSkuModal"
-                    >選択</UButton
-                  >
-                </div>
-
-                <div
-                  v-if="apiValidationError?.exists('skuMonitoringUnitType')"
-                  class="mb-2 text-sm text-red-500"
-                >
-                  {{ apiValidationError?.first('skuMonitoringUnitType') }}
-                </div>
-
-                <div class="flex flex-wrap gap-2">
-                  <template
-                    v-for="(sku, index) in formData.skus"
-                    :key="sku.skuId"
-                  >
-                    <UBadge color="gray" variant="subtle" size="md">
-                      {{ sku.skuName }}
-                      <UButton
-                        :padded="false"
-                        color="gray"
-                        variant="link"
-                        icon="i-heroicons-x-mark-20-solid"
-                        class="ml-1"
-                        @click="formData.skus.splice(index, 1)"
-                      />
-                    </UBadge>
-                  </template>
-                  <template
-                    v-for="(group, index) in formData.groups"
-                    :key="group.groupId"
-                  >
-                    <UBadge color="gray" variant="subtle" size="md">
-                      {{ group.groupName }}
-                      <UButton
-                        :padded="false"
-                        color="gray"
-                        variant="link"
-                        icon="i-heroicons-x-mark-20-solid"
-                        class="ml-1"
-                        @click="formData.groups.splice(index, 1)"
-                      />
-                    </UBadge>
-                  </template>
-                  <template
-                    v-for="(department, index) in formData.departments"
-                    :key="department.departmentId"
-                  >
-                    <UBadge color="gray" variant="subtle" size="md">
-                      {{ department.departmentName }}
-                      <UButton
-                        :padded="false"
-                        color="gray"
-                        variant="link"
-                        icon="i-heroicons-x-mark-20-solid"
-                        class="ml-1"
-                        @click="formData.departments.splice(index, 1)"
-                      />
-                    </UBadge>
-                  </template>
-                  <template
-                    v-for="(clazz, index) in formData.classes"
-                    :key="clazz.classId"
-                  >
-                    <UBadge color="gray" variant="subtle" size="md">
-                      {{ clazz.className }}
-                      <UButton
-                        :padded="false"
-                        color="gray"
-                        variant="link"
-                        icon="i-heroicons-x-mark-20-solid"
-                        class="ml-1"
-                        @click="formData.classes.splice(index, 1)"
-                      />
-                    </UBadge>
-                  </template>
-                  <template
-                    v-for="(line, index) in formData.lines"
-                    :key="line.lineId"
-                  >
-                    <UBadge color="gray" variant="subtle" size="md">
-                      {{ line.lineName }}
-                      <UButton
-                        :padded="false"
-                        color="gray"
-                        variant="link"
-                        icon="i-heroicons-x-mark-20-solid"
-                        class="ml-1"
-                        @click="formData.lines.splice(index, 1)"
-                      />
-                    </UBadge>
-                  </template>
-                </div>
-              </div>
-            </div>
-
-            <!-- 対象店舗 -->
-            <div class="flex flex-col gap-4 sm:flex-row">
-              <label
-                class="mt-2 whitespace-nowrap font-bold text-gray-700 sm:w-24 sm:text-right"
-              >
-                対象店舗
-              </label>
-              <div class="flex-1">
-                <div class="mb-2 flex items-center gap-4">
-                  <div class="w-48">
-                    <CommonSelect
-                      v-model:selected="formData.storeMonitoringUnitType"
-                      class="w-full"
-                      :options="StoreMonitoringUnitTypes.getNameValues()"
-                    />
-                  </div>
-                  <UButton
-                    color="indigo"
-                    variant="soft"
-                    :disabled="
-                      formData.storeMonitoringUnitType ===
-                      StoreMonitoringUnitTypes.All
-                    "
-                    @click="openStoreModal"
-                    >選択</UButton
-                  >
-                </div>
-
-                <div
-                  v-if="apiValidationError?.exists('storeMonitoringUnitType')"
-                  class="mb-2 text-sm text-red-500"
-                >
-                  {{ apiValidationError?.first('storeMonitoringUnitType') }}
-                </div>
-
-                <div class="flex flex-wrap gap-2">
-                  <template
-                    v-for="(store, index) in formData.stores"
-                    :key="store.storeId"
-                  >
-                    <UBadge color="gray" variant="subtle" size="md">
-                      {{ store.storeName }}
-                      <UButton
-                        :padded="false"
-                        color="gray"
-                        variant="link"
-                        icon="i-heroicons-x-mark-20-solid"
-                        class="ml-1"
-                        @click="formData.stores.splice(index, 1)"
-                      />
-                    </UBadge>
-                  </template>
-                  <template
-                    v-for="(storeGroup, index) in formData.storeGroups"
-                    :key="storeGroup.storeGroupId"
-                  >
-                    <UBadge color="gray" variant="subtle" size="md">
-                      {{ storeGroup.storeGroupName }}
-                      <UButton
-                        :padded="false"
-                        color="gray"
-                        variant="link"
-                        icon="i-heroicons-x-mark-20-solid"
-                        class="ml-1"
-                        @click="formData.storeGroups.splice(index, 1)"
-                      />
-                    </UBadge>
-                  </template>
-                </div>
-              </div>
-            </div>
+      <div
+        class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between"
+      >
+        <div class="flex flex-1 flex-col gap-4 xl:flex-row xl:items-center">
+          <!-- 期間 -->
+          <div class="flex items-center gap-2">
+            <span class="w-10 text-sm font-semibold text-gray-700">期間</span>
+            <CommonDatepicker v-model="formData.from" class="w-32" />
+            <span class="text-gray-400">-</span>
+            <CommonDatepicker v-model="formData.to" class="w-32" />
           </div>
 
-          <!-- Right Column: Actions -->
-          <div
-            class="flex items-end justify-end gap-3 border-t border-gray-100 pt-6 lg:flex-col lg:border-l lg:border-gray-100 lg:pl-8 lg:pt-0"
-          >
+          <div class="hidden h-6 w-px bg-gray-200 xl:block"></div>
+
+          <!-- 商品 -->
+          <div class="flex flex-wrap items-center gap-2 sm:flex-nowrap">
+            <span class="w-10 text-sm font-semibold text-gray-700">商品</span>
+            <CommonSelect
+              v-model:selected="formData.skuMonitoringUnitType"
+              class="w-40"
+              :options="SkuMonitoringUnitTypes.getNameValues()"
+              @change="onChangedSkuMonitoringUnitType"
+            />
             <UButton
               color="gray"
-              variant="ghost"
-              @click="reset"
-              icon="i-heroicons-arrow-path"
-              class="w-full justify-center lg:w-40"
+              variant="soft"
+              icon="i-heroicons-plus"
+              size="sm"
+              @click="openSkuModal"
+              >選択</UButton
             >
-              リセット
-            </UButton>
-            <UButton
-              color="indigo"
-              @click="get(1)"
-              icon="i-heroicons-magnifying-glass"
-              class="w-full justify-center lg:w-40"
+            <div
+              v-if="apiValidationError?.exists('skuMonitoringUnitType')"
+              class="ml-2 text-xs text-red-500"
             >
-              検索する
-            </UButton>
-            <UButton
-              color="primary"
-              variant="outline"
-              icon="i-heroicons-document-arrow-down"
-              label="エビデンス出力"
-              @click="onExport"
-              class="w-full justify-center lg:mt-auto lg:w-40"
+              {{ apiValidationError?.first('skuMonitoringUnitType') }}
+            </div>
+          </div>
+
+          <div class="hidden h-6 w-px bg-gray-200 xl:block"></div>
+
+          <!-- 店舗 -->
+          <div class="flex flex-wrap items-center gap-2 sm:flex-nowrap">
+            <span class="w-10 text-sm font-semibold text-gray-700">店舗</span>
+            <CommonSelect
+              v-model:selected="formData.storeMonitoringUnitType"
+              class="w-40"
+              :options="StoreMonitoringUnitTypes.getNameValues()"
             />
+            <UButton
+              color="gray"
+              variant="soft"
+              icon="i-heroicons-plus"
+              size="sm"
+              :disabled="
+                formData.storeMonitoringUnitType ===
+                StoreMonitoringUnitTypes.All
+              "
+              @click="openStoreModal"
+              >選択</UButton
+            >
+            <div
+              v-if="apiValidationError?.exists('storeMonitoringUnitType')"
+              class="ml-2 text-xs text-red-500"
+            >
+              {{ apiValidationError?.first('storeMonitoringUnitType') }}
+            </div>
           </div>
         </div>
-      </UForm>
+
+        <div class="mt-2 flex shrink-0 items-center justify-end gap-3 xl:mt-0">
+          <UButton
+            color="gray"
+            variant="ghost"
+            class="text-gray-500 hover:text-gray-900"
+            @click="reset"
+            >リセット</UButton
+          >
+          <UButton
+            color="indigo"
+            variant="solid"
+            icon="i-heroicons-magnifying-glass"
+            class="rounded-lg px-6 font-medium shadow-sm"
+            @click="get(1)"
+            >検索する</UButton
+          >
+        </div>
+      </div>
+
+      <!-- Selected Tags -->
+      <div
+        v-if="hasSelectedFilters"
+        class="mt-4 flex flex-wrap items-center gap-2 border-t border-gray-100 pt-3 text-sm"
+      >
+        <span class="mr-1 text-xs font-medium text-gray-400">選択中:</span>
+        <template v-for="(sku, index) in formData.skus" :key="sku.skuId">
+          <UBadge
+            color="indigo"
+            variant="subtle"
+            size="sm"
+            class="rounded-md bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-200"
+          >
+            {{ sku.skuName }}
+            <UButton
+              :padded="false"
+              color="indigo"
+              variant="link"
+              icon="i-heroicons-x-mark-20-solid"
+              class="ml-1 opacity-60 hover:opacity-100"
+              @click="formData.skus.splice(index, 1)"
+            />
+          </UBadge>
+        </template>
+        <template
+          v-for="(group, index) in formData.groups"
+          :key="group.groupId"
+        >
+          <UBadge
+            color="indigo"
+            variant="subtle"
+            size="sm"
+            class="rounded-md bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-200"
+          >
+            {{ group.groupName }}
+            <UButton
+              :padded="false"
+              color="indigo"
+              variant="link"
+              icon="i-heroicons-x-mark-20-solid"
+              class="ml-1 opacity-60 hover:opacity-100"
+              @click="formData.groups.splice(index, 1)"
+            />
+          </UBadge>
+        </template>
+        <template
+          v-for="(department, index) in formData.departments"
+          :key="department.departmentId"
+        >
+          <UBadge
+            color="indigo"
+            variant="subtle"
+            size="sm"
+            class="rounded-md bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-200"
+          >
+            {{ department.departmentName }}
+            <UButton
+              :padded="false"
+              color="indigo"
+              variant="link"
+              icon="i-heroicons-x-mark-20-solid"
+              class="ml-1 opacity-60 hover:opacity-100"
+              @click="formData.departments.splice(index, 1)"
+            />
+          </UBadge>
+        </template>
+        <template
+          v-for="(clazz, index) in formData.classes"
+          :key="clazz.classId"
+        >
+          <UBadge
+            color="indigo"
+            variant="subtle"
+            size="sm"
+            class="rounded-md bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-200"
+          >
+            {{ clazz.className }}
+            <UButton
+              :padded="false"
+              color="indigo"
+              variant="link"
+              icon="i-heroicons-x-mark-20-solid"
+              class="ml-1 opacity-60 hover:opacity-100"
+              @click="formData.classes.splice(index, 1)"
+            />
+          </UBadge>
+        </template>
+        <template v-for="(line, index) in formData.lines" :key="line.lineId">
+          <UBadge
+            color="indigo"
+            variant="subtle"
+            size="sm"
+            class="rounded-md bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-200"
+          >
+            {{ line.lineName }}
+            <UButton
+              :padded="false"
+              color="indigo"
+              variant="link"
+              icon="i-heroicons-x-mark-20-solid"
+              class="ml-1 opacity-60 hover:opacity-100"
+              @click="formData.lines.splice(index, 1)"
+            />
+          </UBadge>
+        </template>
+        <template
+          v-for="(store, index) in formData.stores"
+          :key="store.storeId"
+        >
+          <UBadge
+            color="indigo"
+            variant="subtle"
+            size="sm"
+            class="rounded-md bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-200"
+          >
+            {{ store.storeName }}
+            <UButton
+              :padded="false"
+              color="indigo"
+              variant="link"
+              icon="i-heroicons-x-mark-20-solid"
+              class="ml-1 opacity-60 hover:opacity-100"
+              @click="formData.stores.splice(index, 1)"
+            />
+          </UBadge>
+        </template>
+        <template
+          v-for="(storeGroup, index) in formData.storeGroups"
+          :key="storeGroup.storeGroupId"
+        >
+          <UBadge
+            color="indigo"
+            variant="subtle"
+            size="sm"
+            class="rounded-md bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-200"
+          >
+            {{ storeGroup.storeGroupName }}
+            <UButton
+              :padded="false"
+              color="indigo"
+              variant="link"
+              icon="i-heroicons-x-mark-20-solid"
+              class="ml-1 opacity-60 hover:opacity-100"
+              @click="formData.storeGroups.splice(index, 1)"
+            />
+          </UBadge>
+        </template>
+      </div>
     </UCard>
 
+    <!-- Summary Cards -->
+    <div
+      v-if="orderTotal > 0"
+      class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+    >
+      <UCard
+        :ui="{
+          ring: 'ring-1 ring-gray-100',
+          shadow: 'shadow-sm',
+          body: { padding: 'p-4' },
+          rounded: 'rounded-xl',
+          background: 'bg-white',
+        }"
+      >
+        <p class="text-xs font-medium text-gray-500">対象件数</p>
+        <p class="mt-1 text-2xl font-bold text-gray-900">
+          {{ formatterNumber(orderTotal) }}
+          <span class="text-sm font-normal text-gray-400">件</span>
+        </p>
+      </UCard>
+      <UCard
+        :ui="{
+          ring: 'ring-1 ring-gray-100',
+          shadow: 'shadow-sm',
+          body: { padding: 'p-4' },
+          rounded: 'rounded-xl',
+          background: 'bg-white',
+        }"
+      >
+        <p class="text-xs font-medium text-gray-500">推奨合計</p>
+        <p class="mt-1 text-2xl font-bold text-indigo-600">
+          {{ formatterNumber(totalPrediction) }}
+        </p>
+      </UCard>
+      <UCard
+        :ui="{
+          ring: 'ring-1 ring-gray-100',
+          shadow: 'shadow-sm',
+          body: { padding: 'p-4' },
+          rounded: 'rounded-xl',
+          background: 'bg-white',
+        }"
+      >
+        <p class="text-xs font-medium text-gray-500">実発注合計</p>
+        <p class="mt-1 text-2xl font-bold text-gray-900">
+          {{ formatterNumber(totalActual) }}
+        </p>
+      </UCard>
+      <UCard
+        :ui="{
+          ring: 'ring-1 ring-gray-100',
+          shadow: 'shadow-sm',
+          body: { padding: 'p-4' },
+          rounded: 'rounded-xl',
+          background: 'bg-white',
+        }"
+      >
+        <p class="text-xs font-medium text-gray-500">差分 (推奨 - 実発注)</p>
+        <div class="mt-1 flex items-center gap-2">
+          <p
+            :class="[
+              'text-2xl font-bold',
+              totalDiff === 0 ? 'text-gray-400' : 'text-amber-600',
+            ]"
+          >
+            {{ totalDiff > 0 ? '+' : '' }}{{ formatterNumber(totalDiff) }}
+          </p>
+        </div>
+      </UCard>
+    </div>
+
+    <!-- Results Card -->
     <UCard
       :ui="{
         ring: 'ring-1 ring-gray-200',
         shadow: 'shadow-sm',
         body: { padding: 'p-0 sm:p-0' },
+        rounded: 'rounded-xl',
+        background: 'bg-white',
       }"
-      class="mt-6"
     >
-      <UTable :rows="orders" :columns="orderColumns" class="w-full">
-        <template #objectiveDate-data="{ row }">
-          <span class="font-medium text-gray-700">{{
-            formatterDate(row.objectiveDate)
-          }}</span>
-        </template>
-        <template #deliveryDate-data="{ row }">
-          <span class="font-medium text-gray-700">{{
-            formatterDate(row.deliveryDate)
-          }}</span>
-        </template>
-        <template #storeId-data="{ row }">
-          {{ row.storeMaster?.storeName }}
-        </template>
-        <template #skuId-data="{ row }">
-          <span class="font-medium text-gray-900">{{
-            row.storeSkuMaster?.skuName
-          }}</span>
-        </template>
-        <template #groupId-data="{ row }">
-          {{ row.groupMaster?.groupName }}
-        </template>
-        <template #departmentId-data="{ row }">
-          {{ row.departmentMaster?.departmentName }}
-        </template>
-        <template #lineId-data="{ row }">
-          {{ row.lineMaster?.lineName }}
-        </template>
-        <template #classId-data="{ row }">
-          {{ row.classMaster?.className }}
-        </template>
-        <template #predictionOrderQty-data="{ row }">
-          <p class="text-right">
-            {{ formatterNumber(row.predictionOrderQty) }}
-          </p>
-        </template>
-        <template #actualOrderQty-data="{ row }">
-          <UTooltip
-            v-if="
-              new Date(row.objectiveDate).getTime() <
-              new Date().setHours(0, 0, 0, 0)
-            "
-            text="当日以外の発注は変更できません"
-            :popper="{ placement: 'top' }"
-          >
-            <UInput v-model.lazy="row.actualOrderQty" type="number" disabled />
-          </UTooltip>
-          <UInput
-            v-else
-            v-model.lazy="row.actualOrderQty"
-            type="number"
-            @change="onChangedActualOrderQty(row)"
+      <div v-if="orderTotal > 0">
+        <!-- Results Header -->
+        <div
+          class="flex items-center justify-between border-b border-gray-100 p-4 sm:px-6"
+        >
+          <h2 class="text-base font-bold text-gray-900">検索結果</h2>
+          <UButton
+            color="white"
+            variant="solid"
+            icon="i-heroicons-document-arrow-down"
+            label="エビデンス出力"
+            class="text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50"
+            @click="onExport"
           />
-        </template>
-      </UTable>
+        </div>
 
-      <div
-        v-if="orderTotal > 0"
-        class="flex items-center justify-between rounded-b-lg border-t border-gray-100 bg-gray-50/50 p-4"
-      >
-        <span class="text-sm text-gray-500">
-          全 {{ formatterNumber(orderTotal) }} 件のご確認
-        </span>
-        <UPagination
-          v-model="paginationPage"
-          :page-count="formData.perPage"
-          :max="5"
-          :total="orderTotal"
-        />
+        <UTable
+          :rows="orders"
+          :columns="orderColumns"
+          class="w-full"
+          :ui="{
+            th: {
+              base: 'whitespace-nowrap bg-gray-50 text-gray-500 font-semibold text-xs',
+              padding: 'py-3 px-4',
+            },
+            td: { padding: 'py-3 px-4 text-sm' },
+          }"
+        >
+          <template #objectiveDate-data="{ row }">
+            <span class="text-gray-600">{{
+              formatterDate(row.objectiveDate)
+            }}</span>
+          </template>
+          <template #deliveryDate-data="{ row }">
+            <span class="text-gray-600">{{
+              formatterDate(row.deliveryDate)
+            }}</span>
+          </template>
+          <template #storeId-data="{ row }">
+            <span class="font-medium text-gray-900">{{
+              row.storeMaster?.storeName
+            }}</span>
+          </template>
+          <template #skuId-data="{ row }">
+            <span class="font-medium text-gray-900">{{
+              row.storeSkuMaster?.skuName
+            }}</span>
+          </template>
+          <template #groupId-data="{ row }">
+            <UBadge
+              v-if="row.groupMaster?.groupName"
+              color="gray"
+              variant="subtle"
+              size="xs"
+              >{{ row.groupMaster?.groupName }}</UBadge
+            >
+            <span v-else class="text-gray-400">-</span>
+          </template>
+          <template #departmentId-data="{ row }">
+            <UBadge
+              v-if="row.departmentMaster?.departmentName"
+              color="gray"
+              variant="subtle"
+              size="xs"
+              >{{ row.departmentMaster?.departmentName }}</UBadge
+            >
+            <span v-else class="text-gray-400">-</span>
+          </template>
+          <template #lineId-data="{ row }">
+            <UBadge
+              v-if="row.lineMaster?.lineName"
+              color="gray"
+              variant="subtle"
+              size="xs"
+              >{{ row.lineMaster?.lineName }}</UBadge
+            >
+            <span v-else class="text-gray-400">-</span>
+          </template>
+          <template #classId-data="{ row }">
+            <UBadge
+              v-if="row.classMaster?.className"
+              color="gray"
+              variant="subtle"
+              size="xs"
+              >{{ row.classMaster?.className }}</UBadge
+            >
+            <span v-else class="text-gray-400">-</span>
+          </template>
+          <template #predictionOrderQty-data="{ row }">
+            <p
+              class="rounded bg-indigo-50/50 px-2 py-1 text-right font-medium text-indigo-600"
+            >
+              {{ formatterNumber(row.predictionOrderQty) }}
+            </p>
+          </template>
+          <template #actualOrderQty-data="{ row }">
+            <UTooltip
+              v-if="
+                row.objectiveDate &&
+                new Date(row.objectiveDate).getTime() <
+                  new Date().setHours(0, 0, 0, 0)
+              "
+              text="当日以外の発注は変更できません"
+              :popper="{ placement: 'top' }"
+            >
+              <UInput
+                v-model.lazy="row.actualOrderQty"
+                type="number"
+                disabled
+                class="ml-auto w-24"
+              />
+            </UTooltip>
+            <UInput
+              v-else
+              v-model.lazy="row.actualOrderQty"
+              type="number"
+              class="ml-auto w-24"
+              @change="onChangedActualOrderQty(row)"
+            />
+          </template>
+        </UTable>
+
+        <div
+          class="flex flex-col items-center justify-between gap-4 rounded-b-xl border-t border-gray-100 bg-gray-50/50 p-4 sm:flex-row"
+        >
+          <span class="text-sm font-medium text-gray-500">
+            全 {{ formatterNumber(orderTotal) }} 件のご確認
+          </span>
+          <UPagination
+            v-model="paginationPage"
+            :page-count="formData.perPage"
+            :max="5"
+            :total="orderTotal"
+            :ui="{ wrapper: 'shadow-sm', rounded: 'rounded-md' }"
+          />
+        </div>
       </div>
-      <div v-else class="p-8 text-center text-gray-500">
-        該当する発注データは見つかりませんでした。
+
+      <!-- Empty State -->
+      <div
+        v-else
+        class="flex flex-col items-center justify-center p-16 text-center"
+      >
+        <div
+          class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-50 text-gray-300 ring-8 ring-gray-50/50"
+        >
+          <UIcon name="i-heroicons-document-magnifying-glass" class="h-8 w-8" />
+        </div>
+        <h3 class="mb-1 text-lg font-bold text-gray-900">
+          該当データがありません
+        </h3>
+        <p class="text-sm text-gray-500">
+          条件に一致する発注データが見つかりませんでした。
+        </p>
+        <p class="text-sm text-gray-500">
+          期間や対象条件を変更して再検索してください。
+        </p>
       </div>
     </UCard>
 
@@ -481,6 +658,37 @@ const paginationPage = computed({
   set: (value) => {
     get(value)
   },
+})
+
+// Summary KPI Computed Properties
+const hasSelectedFilters = computed(() => {
+  return (
+    formData.value.skus.length > 0 ||
+    formData.value.groups.length > 0 ||
+    formData.value.departments.length > 0 ||
+    formData.value.classes.length > 0 ||
+    formData.value.lines.length > 0 ||
+    formData.value.stores.length > 0 ||
+    formData.value.storeGroups.length > 0
+  )
+})
+
+const totalPrediction = computed(() => {
+  return orders.value.reduce(
+    (sum, order) => sum + (Number(order.predictionOrderQty) || 0),
+    0
+  )
+})
+
+const totalActual = computed(() => {
+  return orders.value.reduce(
+    (sum, order) => sum + (Number(order.actualOrderQty) || 0),
+    0
+  )
+})
+
+const totalDiff = computed(() => {
+  return totalActual.value - totalPrediction.value
 })
 
 async function reset() {

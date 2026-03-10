@@ -24,14 +24,14 @@
             <UButton
               color="gray"
               variant="ghost"
-              @click="reset"
               icon="i-heroicons-arrow-path"
+              @click="reset"
               >リセット</UButton
             >
             <UButton
               color="indigo"
-              @click="get(request.page)"
               icon="i-heroicons-magnifying-glass"
+              @click="get(request.page)"
               >検索する</UButton
             >
           </div>
@@ -129,8 +129,8 @@
 
         <UTabs
           :items="[{ label: '対象アイテム' }, { label: '対象店舗' }]"
-          @change="onChangedTarget"
           class="mb-4"
+          @change="onChangedTarget"
         />
 
         <UTable :rows="targets" :columns="[{ key: 'name', label: '登録名称' }]">
