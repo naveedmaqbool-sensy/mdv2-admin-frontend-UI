@@ -2,66 +2,140 @@
   <div>
     <CommonHeader title="ユーザー管理" />
 
-    <UForm :state="{}">
-      <section class="rounded border border-gray-300 p-4">
-        <div class="flex flex-row">
-          <div class="my-auto basis-1/12 text-right">
-            <label class="whitespace-nowrap pr-2 text-right font-bold">
+    <UCard
+      :ui="{
+        ring: 'ring-1 ring-gray-200',
+        shadow: 'shadow-sm',
+        body: { padding: 'p-6' },
+      }"
+    >
+      <UForm :state="{}">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div class="flex flex-1 items-center gap-4">
+            <label
+              class="whitespace-nowrap font-bold text-gray-700 sm:w-32 sm:text-right"
+            >
               あいまい検索
             </label>
+            <div class="max-w-lg flex-1">
+              <UInput
+                v-model="fetchRequest.text!"
+                placeholder="社員番号・氏名"
+                icon="i-heroicons-magnifying-glass"
+              />
+            </div>
           </div>
-          <div class="basis-5/12">
-            <UInput v-model="fetchRequest.text!" placeholder="社員番号・氏名" />
-          </div>
-        </div>
-      </section>
-      <section class="flex flex-row pt-2">
-        <div class="basis-1/2 text-left">
-          <UButton color="white" @click="reset">リセット</UButton>
-          <UButton class="ml-2" color="indigo" @click="fetch(1)">検索</UButton>
-        </div>
-        <div class="basis-1/2 text-right">
-          <UButton
-            v-if="loginUser.permission === UserPermissionTypes.Admin"
-            @click="onCreate"
+
+          <div
+            class="flex items-center gap-3 sm:border-l sm:border-gray-100 sm:pl-8"
           >
-            新規追加
-          </UButton>
+            <UButton
+              color="gray"
+              variant="ghost"
+              @click="reset"
+              icon="i-heroicons-arrow-path"
+            >
+              リセット
+            </UButton>
+            <UButton color="indigo" @click="fetch(1)"> 検索 </UButton>
+            <UButton
+              v-if="loginUser.permission === UserPermissionTypes.Admin"
+              color="primary"
+              variant="outline"
+              icon="i-heroicons-plus"
+              @click="onCreate"
+            >
+              新規追加
+            </UButton>
+          </div>
         </div>
-      </section>
-    </UForm>
+      </UForm>
+    </UCard>
 
-    <UTable :rows="users" :columns="userHeaders">
-      <template #permission-data="{ row }">
-        {{ UserPermissionTypes.getName(row.permission) }}
-      </template>
-      <template #storeMasters-data="{ row }">
-        <template v-if="row.storeMasters.length > 0">
-          {{ row.storeMasters.map((v: StoreMaster) => v.storeName).join('/') }}
+    <UCard
+      :ui="{
+        ring: 'ring-1 ring-gray-200',
+        shadow: 'shadow-sm',
+        body: { padding: 'p-0 sm:p-0' },
+      }"
+      class="mt-6"
+    >
+      <UTable :rows="users" :columns="userHeaders" class="w-full">
+        <template #permission-data="{ row }">
+          <UBadge
+            :color="
+              row.permission === UserPermissionTypes.Admin ? 'primary' : 'gray'
+            "
+            variant="subtle"
+          >
+            {{ UserPermissionTypes.getName(row.permission) }}
+          </UBadge>
         </template>
-        <template v-else> - </template>
-      </template>
-      <template #groupMasters-data="{ row }">
-        <template v-if="row.groupMasters.length > 0">
-          {{ row.groupMasters.map((v: GroupMaster) => v.groupName).join('/') }}
+        <template #storeMasters-data="{ row }">
+          <template v-if="row.storeMasters.length > 0">
+            <span class="text-gray-700">{{
+              row.storeMasters.map((v: StoreMaster) => v.storeName).join('/')
+            }}</span>
+          </template>
+          <template v-else>
+            <span class="text-gray-400">-</span>
+          </template>
         </template>
-        <template v-else> - </template>
-      </template>
-      <template #isValid-data="{ row }">
-        {{ row.isValid ? '有効' : '無効' }}
-      </template>
-      <template #actions-data="{ row }">
-        <UButton color="yellow" @click="onEdit(row)">編集</UButton>
-        <UButton color="red" class="ml-2" @click="onDelete(row)">削除</UButton>
-      </template>
-    </UTable>
+        <template #groupMasters-data="{ row }">
+          <template v-if="row.groupMasters.length > 0">
+            <span class="text-gray-700">{{
+              row.groupMasters.map((v: GroupMaster) => v.groupName).join('/')
+            }}</span>
+          </template>
+          <template v-else>
+            <span class="text-gray-400">-</span>
+          </template>
+        </template>
+        <template #isValid-data="{ row }">
+          <UBadge :color="row.isValid ? 'emerald' : 'red'" variant="subtle">
+            {{ row.isValid ? '有効' : '無効' }}
+          </UBadge>
+        </template>
+        <template #actions-data="{ row }">
+          <div class="flex gap-2">
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-pencil-square"
+              @click="onEdit(row)"
+            >
+              編集
+            </UButton>
+            <UButton
+              color="red"
+              variant="ghost"
+              icon="i-heroicons-trash"
+              @click="onDelete(row)"
+            >
+              削除
+            </UButton>
+          </div>
+        </template>
+      </UTable>
 
-    <UPagination
-      v-model="paginationPage"
-      :page-count="fetchRequest.perPage"
-      :max="5"
-      :total="userTotal"
-    />
+      <div
+        v-if="userTotal > 0"
+        class="flex items-center justify-between rounded-b-lg border-t border-gray-100 bg-gray-50/50 p-4"
+      >
+        <span class="text-sm text-gray-500">
+          全 {{ userTotal }} 件のご確認
+        </span>
+        <UPagination
+          v-model="paginationPage"
+          :page-count="fetchRequest.perPage"
+          :max="5"
+          :total="userTotal"
+        />
+      </div>
+      <div v-else class="p-8 text-center text-gray-500">
+        該当するユーザーは見つかりませんでした。
+      </div>
+    </UCard>
 
     <CommonConfirmModal v-model="showDeleteModal" @submit="submitDelete">
       <template #body>

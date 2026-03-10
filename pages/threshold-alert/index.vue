@@ -1,121 +1,158 @@
 <template>
-  <div>
-    <CommonHeader title="閾値アラート" />
+  <div class="space-y-6">
+    <CommonHeader title="閾値アラートリスト" />
 
-    <UForm :state="{}">
-      <section class="rounded border border-gray-300 p-4">
-        <div class="flex flex-row">
-          <div class="my-auto basis-1/12">
-            <label class="whitespace-nowrap pr-2 text-right font-bold">
-              対象期間
+    <!-- Filter Bar -->
+    <UCard :ui="{ ring: 'ring-1 ring-gray-200', shadow: 'shadow-sm' }">
+      <UForm :state="{}" @submit="get(request.page)">
+        <div class="flex flex-col gap-4 md:flex-row md:items-center">
+          <div class="flex items-center gap-4">
+            <label class="whitespace-nowrap text-sm font-bold text-gray-700">
+              検索対象期間
             </label>
+            <div class="w-40">
+              <CommonDatepicker v-model="request.from" />
+            </div>
+            <span class="text-gray-400">～</span>
+            <div class="w-40">
+              <CommonDatepicker v-model="request.to" />
+            </div>
           </div>
-          <div class="basis-2/12">
-            <CommonDatepicker v-model="request.from" />
-          </div>
-          <div class="my-auto px-2">～</div>
-          <div class="basis-2/12">
-            <CommonDatepicker v-model="request.to" />
+          <div
+            class="flex items-center justify-end gap-3 border-t border-gray-100 pt-4 md:ml-auto md:border-t-0 md:pt-0"
+          >
+            <UButton
+              color="gray"
+              variant="ghost"
+              @click="reset"
+              icon="i-heroicons-arrow-path"
+              >リセット</UButton
+            >
+            <UButton
+              color="indigo"
+              @click="get(request.page)"
+              icon="i-heroicons-magnifying-glass"
+              >検索する</UButton
+            >
           </div>
         </div>
-      </section>
-      <section class="pt-2">
-        <UButton color="white" @click="reset">リセット</UButton>
-        <UButton class="ml-2" color="indigo" @click="get(request.page)">
-          確認
-        </UButton>
-      </section>
-    </UForm>
+      </UForm>
+    </UCard>
 
-    <UTable :rows="thresholdAlerts" :columns="thresholdAlertHeaders">
-      <template #objectiveDate-data="{ row }">
-        {{ formatterDate(row.objectiveDate) }}
-      </template>
-      <template #monitoringType-data="{ row }">
-        {{ MonitoringTypes.getName(row.monitoringType) }}
-      </template>
-      <template #skuMonitoringUnitType-data="{ row }">
-        {{ skuTarget(row) }}
-      </template>
-      <template #storeMonitoringUnitType-data="{ row }">
-        {{ storeTarget(row) }}
-      </template>
-      <template #actions-data="{ row }">
-        <UButton color="blue" @click="openTargetModal(row)">対象を確認</UButton>
-      </template>
-    </UTable>
-    <UPagination
-      v-model="paginationPage"
-      :page-count="request.perPage"
-      :max="5"
-      :total="thresholdAlertTotal"
-    />
+    <!-- Data Table -->
+    <UCard
+      :ui="{
+        ring: 'ring-1 ring-gray-200',
+        shadow: 'shadow-sm',
+        body: { padding: 'p-0 sm:p-0' },
+      }"
+    >
+      <UTable
+        :rows="thresholdAlerts"
+        :columns="thresholdAlertHeaders"
+        class="w-full"
+      >
+        <template #objectiveDate-data="{ row }">
+          <span class="font-medium text-gray-700">{{
+            formatterDate(row.objectiveDate)
+          }}</span>
+        </template>
+        <template #monitoringType-data="{ row }">
+          <UBadge color="red" variant="subtle" size="sm">
+            {{ MonitoringTypes.getName(row.monitoringType) }}
+          </UBadge>
+        </template>
+        <template #skuMonitoringUnitType-data="{ row }">
+          <span class="text-gray-800">{{ skuTarget(row) }}</span>
+        </template>
+        <template #storeMonitoringUnitType-data="{ row }">
+          <span class="text-gray-800">{{ storeTarget(row) }}</span>
+        </template>
+        <template #actions-data="{ row }">
+          <UButton
+            color="white"
+            variant="solid"
+            size="xs"
+            icon="i-heroicons-eye"
+            @click="openTargetModal(row)"
+          >
+            対象を確認
+          </UButton>
+        </template>
+      </UTable>
 
-    <div class="pt-2">
-      <UButton color="white" @click="back">戻る</UButton>
+      <!-- Pagination Footer -->
+      <div
+        v-if="thresholdAlertTotal > 0"
+        class="flex items-center justify-between rounded-b-lg border-t border-gray-100 bg-gray-50/50 p-4"
+      >
+        <span class="text-sm text-gray-500">
+          全 {{ formatterNumber(thresholdAlertTotal) }} 件のご確認
+        </span>
+        <UPagination
+          v-model="paginationPage"
+          :page-count="request.perPage"
+          :max="5"
+          :total="thresholdAlertTotal"
+        />
+      </div>
+      <div v-else class="p-8 text-center text-gray-500">
+        該当する閾値アラートは見つかりませんでした。
+      </div>
+    </UCard>
+
+    <div class="pt-4">
+      <UButton
+        color="gray"
+        variant="ghost"
+        icon="i-heroicons-arrow-left"
+        @click="back"
+        >ダッシュボードへ戻る</UButton
+      >
     </div>
 
+    <!-- Target Details Modal -->
     <UModal v-model="showTargetModal">
-      <UCard
-        :ui="{
-          ring: '',
-        }"
-      >
+      <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100' }">
         <template #header>
-          <!-- <UForm :state="{}" class="flex flex-row" @submit="fetch(1)">
-            <UInput
-              v-model="searchRequest.text"
-              class="basis-10/12"
-              icon="i-heroicons-magnifying-glass-20-solid"
-              placeholder="検索"
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold text-gray-900">対象詳細の確認</h3>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark"
+              class="-my-1"
+              @click="showTargetModal = false"
             />
-            <div class="basis-2/12 text-right">
-              <UButton color="indigo" @click="fetch(1)"> 検索 </UButton>
-            </div>
-          </UForm> -->
+          </div>
         </template>
 
         <UTabs
-          :items="[
-            {
-              label: '対象',
-            },
-            { label: '店舗' },
-          ]"
+          :items="[{ label: '対象アイテム' }, { label: '対象店舗' }]"
           @change="onChangedTarget"
+          class="mb-4"
         />
 
-        <UTable
-          :rows="targets"
-          :columns="[
-            {
-              key: 'name',
-              label: '名前',
-            },
-          ]"
-        >
+        <UTable :rows="targets" :columns="[{ key: 'name', label: '登録名称' }]">
           <template #name-data="{ row }">
-            {{ row?.targetName }}
+            <span class="font-medium text-gray-700">{{ row?.targetName }}</span>
           </template>
         </UTable>
 
         <template #footer>
-          <div class="flex flex-row">
-            <div class="basis-3/4 justify-start">
-              <UPagination
-                v-model="targetPaginationPage"
-                :page-count="targetFetchRequst.perPage"
-                :max="5"
-                :total="targetTotal"
-              />
-            </div>
-            <div class="basis-1/4 text-right">
-              <UButton
-                color="gray"
-                label="閉じる"
-                @click="showTargetModal = false"
-              />
-            </div>
+          <div class="flex flex-row items-center justify-between">
+            <UPagination
+              v-model="targetPaginationPage"
+              :page-count="targetFetchRequst.perPage"
+              :max="5"
+              :total="targetTotal"
+            />
+            <UButton
+              color="gray"
+              variant="solid"
+              label="閉じる"
+              @click="showTargetModal = false"
+            />
           </div>
         </template>
       </UCard>
@@ -174,7 +211,7 @@ const thresholdAlertHeaders = [
     label: '対象店舗',
   },
   {
-    key: 'actions',
+    key: 'targetDetail',
     label: '操作',
   },
 ]

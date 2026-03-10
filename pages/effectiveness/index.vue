@@ -2,204 +2,236 @@
   <div>
     <CommonHeader title="効果測定" />
 
-    <UForm :state="{}">
-      <section class="rounded border border-gray-300 py-2">
-        <!-- 対象商品 -->
-        <div class="flex flex-row">
-          <div class="flex basis-1/12 flex-col justify-center text-right">
-            <label class="whitespace-nowrap pr-2 font-bold">対象商品</label>
+    <UCard
+      :ui="{
+        ring: 'ring-1 ring-gray-200',
+        shadow: 'shadow-sm',
+        body: { padding: 'p-6' },
+      }"
+    >
+      <UForm :state="{}">
+        <div class="flex flex-col gap-8 lg:flex-row">
+          <!-- Left Column: Inputs -->
+          <div class="flex-1 space-y-6">
+            <!-- 対象商品 -->
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <label
+                class="whitespace-nowrap font-bold text-gray-700 sm:w-24 sm:text-right"
+              >
+                対象商品
+              </label>
+              <div class="flex items-center gap-4">
+                <div class="w-40">
+                  <CommonSelect
+                    v-model:selected="selectedSkuMonitoringUnitType"
+                    :options="SkuMonitoringUnitTypes.getNameValues()"
+                    @change="
+                      () => {
+                        selectedSkus = []
+                        selectedGroups = []
+                        selectedDepartments = []
+                        selectedLines = []
+                        selectedClasses = []
+                      }
+                    "
+                  />
+                </div>
+                <UButton color="indigo" variant="soft" @click="openTargetModal"
+                  >選択</UButton
+                >
+              </div>
+            </div>
+
+            <!-- Validation Error & Selected Badges -->
+            <div class="sm:ml-28">
+              <div
+                v-if="apiValidationError.exists('skuId')"
+                class="mb-2 text-sm text-red-500"
+              >
+                {{ apiValidationError.first('skuId') }}
+              </div>
+
+              <div class="flex flex-wrap gap-2">
+                <template v-for="(sku, index) in selectedSkus" :key="sku.skuId">
+                  <UBadge color="gray" variant="subtle" size="md">
+                    {{ sku.skuName }}
+                    <UButton
+                      :padded="false"
+                      color="gray"
+                      variant="link"
+                      icon="i-heroicons-x-mark-20-solid"
+                      class="ml-1"
+                      @click="selectedSkus.splice(index, 1)"
+                    />
+                  </UBadge>
+                </template>
+                <template
+                  v-for="(group, index) in selectedGroups"
+                  :key="group.groupId"
+                >
+                  <UBadge color="gray" variant="subtle" size="md">
+                    {{ group.groupName }}
+                    <UButton
+                      :padded="false"
+                      color="gray"
+                      variant="link"
+                      icon="i-heroicons-x-mark-20-solid"
+                      class="ml-1"
+                      @click="selectedGroups.splice(index, 1)"
+                    />
+                  </UBadge>
+                </template>
+                <template
+                  v-for="(department, index) in selectedDepartments"
+                  :key="department.departmentId"
+                >
+                  <UBadge color="gray" variant="subtle" size="md">
+                    {{ department.departmentName }}
+                    <UButton
+                      :padded="false"
+                      color="gray"
+                      variant="link"
+                      icon="i-heroicons-x-mark-20-solid"
+                      class="ml-1"
+                      @click="selectedDepartments.splice(index, 1)"
+                    />
+                  </UBadge>
+                </template>
+                <template
+                  v-for="(line, index) in selectedLines"
+                  :key="line.lineId"
+                >
+                  <UBadge color="gray" variant="subtle" size="md">
+                    {{ line.lineName }}
+                    <UButton
+                      :padded="false"
+                      color="gray"
+                      variant="link"
+                      icon="i-heroicons-x-mark-20-solid"
+                      class="ml-1"
+                      @click="selectedLines.splice(index, 1)"
+                    />
+                  </UBadge>
+                </template>
+                <template
+                  v-for="(clazz, index) in selectedClasses"
+                  :key="clazz.classId"
+                >
+                  <UBadge color="gray" variant="subtle" size="md">
+                    {{ clazz.className }}
+                    <UButton
+                      :padded="false"
+                      color="gray"
+                      variant="link"
+                      icon="i-heroicons-x-mark-20-solid"
+                      class="ml-1"
+                      @click="selectedClasses.splice(index, 1)"
+                    />
+                  </UBadge>
+                </template>
+              </div>
+            </div>
+
+            <!-- 対象店舗 -->
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <label
+                class="whitespace-nowrap font-bold text-gray-700 sm:w-24 sm:text-right"
+              >
+                対象店舗
+              </label>
+              <div class="flex items-center gap-4">
+                <UButton color="indigo" variant="soft" @click="openStoreModal"
+                  >選択</UButton
+                >
+              </div>
+            </div>
+
+            <div class="sm:ml-28">
+              <div
+                v-if="apiValidationError?.exists('storeId')"
+                class="mb-2 text-sm text-red-500"
+              >
+                {{ apiValidationError?.first('storeId') }}
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <template
+                  v-for="(store, index) in selectedStores"
+                  :key="store.storeId"
+                >
+                  <UBadge color="gray" variant="subtle" size="md" class="py-1">
+                    {{ store.storeName }}
+                    <UButton
+                      :padded="false"
+                      color="gray"
+                      variant="link"
+                      icon="i-heroicons-x-mark-20-solid"
+                      class="ml-1"
+                      @click="selectedStores.splice(index, 1)"
+                    />
+                  </UBadge>
+                </template>
+              </div>
+            </div>
+
+            <!-- 対象期間 -->
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <label
+                class="whitespace-nowrap font-bold text-gray-700 sm:w-24 sm:text-right"
+              >
+                対象期間
+              </label>
+              <div class="flex items-center gap-4">
+                <div class="w-40">
+                  <CommonAppDatepicker
+                    v-model:date="from"
+                    v-model:type="targetDateRangeType"
+                  />
+                </div>
+                <span class="text-gray-400">～</span>
+                <div class="w-40">
+                  <CommonAppDatepicker
+                    v-model:date="to"
+                    :type="targetDateRangeType"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="text-sm text-red-500 sm:ml-28">
+              <p v-if="apiValidationError.exists('from')">
+                {{ apiValidationError.first('from') }}
+              </p>
+              <p v-if="apiValidationError.exists('to')">
+                {{ apiValidationError.first('to') }}
+              </p>
+            </div>
           </div>
+
+          <!-- Right Column: Actions -->
           <div
-            class="flex basis-1/12 flex-col justify-center whitespace-nowrap pl-2"
+            class="flex items-end justify-end gap-3 border-t border-gray-100 pt-6 lg:flex-col lg:border-l lg:border-gray-100 lg:pl-8 lg:pt-0"
           >
-            <CommonSelect
-              v-model:selected="selectedSkuMonitoringUnitType"
-              class="basis-2/12"
-              :options="SkuMonitoringUnitTypes.getNameValues()"
-              @change="
-                () => {
-                  selectedSkus = []
-                  selectedGroups = []
-                  selectedDepartments = []
-                  selectedLines = []
-                  selectedClasses = []
-                }
-              "
-            />
-          </div>
-          <div class="flex flex-col justify-center whitespace-nowrap pl-2">
-            <UButton color="indigo" @click="openTargetModal">選択</UButton>
-          </div>
-        </div>
-        <div v-if="apiValidationError.exists('skuId')" class="flex flex-row">
-          <div class="flex basis-1/12 flex-col justify-center text-right" />
-          <div class="text-red-400">
-            {{ apiValidationError.first('skuId') }}
-          </div>
-        </div>
-
-        <div class="flex flex-row pt-2">
-          <div v-if="selectedSkus.length > 0">
-            <template v-for="(sku, index) in selectedSkus" :key="sku.skuId">
-              <UBadge class="ml-1" color="gray">
-                {{ sku.skuName }}
-                <UButton
-                  :padded="false"
-                  color="gray"
-                  variant="link"
-                  icon="i-heroicons-x-mark-20-solid"
-                  @click="selectedSkus.splice(index, 1)"
-                />
-              </UBadge>
-            </template>
-          </div>
-          <div v-if="selectedGroups.length > 0">
-            <template
-              v-for="(group, index) in selectedGroups"
-              :key="group.groupId"
+            <UButton
+              color="gray"
+              variant="ghost"
+              @click="reset"
+              icon="i-heroicons-arrow-path"
+              class="w-full justify-center lg:w-32"
             >
-              <UBadge class="ml-1" color="gray">
-                {{ group.groupName }}
-                <UButton
-                  :padded="false"
-                  color="gray"
-                  variant="link"
-                  icon="i-heroicons-x-mark-20-solid"
-                  @click="selectedGroups.splice(index, 1)"
-                />
-              </UBadge>
-            </template>
-          </div>
-          <div v-if="selectedDepartments.length > 0">
-            <template
-              v-for="(department, index) in selectedDepartments"
-              :key="department.departmentId"
+              リセット
+            </UButton>
+            <UButton
+              color="indigo"
+              @click="fetch()"
+              icon="i-heroicons-presentation-chart-line"
+              class="w-full justify-center lg:w-32"
             >
-              <UBadge class="ml-1" color="gray">
-                {{ department.departmentName }}
-                <UButton
-                  :padded="false"
-                  color="gray"
-                  variant="link"
-                  icon="i-heroicons-x-mark-20-solid"
-                  @click="selectedDepartments.splice(index, 1)"
-                />
-              </UBadge>
-            </template>
-          </div>
-          <div v-if="selectedLines.length > 0">
-            <template v-for="(line, index) in selectedLines" :key="line.lineId">
-              <UBadge class="ml-1" color="gray">
-                {{ line.lineName }}
-                <UButton
-                  :padded="false"
-                  color="gray"
-                  variant="link"
-                  icon="i-heroicons-x-mark-20-solid"
-                  @click="selectedLines.splice(index, 1)"
-                />
-              </UBadge>
-            </template>
-          </div>
-          <div v-if="selectedClasses.length > 0">
-            <template
-              v-for="(clazz, index) in selectedClasses"
-              :key="clazz.classId"
-            >
-              <UBadge class="ml-1" color="gray">
-                {{ clazz.className }}
-                <UButton
-                  :padded="false"
-                  color="gray"
-                  variant="link"
-                  icon="i-heroicons-x-mark-20-solid"
-                  @click="selectedClasses.splice(index, 1)"
-                />
-              </UBadge>
-            </template>
+              画面表示
+            </UButton>
           </div>
         </div>
-
-        <!-- 対象店舗 -->
-        <div class="flex flex-row pt-2">
-          <div class="flex basis-1/12 flex-col justify-center text-right">
-            <label class="whitespace-nowrap pr-2 font-bold"> 対象店舗 </label>
-          </div>
-          <div class="flex flex-col justify-center whitespace-nowrap pl-2">
-            <UButton color="indigo" @click="openStoreModal">選択</UButton>
-          </div>
-          <div v-if="selectedStores.length > 0">
-            <template
-              v-for="(store, index) in selectedStores"
-              :key="store.storeId"
-            >
-              <UBadge class="ml-2 py-2" color="gray">
-                {{ store.storeName }}
-                <UButton
-                  :padded="false"
-                  color="gray"
-                  variant="link"
-                  icon="i-heroicons-x-mark-20-solid"
-                  @click="selectedStores.splice(index, 1)"
-                />
-              </UBadge>
-            </template>
-          </div>
-        </div>
-        <div v-if="apiValidationError?.exists('storeId')" class="flex flex-row">
-          <div class="flex basis-1/12 flex-col justify-center text-right" />
-          <div class="text-red-400">
-            {{ apiValidationError?.first('storeId') }}
-          </div>
-        </div>
-
-        <!-- 対象期間 -->
-        <div class="flex flex-row pt-2">
-          <div class="my-auto basis-1/12 text-right">
-            <label class="whitespace-nowrap pr-2 text-right font-bold">
-              対象期間
-            </label>
-          </div>
-          <div class="basis-1/12 pl-2">
-            <CommonAppDatepicker
-              v-model:date="from"
-              v-model:type="targetDateRangeType"
-            />
-          </div>
-          <div class="my-auto">～</div>
-          <div class="basis-1/12">
-            <CommonAppDatepicker
-              v-model:date="to"
-              :type="targetDateRangeType"
-            />
-          </div>
-        </div>
-        <div
-          v-if="
-            apiValidationError.exists('from') || apiValidationError.exists('to')
-          "
-          class="flex flex-row"
-        >
-          <div class="my-auto basis-1/12 text-right"></div>
-          <div class="basis-auto text-red-400">
-            <p v-if="apiValidationError.exists('from')">
-              {{ apiValidationError.first('from') }}
-            </p>
-            <p v-if="apiValidationError.exists('to')">
-              {{ apiValidationError.first('to') }}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section class="flex pt-2">
-        <div class="basis-1/2 text-left">
-          <UButton class="mr-2" color="white" @click="reset">リセット</UButton>
-          <UButton color="indigo" @click="fetch()">画面表示</UButton>
-        </div>
-        <div class="basis-1/2 text-right"></div>
-      </section>
-    </UForm>
+      </UForm>
+    </UCard>
 
     <template v-for="category in categories">
       <section class="flex justify-between pt-5">

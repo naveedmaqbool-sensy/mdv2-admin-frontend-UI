@@ -2,284 +2,338 @@
   <div>
     <CommonHeader title="発注修正" />
 
-    <UForm :state="{}">
-      <section class="rounded border border-gray-300 p-4">
-        <div class="flex flex-row">
-          <div class="my-auto basis-1/12 text-right">
-            <label class="whitespace-nowrap pr-2 text-right font-bold">
-              対象期間
-            </label>
-          </div>
-          <div class="basis-2/12">
-            <CommonDatepicker v-model="formData.from" />
-          </div>
-          <div class="my-auto px-2">～</div>
-          <div class="basis-2/12">
-            <CommonDatepicker v-model="formData.to" />
-          </div>
-        </div>
+    <UCard
+      :ui="{
+        ring: 'ring-1 ring-gray-200',
+        shadow: 'shadow-sm',
+        body: { padding: 'p-6' },
+      }"
+    >
+      <UForm :state="{}">
+        <div class="flex flex-col gap-8 lg:flex-row">
+          <!-- Left Column: Inputs -->
+          <div class="flex-1 space-y-6">
+            <!-- 対象期間 -->
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <label
+                class="whitespace-nowrap font-bold text-gray-700 sm:w-24 sm:text-right"
+              >
+                対象期間
+              </label>
+              <div class="flex items-center gap-4">
+                <div class="w-40">
+                  <CommonDatepicker v-model="formData.from" />
+                </div>
+                <span class="text-gray-400">～</span>
+                <div class="w-40">
+                  <CommonDatepicker v-model="formData.to" />
+                </div>
+              </div>
+            </div>
 
-        <!-- 対象単位 -->
-        <div class="flex flex-row pt-2">
-          <div class="flex basis-1/12 flex-col justify-center text-right">
-            <label class="whitespace-nowrap pr-2 font-bold">対象単位</label>
-          </div>
-          <div class="my-auto flex basis-2/12 flex-col justify-center">
-            <CommonSelect
-              v-model:selected="formData.skuMonitoringUnitType"
-              class="w-full"
-              :options="SkuMonitoringUnitTypes.getNameValues()"
-              @change="onChangedSkuMonitoringUnitType"
-            />
-          </div>
-          <div class="flex flex-col justify-center pl-2">
-            <UButton color="indigo" @click="openSkuModal">選択</UButton>
-          </div>
-        </div>
-        <div
-          v-if="apiValidationError?.exists('skuMonitoringUnitType')"
-          class="flex flex-row"
-        >
-          <div class="flex basis-1/12 flex-col justify-center text-right" />
-          <div class="text-red-400">
-            {{ apiValidationError?.first('skuMonitoringUnitType') }}
-          </div>
-        </div>
+            <!-- 対象単位 -->
+            <div class="flex flex-col gap-4 sm:flex-row">
+              <label
+                class="mt-2 whitespace-nowrap font-bold text-gray-700 sm:w-24 sm:text-right"
+              >
+                対象単位
+              </label>
+              <div class="flex-1">
+                <div class="mb-2 flex items-center gap-4">
+                  <div class="w-48">
+                    <CommonSelect
+                      v-model:selected="formData.skuMonitoringUnitType"
+                      class="w-full"
+                      :options="SkuMonitoringUnitTypes.getNameValues()"
+                      @change="onChangedSkuMonitoringUnitType"
+                    />
+                  </div>
+                  <UButton color="indigo" variant="soft" @click="openSkuModal"
+                    >選択</UButton
+                  >
+                </div>
 
-        <!-- 選択内容を表示 -->
-        <div class="flex flex-row pt-2">
-          <div class="flex basis-1/12 flex-col justify-center text-right" />
-          <div class="my-auto flex flex-col justify-center">
-            <div v-if="formData.skus.length > 0" class="pb-3">
-              <template v-for="(sku, index) in formData.skus" :key="sku.skuId">
-                <UBadge class="ml-1" color="gray">
-                  {{ sku.skuName }}
-                  <UButton
-                    :padded="false"
-                    color="gray"
-                    variant="link"
-                    icon="i-heroicons-x-mark-20-solid"
-                    @click="formData.skus.splice(index, 1)"
-                  />
-                </UBadge>
-              </template>
-            </div>
-            <div v-if="formData.groups.length > 0" class="pb-3">
-              <template
-                v-for="(group, index) in formData.groups"
-                :key="group.groupId"
-              >
-                <UBadge class="ml-1" color="gray">
-                  {{ group.groupName }}
-                  <UButton
-                    :padded="false"
-                    color="gray"
-                    variant="link"
-                    icon="i-heroicons-x-mark-20-solid"
-                    @click="formData.groups.splice(index, 1)"
-                  />
-                </UBadge>
-              </template>
-            </div>
-            <div v-if="formData.departments.length > 0" class="pb-3">
-              <template
-                v-for="(department, index) in formData.departments"
-                :key="department.departmentId"
-              >
-                <UBadge class="ml-1" color="gray">
-                  {{ department.departmentName }}
-                  <UButton
-                    :padded="false"
-                    color="gray"
-                    variant="link"
-                    icon="i-heroicons-x-mark-20-solid"
-                    @click="formData.departments.splice(index, 1)"
-                  />
-                </UBadge>
-              </template>
-            </div>
-            <div v-if="formData.classes.length > 0" class="pb-3">
-              <template
-                v-for="(clazz, index) in formData.classes"
-                :key="clazz.classId"
-              >
-                <UBadge class="ml-1" color="gray">
-                  {{ clazz.className }}
-                  <UButton
-                    :padded="false"
-                    color="gray"
-                    variant="link"
-                    icon="i-heroicons-x-mark-20-solid"
-                    @click="formData.classes.splice(index, 1)"
-                  />
-                </UBadge>
-              </template>
-            </div>
-            <div v-if="formData.lines.length > 0" class="pb-3">
-              <template
-                v-for="(line, index) in formData.lines"
-                :key="line.lineId"
-              >
-                <UBadge class="ml-1" color="gray">
-                  {{ line.lineName }}
-                  <UButton
-                    :padded="false"
-                    color="gray"
-                    variant="link"
-                    icon="i-heroicons-x-mark-20-solid"
-                    @click="formData.lines.splice(index, 1)"
-                  />
-                </UBadge>
-              </template>
-            </div>
-          </div>
-        </div>
+                <div
+                  v-if="apiValidationError?.exists('skuMonitoringUnitType')"
+                  class="mb-2 text-sm text-red-500"
+                >
+                  {{ apiValidationError?.first('skuMonitoringUnitType') }}
+                </div>
 
-        <!-- 対象店舗 -->
-        <div class="flex flex-row">
-          <div class="flex basis-1/12 flex-col justify-center text-right">
-            <label class="whitespace-nowrap pr-2 font-bold"> 対象店舗 </label>
+                <div class="flex flex-wrap gap-2">
+                  <template
+                    v-for="(sku, index) in formData.skus"
+                    :key="sku.skuId"
+                  >
+                    <UBadge color="gray" variant="subtle" size="md">
+                      {{ sku.skuName }}
+                      <UButton
+                        :padded="false"
+                        color="gray"
+                        variant="link"
+                        icon="i-heroicons-x-mark-20-solid"
+                        class="ml-1"
+                        @click="formData.skus.splice(index, 1)"
+                      />
+                    </UBadge>
+                  </template>
+                  <template
+                    v-for="(group, index) in formData.groups"
+                    :key="group.groupId"
+                  >
+                    <UBadge color="gray" variant="subtle" size="md">
+                      {{ group.groupName }}
+                      <UButton
+                        :padded="false"
+                        color="gray"
+                        variant="link"
+                        icon="i-heroicons-x-mark-20-solid"
+                        class="ml-1"
+                        @click="formData.groups.splice(index, 1)"
+                      />
+                    </UBadge>
+                  </template>
+                  <template
+                    v-for="(department, index) in formData.departments"
+                    :key="department.departmentId"
+                  >
+                    <UBadge color="gray" variant="subtle" size="md">
+                      {{ department.departmentName }}
+                      <UButton
+                        :padded="false"
+                        color="gray"
+                        variant="link"
+                        icon="i-heroicons-x-mark-20-solid"
+                        class="ml-1"
+                        @click="formData.departments.splice(index, 1)"
+                      />
+                    </UBadge>
+                  </template>
+                  <template
+                    v-for="(clazz, index) in formData.classes"
+                    :key="clazz.classId"
+                  >
+                    <UBadge color="gray" variant="subtle" size="md">
+                      {{ clazz.className }}
+                      <UButton
+                        :padded="false"
+                        color="gray"
+                        variant="link"
+                        icon="i-heroicons-x-mark-20-solid"
+                        class="ml-1"
+                        @click="formData.classes.splice(index, 1)"
+                      />
+                    </UBadge>
+                  </template>
+                  <template
+                    v-for="(line, index) in formData.lines"
+                    :key="line.lineId"
+                  >
+                    <UBadge color="gray" variant="subtle" size="md">
+                      {{ line.lineName }}
+                      <UButton
+                        :padded="false"
+                        color="gray"
+                        variant="link"
+                        icon="i-heroicons-x-mark-20-solid"
+                        class="ml-1"
+                        @click="formData.lines.splice(index, 1)"
+                      />
+                    </UBadge>
+                  </template>
+                </div>
+              </div>
+            </div>
+
+            <!-- 対象店舗 -->
+            <div class="flex flex-col gap-4 sm:flex-row">
+              <label
+                class="mt-2 whitespace-nowrap font-bold text-gray-700 sm:w-24 sm:text-right"
+              >
+                対象店舗
+              </label>
+              <div class="flex-1">
+                <div class="mb-2 flex items-center gap-4">
+                  <div class="w-48">
+                    <CommonSelect
+                      v-model:selected="formData.storeMonitoringUnitType"
+                      class="w-full"
+                      :options="StoreMonitoringUnitTypes.getNameValues()"
+                    />
+                  </div>
+                  <UButton
+                    color="indigo"
+                    variant="soft"
+                    :disabled="
+                      formData.storeMonitoringUnitType ===
+                      StoreMonitoringUnitTypes.All
+                    "
+                    @click="openStoreModal"
+                    >選択</UButton
+                  >
+                </div>
+
+                <div
+                  v-if="apiValidationError?.exists('storeMonitoringUnitType')"
+                  class="mb-2 text-sm text-red-500"
+                >
+                  {{ apiValidationError?.first('storeMonitoringUnitType') }}
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                  <template
+                    v-for="(store, index) in formData.stores"
+                    :key="store.storeId"
+                  >
+                    <UBadge color="gray" variant="subtle" size="md">
+                      {{ store.storeName }}
+                      <UButton
+                        :padded="false"
+                        color="gray"
+                        variant="link"
+                        icon="i-heroicons-x-mark-20-solid"
+                        class="ml-1"
+                        @click="formData.stores.splice(index, 1)"
+                      />
+                    </UBadge>
+                  </template>
+                  <template
+                    v-for="(storeGroup, index) in formData.storeGroups"
+                    :key="storeGroup.storeGroupId"
+                  >
+                    <UBadge color="gray" variant="subtle" size="md">
+                      {{ storeGroup.storeGroupName }}
+                      <UButton
+                        :padded="false"
+                        color="gray"
+                        variant="link"
+                        icon="i-heroicons-x-mark-20-solid"
+                        class="ml-1"
+                        @click="formData.storeGroups.splice(index, 1)"
+                      />
+                    </UBadge>
+                  </template>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="my-auto flex basis-2/12 flex-col justify-center">
-            <CommonSelect
-              v-model:selected="formData.storeMonitoringUnitType"
-              class="w-full"
-              :options="StoreMonitoringUnitTypes.getNameValues()"
-            />
-          </div>
-          <div class="flex flex-col justify-center pl-2">
+
+          <!-- Right Column: Actions -->
+          <div
+            class="flex items-end justify-end gap-3 border-t border-gray-100 pt-6 lg:flex-col lg:border-l lg:border-gray-100 lg:pl-8 lg:pt-0"
+          >
+            <UButton
+              color="gray"
+              variant="ghost"
+              @click="reset"
+              icon="i-heroicons-arrow-path"
+              class="w-full justify-center lg:w-40"
+            >
+              リセット
+            </UButton>
             <UButton
               color="indigo"
-              :disabled="
-                formData.storeMonitoringUnitType ===
-                StoreMonitoringUnitTypes.All
-              "
-              @click="openStoreModal"
-              >選択</UButton
+              @click="get(1)"
+              icon="i-heroicons-magnifying-glass"
+              class="w-full justify-center lg:w-40"
             >
+              検索する
+            </UButton>
+            <UButton
+              color="primary"
+              variant="outline"
+              icon="i-heroicons-document-arrow-down"
+              label="エビデンス出力"
+              @click="onExport"
+              class="w-full justify-center lg:mt-auto lg:w-40"
+            />
           </div>
         </div>
-        <div
-          v-if="apiValidationError?.exists('storeMonitoringUnitType')"
-          class="flex flex-row"
-        >
-          <div class="flex basis-1/12 flex-col justify-center text-right" />
-          <div class="text-red-400">
-            {{ apiValidationError?.first('storeMonitoringUnitType') }}
-          </div>
-        </div>
+      </UForm>
+    </UCard>
 
-        <!-- 選択内容を表示 -->
-        <div class="flex flex-row pt-2">
-          <div class="flex basis-1/12 flex-col justify-center text-right" />
-          <div class="my-auto flex flex-col justify-center">
-            <div v-if="formData.stores.length > 0" class="pb-3">
-              <template
-                v-for="(store, index) in formData.stores"
-                :key="store.storeId"
-              >
-                <UBadge class="ml-1" color="gray">
-                  {{ store.storeName }}
-                  <UButton
-                    :padded="false"
-                    color="gray"
-                    variant="link"
-                    icon="i-heroicons-x-mark-20-solid"
-                    @click="formData.stores.splice(index, 1)"
-                  />
-                </UBadge>
-              </template>
-            </div>
-            <div v-if="formData.storeGroups.length > 0" class="pb-3">
-              <template
-                v-for="(storeGroup, index) in formData.storeGroups"
-                :key="storeGroup.storeGroupId"
-              >
-                <UBadge class="ml-1" color="gray">
-                  {{ storeGroup.storeGroupName }}
-                  <UButton
-                    :padded="false"
-                    color="gray"
-                    variant="link"
-                    icon="i-heroicons-x-mark-20-solid"
-                    @click="formData.storeGroups.splice(index, 1)"
-                  />
-                </UBadge>
-              </template>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section class="flex pt-2">
-        <div class="basis-1/2">
-          <UButton color="white" @click="reset">リセット</UButton>
-          <UButton class="ml-2" color="indigo" @click="get(1)">検索</UButton>
-        </div>
-        <div class="basis-1/2 text-right">
-          <UButton
-            color="primary"
-            class="ml-2"
-            label="エビデンス出力"
-            @click="onExport"
+    <UCard
+      :ui="{
+        ring: 'ring-1 ring-gray-200',
+        shadow: 'shadow-sm',
+        body: { padding: 'p-0 sm:p-0' },
+      }"
+      class="mt-6"
+    >
+      <UTable :rows="orders" :columns="orderColumns" class="w-full">
+        <template #objectiveDate-data="{ row }">
+          <span class="font-medium text-gray-700">{{
+            formatterDate(row.objectiveDate)
+          }}</span>
+        </template>
+        <template #deliveryDate-data="{ row }">
+          <span class="font-medium text-gray-700">{{
+            formatterDate(row.deliveryDate)
+          }}</span>
+        </template>
+        <template #storeId-data="{ row }">
+          {{ row.storeMaster?.storeName }}
+        </template>
+        <template #skuId-data="{ row }">
+          <span class="font-medium text-gray-900">{{
+            row.storeSkuMaster?.skuName
+          }}</span>
+        </template>
+        <template #groupId-data="{ row }">
+          {{ row.groupMaster?.groupName }}
+        </template>
+        <template #departmentId-data="{ row }">
+          {{ row.departmentMaster?.departmentName }}
+        </template>
+        <template #lineId-data="{ row }">
+          {{ row.lineMaster?.lineName }}
+        </template>
+        <template #classId-data="{ row }">
+          {{ row.classMaster?.className }}
+        </template>
+        <template #predictionOrderQty-data="{ row }">
+          <p class="text-right">
+            {{ formatterNumber(row.predictionOrderQty) }}
+          </p>
+        </template>
+        <template #actualOrderQty-data="{ row }">
+          <UTooltip
+            v-if="
+              new Date(row.objectiveDate).getTime() <
+              new Date().setHours(0, 0, 0, 0)
+            "
+            text="当日以外の発注は変更できません"
+            :popper="{ placement: 'top' }"
+          >
+            <UInput v-model.lazy="row.actualOrderQty" type="number" disabled />
+          </UTooltip>
+          <UInput
+            v-else
+            v-model.lazy="row.actualOrderQty"
+            type="number"
+            @change="onChangedActualOrderQty(row)"
           />
-        </div>
-      </section>
-    </UForm>
+        </template>
+      </UTable>
 
-    <UTable :rows="orders" :columns="orderColumns">
-      <template #objectiveDate-data="{ row }">
-        {{ formatterDate(row.objectiveDate) }}
-      </template>
-      <template #deliveryDate-data="{ row }">
-        {{ formatterDate(row.deliveryDate) }}
-      </template>
-      <template #storeId-data="{ row }">
-        {{ row.storeMaster?.storeName }}
-      </template>
-      <template #skuId-data="{ row }">
-        {{ row.storeSkuMaster?.skuName }}
-      </template>
-      <template #groupId-data="{ row }">
-        {{ row.groupMaster?.groupName }}
-      </template>
-      <template #departmentId-data="{ row }">
-        {{ row.departmentMaster?.departmentName }}
-      </template>
-      <template #lineId-data="{ row }">
-        {{ row.lineMaster?.lineName }}
-      </template>
-      <template #classId-data="{ row }">
-        {{ row.classMaster?.className }}
-      </template>
-      <template #predictionOrderQty-data="{ row }">
-        <p class="text-right">{{ formatterNumber(row.predictionOrderQty) }}</p>
-      </template>
-      <template #actualOrderQty-data="{ row }">
-        <UTooltip
-          v-if="
-            new Date(row.objectiveDate).getTime() <
-            new Date().setHours(0, 0, 0, 0)
-          "
-          text="当日以外の発注は変更できません"
-          :popper="{ placement: 'top' }"
-        >
-          <UInput v-model.lazy="row.actualOrderQty" type="number" disabled />
-        </UTooltip>
-        <UInput
-          v-else
-          v-model.lazy="row.actualOrderQty"
-          type="number"
-          @change="onChangedActualOrderQty(row)"
+      <div
+        v-if="orderTotal > 0"
+        class="flex items-center justify-between rounded-b-lg border-t border-gray-100 bg-gray-50/50 p-4"
+      >
+        <span class="text-sm text-gray-500">
+          全 {{ formatterNumber(orderTotal) }} 件のご確認
+        </span>
+        <UPagination
+          v-model="paginationPage"
+          :page-count="formData.perPage"
+          :max="5"
+          :total="orderTotal"
         />
-      </template>
-    </UTable>
-
-    <UPagination
-      v-model="paginationPage"
-      :page-count="formData.perPage"
-      :max="5"
-      :total="orderTotal"
-    />
+      </div>
+      <div v-else class="p-8 text-center text-gray-500">
+        該当する発注データは見つかりませんでした。
+      </div>
+    </UCard>
 
     <MonitoringSelectObjectModal
       v-model:is-open-modal="isOpenSkuModal"
