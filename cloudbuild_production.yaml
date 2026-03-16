@@ -1,0 +1,10 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: ["make", "deploy", "PROJECT=${_DEPLOY_PROJECT}", "BRANCH=${_BRANCH}", "TAG=${_TAG}"]
+
+substitutions:
+  _DEPLOY_PROJECT: "sensy-md-ui-prod"
+  _BRANCH: "main"
+  _TAG: "latest"
+
+timeout: 3600s
